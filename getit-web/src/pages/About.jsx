@@ -22,16 +22,20 @@ const About = () => {
         <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-cyan-900/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        
+      <div className="text-center mb-24 relative">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[100px] bg-cyan-500/30 blur-[80px] rounded-full pointer-events-none"></div>
         {/* 1. 타이틀 섹션 (수정됨) */}
         <div className="text-center mb-24 animate-fade-in-up">
           <span className="text-cyan-400 font-bold tracking-widest uppercase text-sm border border-cyan-400/30 px-3 py-1 rounded-full">
             GET IT 9기
           </span>
-          <h2 className="text-4xl md:text-6xl font-black mt-6 mb-6 leading-tight">
-            우리는 코드를 통해<br />
-            <span className="text-white">세상의 문제를 해결합니다.</span>
+          <h2 className="text-4xl md:text-6xl font-black mt-8 mb-8 leading-tight relative z-10">
+          <span className="block text-gray-300 text-2xl md:text-4xl font-bold mb-2 tracking-tight opacity-80">
+            우리는 코드를 통해
+          </span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500">
+            세상의 문제를 해결합니다.
+          </span>
           </h2>
           <div className="max-w-3xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
             <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-4">

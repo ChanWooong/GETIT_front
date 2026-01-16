@@ -7,8 +7,9 @@ import Project from './pages/Project';
 import Recruit from './pages/Recruit';
 import Login from './pages/Login';
 import Lecture from './pages/Lecture';
+import LectureDetail from './pages/LectureDetail'; // 🔥 새로 추가
 import Invest from './pages/Invest';
-import Dashboard from './pages/Dashboard'; // 🔥 1. import 다시 추가!
+import Dashboard from './pages/Dashboard';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -26,12 +27,15 @@ function App() {
         <Route path="/recruit" element={<Recruit />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         
-        {/* 🔐 멤버 전용 (로그인 시 접근 가능) */}
+        {/* 🔐 멤버 전용 */}
         {isLoggedIn && (
           <>
-            <Route path="/dashboard" element={<Dashboard />} /> {/* 🔥 2. 라우트 복구 완료! */}
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/lecture" element={<Lecture />} />
+            {/* 🔥 상세 페이지 라우트 추가! (:id는 변수입니다) */}
+            <Route path="/lecture/:id" element={<LectureDetail />} />
             <Route path="/invest" element={<Invest />} />
+            <Route path="/lecture/:id" element={<LectureDetail />} />
           </>
         )}
 
