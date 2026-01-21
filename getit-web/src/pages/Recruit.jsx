@@ -1,42 +1,51 @@
 import React, { useState } from 'react';
-import { Calendar, CheckCircle, ChevronDown, ChevronUp, UserPlus, Sparkles, Send } from 'lucide-react';
+import { 
+  Calendar, 
+  ChevronDown, 
+  ChevronUp, 
+  Sparkles, 
+  Send, 
+  Lightbulb, // 아이디어 아이콘 추가
+  Rocket,    // 창업 아이콘 추가
+  Flag       // 완주 아이콘 추가
+} from 'lucide-react';
 
 const Recruit = () => {
   // 🔥 모집 기간이면 true, 아니면 false로 설정하세요!
   const isRecruiting = true; 
 
-  // 모집 분야 데이터
-  const positions = [
+  // ✅ 변경된 부분: 모집 분야 -> 인재상 데이터
+  const targetAudience = [
     {
-      title: "Backend Dev",
-      desc: "Spring Boot, Node.js 등을 이용해 안정적인 API와 서버 구조를 설계합니다.",
-      skills: ["Java/Spring", "MySQL", "AWS"]
+      icon: <Lightbulb size={40} className="text-yellow-400" />,
+      text: "아이디어를 SW 서비스로\n구체화하고 싶은 학생",
+      sub: "아이디어는 있는데 어떻게 시작할지 모르겠다면 함께해요."
     },
     {
-      title: "Frontend Dev",
-      desc: "React, Vue 등을 활용하여 사용자와 직접 소통하는 매력적인 인터페이스를 구현합니다.",
-      skills: ["React", "TypeScript", "Tailwind"]
+      icon: <Rocket size={40} className="text-red-400" />,
+      text: "창업과 스타트업 생태계에\n관심이 있는 학생",
+      sub: "개발 뿐 아니라 기획, 마케팅 등 다양한 경험을 쌓습니다."
     },
     {
-      title: "PM / Planner",
-      desc: "시장의 문제를 발견하고, 이를 해결할 비즈니스 모델과 서비스 기획안을 도출합니다.",
-      skills: ["Figma", "Communication", "Data Analysis"]
+      icon: <Flag size={40} className="text-green-400" />,
+      text: "프로젝트를 처음부터 끝까지\n 경험하고픈 학생",
+      sub: "기획부터 배포, 운영까지의 전체 사이클을 경험합니다."
     }
   ];
 
   // 모집 일정 데이터
   const schedule = [
-    { step: "01", title: "서류 접수", date: "3.2 ~ 3.15" },
-    { step: "02", title: "서류 발표", date: "3.18" },
-    { step: "03", title: "직무 면접", date: "3.20 ~ 3.22" },
-    { step: "04", title: "최종 합격", date: "3.25" }
+    { step: "01", title: "서류 접수", date: "3.12 ~ 3.14" },
+    { step: "02", title: "서류 발표", date: "3.15" },
+    { step: "03", title: "면접 심사", date: "3.16 ~ 3.18" },
+    { step: "04", title: "최종 합격", date: "3.19" }
   ];
 
   // FAQ 데이터
   const faqs = [
     { q: "코딩을 한 번도 안 해본 비전공자도 지원 가능한가요?", a: "네, 가능합니다! GET IT은 실력보다 열정을 중요하게 생각합니다. 신입 기수 교육 커리큘럼이 준비되어 있으니 걱정 마세요." },
-    { q: "정기 모임은 언제인가요?", a: "매주 목요일 저녁 7시에 정기 세션이 있으며, 시험 기간 2주는 휴식기를 갖습니다." },
-    { q: "회비가 있나요?", a: "네, 동아리 운영 및 서버 비용 등을 위해 학기당 3만원의 회비가 있습니다." },
+    { q: "정기 모임은 언제인가요?", a: "2주에 한번 목요일 저녁 7시에 정기 세미나이 있으며, 시험 기간 2주는 휴식기를 갖습니다." },
+    { q: "회비가 있나요?", a: "네, 동아리 운영 및 서버 비용 등을 위해 학기당 2만원의 회비가 있습니다." },
     { q: "재학생만 지원 가능한가요?", a: "기본적으로 재학생 및 휴학생을 대상으로 하지만, 졸업 유예생의 경우 면접 시 논의 가능합니다." }
   ];
 
@@ -53,7 +62,7 @@ const Recruit = () => {
       <div className="max-w-4xl mx-auto">
         
         {/* 1. 헤더 섹션 */}
-        <div className="text-center mb-16 animate-fade-in-up">
+        <div className="text-center mb-20 animate-fade-in-up">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
             <Sparkles size={16} className="text-cyan-400" />
             <span className="text-sm font-bold tracking-wider text-cyan-400">
@@ -73,7 +82,7 @@ const Recruit = () => {
             GET IT과 함께 성장할 9기 멤버를 찾습니다.
           </p>
 
-          {/* 지원하기 버튼 (상태에 따라 다르게 보임) */}
+          {/* 지원하기 버튼 */}
           {isRecruiting ? (
             <a 
               href="https://google.com" // 실제 구글폼 주소 넣기
@@ -90,21 +99,29 @@ const Recruit = () => {
           )}
         </div>
 
-        {/* 2. 모집 분야 (Cards) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
-          {positions.map((pos, idx) => (
-            <div key={idx} className="bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-colors">
-              <h3 className="text-2xl font-bold mb-4 text-white">{pos.title}</h3>
-              <p className="text-gray-400 text-sm mb-6 leading-relaxed h-16">{pos.desc}</p>
-              <div className="flex flex-wrap gap-2">
-                {pos.skills.map((skill, i) => (
-                  <span key={i} className="text-xs bg-black/30 px-3 py-1 rounded-full text-cyan-400 font-medium">
-                    {skill}
-                  </span>
-                ))}
+        {/* 2. ✅ 변경된 섹션: 이런 분들을 찾습니다 (Who We Want) */}
+        <div className="mb-24">
+          <h3 className="text-3xl font-bold mb-10 text-center text-white">
+            이런 분들을 <span className="text-cyan-400">찾고 있어요!</span>
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {targetAudience.map((item, idx) => (
+              <div key={idx} className="flex flex-col items-center text-center bg-white/5 border border-white/10 p-8 rounded-2xl hover:bg-white/10 hover:border-cyan-500/30 transition-all group">
+                {/* 아이콘 원형 배경 */}
+                <div className="w-20 h-20 rounded-full bg-black/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  {item.icon}
+                </div>
+                {/* 텍스트 */}
+                <h3 className="text-xl font-bold mb-3 text-white whitespace-pre-line leading-snug">
+                  {item.text}
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed">
+                  {item.sub}
+                </p>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* 3. 모집 일정 (Steps) */}
@@ -144,6 +161,7 @@ const Recruit = () => {
                 {/* 열렸을 때만 보이는 답변 영역 */}
                 {openFaqIndex === index && (
                   <div className="p-6 pt-0 text-gray-400 border-t border-white/5 bg-black/20 leading-relaxed">
+                    <br />
                     A. {item.a}
                   </div>
                 )}

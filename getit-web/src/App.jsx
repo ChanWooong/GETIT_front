@@ -11,6 +11,7 @@ import Login from './pages/Login';
 import Lecture from './pages/Lecture';
 import LectureDetail from './pages/LectureDetail';
 import Invest from './pages/Invest';
+import Executives from './pages/Excutives';
 import Dashboard from './pages/Dashboard';
 import AdminPage from './pages/AdminPage'; // 🔥 이 파일이 src/pages/AdminPage.jsx 에 있어야 합니다!
 
@@ -32,6 +33,7 @@ function App() {
         
         <Route path="/about" element={<About />} />
         <Route path="/project" element={<Project />} />
+        <Route path="/excutive" element={<Executives />} />
         <Route path="/recruit" element={<Recruit />} />
         
         {/* Login에 역할 설정 함수 전달 */}

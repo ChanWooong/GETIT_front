@@ -52,7 +52,7 @@ const Home = ({ isLoggedIn }) => {
                 onClick={() => navigate('/recruit')}
                 className="bg-white text-[#110b29] font-bold py-4 px-8 rounded-full hover:bg-gray-100 transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
               >
-                <Send size={20} /> 8기 지원하러 가기
+                <Send size={20} /> 9기 지원하러 가기
               </button>
             )}
             

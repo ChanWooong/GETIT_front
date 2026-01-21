@@ -4,12 +4,12 @@ import { BookOpen, Rocket, MonitorPlay, BrainCircuit, Calendar, CheckCircle } fr
 const About = () => {
   // 📅 세미나 일정 데이터 (나중에 여기 내용만 바꾸면 리스트가 바뀝니다)
   const seminarSchedule = [
-    { date: "3월 2주차", topic: "OT & 웹 서비스의 이해 (Front/Back)", type: "Offline" },
-    { date: "3월 4주차", topic: "AI 코딩 도구(Cursor, GPT) 활용법", type: "Offline" },
-    { date: "4월 2주차", topic: "프론트엔드 기초 & 반응형 웹", type: "Online" },
-    { date: "4월 4주차", topic: "백엔드 API 설계 및 DB 기초", type: "Offline" },
-    { date: "5월 2주차", topic: "중간 점검 & 미니 해커톤 팀 빌딩", type: "Offline" },
-    { date: "6월 1주차", topic: "1학기 마무리: 미니 해커톤", type: "Event" },
+    { date: "3월 2주차", topic: "GETIT Chat", type: "Offline" },
+    { date: "4월 2주차", topic: "웹 지식 세미나(가제)", type: "Offline" },
+    { date: "4월 4주차", topic: "협업 툴 관련 세미나(가제)", type: "Offline" },
+    { date: "5월 2주차", topic: "창업 관련 세미나(가제)", type: "Offline" },
+    { date: "5월 4주차", topic: "1학기 마무리: 미니 해커톤", type: "Event" },
+    { date: "6월 1주차", topic: "해커톤 발표", type: "Offline" },
   ];
 
   return (
@@ -45,7 +45,7 @@ const About = () => {
               단순히 코드를 따라 치는 것은 멈추세요. <br className="hidden md:block" />
               우리는 <b className="text-white">AI 바이브 코딩(Vibe Coding)</b>을 중심으로 아이디어를 현실로 만듭니다.<br /><br />
               코딩 베이스가 없는 신입생도, 개발이 낯선 타과생도 괜찮습니다.<br />
-              웹 구동 원리를 이해하고 AI를 똑똑하게 부리는 <b>'진짜 메이커'</b>로 성장시켜 드립니다.
+              웹 구동 원리를 이해하고 AI를 이용하는 <b>'Maker'</b>로 성장시켜 드립니다.
             </p>
           </div>
         </div>
@@ -54,8 +54,11 @@ const About = () => {
         <div className="mb-24">
           <h3 className="text-3xl font-bold mb-10 text-center flex items-center justify-center gap-2">
             <Rocket className="text-cyan-400" />
-            New Curriculum
+            Curriculum
           </h3>
+          <p className="text-center text-gray-400 mb-12 max-w-2xl mx-auto ">
+            GET IT 9기는 1년동안 두 학기로 나누어 운영됩니다. <br />
+          </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* 1학기 카드 */}
@@ -79,7 +82,7 @@ const About = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle size={16} className="text-blue-400 mt-0.5 shrink-0" />
-                  <span><b>간결한 해커톤</b>으로 간단한 프로젝트 완주 경험</span>
+                  <span><b>간단한 해커톤</b>으로 간단한 프로젝트 완주 경험</span>
                 </li>
               </ul>
             </div>
@@ -105,7 +108,7 @@ const About = () => {
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle size={16} className="text-purple-400 mt-0.5 shrink-0" />
-                  <span>교내/외 공모전 및 창업 대회 출전 지원</span>
+                  <span>최종 해커톤 대회를 통한 프로젝트 완주</span>
                 </li>
               </ul>
             </div>
@@ -117,7 +120,7 @@ const About = () => {
            <div className="w-full md:w-1/2">
               <div className="relative aspect-square md:aspect-video bg-gradient-to-br from-gray-800 to-black rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 shadow-2xl">
                  {/* AI 뇌 구조 아이콘 느낌 */}
-                 <BrainCircuit size={100} className="text-cyan-500 animate-pulse" />
+                 <BrainCircuit size={90} className="text-cyan-500 animate-pulse" />
                  <div className="absolute inset-0 bg-cyan-500/10 blur-3xl"></div>
               </div>
            </div>
@@ -126,9 +129,10 @@ const About = () => {
                 <span className="text-cyan-400">AI Vibe Coding</span>으로<br />
                 장벽을 허뭅니다.
               </h3>
-              <p className="text-gray-300 leading-relaxed">
-                복잡한 문법을 외우느라 지치지 마세요. <br />
-                우리의 목표는 <b>'코딩 괴물'</b>이 아닌 <b>'아이디어 실현가'</b>입니다.
+              <p className="text-gray-300 leading-relaxed ">
+                아이디어는 있는데 코딩이 어려우신가요? <br />
+                프로젝트를 어떻게 시작해야 할지 막막하신가요? <br />
+                <b>GET IT에선</b> 누구나 쉽게 아이디어를 실현할 수 있습니다. <br /> 
               </p>
               <div className="space-y-4">
                  <div className="bg-black/30 p-4 rounded-xl border-l-4 border-cyan-500">

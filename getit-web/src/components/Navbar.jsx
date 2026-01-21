@@ -62,7 +62,8 @@ const Navbar = ({ userRole, setUserRole }) => {
             </>
           ) : (
             <>
-              <Link to="/project" className="hover:text-cyan-400 transition-colors">Project</Link>
+             {/* <Link to="/project" className="hover:text-cyan-400 transition-colors">Project</Link> */}
+              <Link to="/excutive" className="hover:text-cyan-400 transition-colors">Excutives</Link>
               <Link to="/recruit" className="hover:text-cyan-400 transition-colors">Recruit</Link>
               <Link 
                 to="/login" 
