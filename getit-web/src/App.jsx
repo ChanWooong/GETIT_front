@@ -3,17 +3,17 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // 컴포넌트들 (파일이 실제로 존재하는지 꼭 확인하세요!)
 import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import About from './pages/About';
-import Project from './pages/Project';
-import Recruit from './pages/Recruit';
-import Login from './pages/Login';
-import Lecture from './pages/Lecture';
-import LectureDetail from './pages/LectureDetail';
+import Home from './pages/Open/Home';
+import About from './pages/Open/About';
+import Project from './pages/Open/Project';
+import Recruit from './pages/Open/Recruit';
+import Login from './pages/Auth/Login';
+import Lecture from './pages/Member/Lecture';
+import LectureDetail from './pages/Member/LectureDetail';
 import Invest from './pages/Invest';
-import Executives from './pages/Excutives';
+import Executives from './pages/Open/Excutives';
 import Dashboard from './pages/Dashboard';
-import AdminPage from './pages/AdminPage'; // 🔥 이 파일이 src/pages/AdminPage.jsx 에 있어야 합니다!
+import AdminPage from './pages/Admin/AdminPage'; // 🔥 이 파일이 src/pages/AdminPage.jsx 에 있어야 합니다!
 
 function App() {
   // role: 'GUEST' | 'MEMBER' | 'ADMIN'
