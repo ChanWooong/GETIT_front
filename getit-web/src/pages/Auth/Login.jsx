@@ -1,31 +1,51 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, ArrowRight } from 'lucide-react';
+import axios from 'axios'; // 1. Axios 임포트
 
-// 🔥 중요: 여기서 { setUserRole }을 받아야 합니다! (기존 setIsLoggedIn 삭제)
 const Login = ({ setUserRole }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault(); // 페이지 새로고침 방지 (필수)
+  const handleLogin = async (e) => { // 2. 비동기 함수(async)로 변경
+    e.preventDefault();
 
-    // 간단한 로그인 로직
-    if (id && password) {
-      if (id === 'admin') {
-        // 👑 1. 관리자(운영진) 로그인
-        setUserRole('ADMIN'); // App.jsx의 상태 변경
-        alert("운영진 모드로 접속합니다.");
-        navigate('/admin');   // 관리자 페이지로 이동
-      } else {
-        // 👤 2. 일반 부원 로그인
-        setUserRole('MEMBER'); // App.jsx의 상태 변경
-        // alert(`${id}님 환영합니다!`);
-        navigate('/dashboard'); // 대시보드로 이동
-      }
-    } else {
+    if (!id || !password) {
       alert("아이디와 비밀번호를 모두 입력해주세요.");
+      return;
+    }
+
+    try {
+      // 3. 스프링 서버로 로그인 요청 (POST)
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        studentId: id,   // 백엔드 DTO의 필드명과 일치시켜야 함
+        password: password
+      });
+
+      // 4. 성공 시 처리 (백엔드에서 TokenResponse를 준다고 가정)
+      const { accessToken, role } = response.data;
+
+      // 4-1. 토큰 저장 (매우 중요! 나중에 API 호출할 때 씀)
+      localStorage.setItem('accessToken', accessToken);
+
+      // 4-2. 상태 업데이트
+      setUserRole(role); // "ADMIN" or "MEMBER"
+
+      // 4-3. 역할에 따른 페이지 이동
+      alert("로그인에 성공했습니다.");
+      if (role === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+
+    } catch (error) {
+      // 5. 실패 시 처리
+      console.error("로그인 에러:", error);
+      // 백엔드에서 에러 메시지를 보냈다면 그걸 보여줌
+      const errorMsg = error.response?.data || "아이디 또는 비밀번호를 확인해주세요.";
+      alert(errorMsg);
     }
   };
 
@@ -35,7 +55,7 @@ const Login = ({ setUserRole }) => {
         
         <div className="text-center mb-8">
           <h2 className="text-3xl font-black italic mb-2">LOGIN</h2>
-          <p className="text-gray-400 text-sm">GET IT 8기 멤버십 서비스</p>
+          <p className="text-gray-400 text-sm">GET IT 9기 멤버십 서비스</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -47,7 +67,7 @@ const Login = ({ setUserRole }) => {
               <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
               <input 
                 type="text" 
-                placeholder="학번을 입력하세요 (admin 입력 시 관리자)" 
+                placeholder="학번을 입력하세요" 
                 className="w-full bg-black/30 border border-white/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-cyan-500 transition-colors"
                 value={id}
                 onChange={(e) => setId(e.target.value)}
