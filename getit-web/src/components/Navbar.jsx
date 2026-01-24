@@ -23,7 +23,6 @@ const Navbar = ({ userRole, setUserRole }) => {
           GET IT<span className="text-cyan-400 not-italic">.</span>
         </Link>
 
-        {/* 🖥️ PC 메뉴 */}
         <div className="hidden md:flex items-center space-x-8 font-medium text-gray-300">
           <Link to="/about" className="hover:text-cyan-400 transition-colors">About</Link>
 
@@ -40,7 +39,6 @@ const Navbar = ({ userRole, setUserRole }) => {
               
               <div className="h-4 w-px bg-gray-700 mx-2"></div>
 
-              {/* 2. Admin Page: 가장 우측 (로그아웃 바로 앞)으로 이동 */}
               {userRole === 'ADMIN' && (
                 <Link 
                   to="/admin" 
@@ -50,7 +48,6 @@ const Navbar = ({ userRole, setUserRole }) => {
                 </Link>
               )}
 
-              {/* 1. Dashboard: 관리자가 아닐 때만 보임 */}
               {userRole !== 'ADMIN' && (
                 <Link to="/dashboard" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
                   <LayoutDashboard size={18} /> Dashboard
@@ -63,7 +60,6 @@ const Navbar = ({ userRole, setUserRole }) => {
             </>
           ) : (
             <>
-             {/* <Link to="/project" className="hover:text-cyan-400 transition-colors">Project</Link> */}
               <Link to="/excutive" className="hover:text-cyan-400 transition-colors">Excutives</Link>
               <Link to="/recruit" className="hover:text-cyan-400 transition-colors">Recruit</Link>
               <Link 
@@ -81,7 +77,6 @@ const Navbar = ({ userRole, setUserRole }) => {
         </button>
       </div>
 
-      {/* 📱 모바일 메뉴 */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-[#110b29] z-40 flex flex-col justify-center items-center space-y-8 text-xl font-bold md:hidden text-white animate-fade-in">
           <Link to="/about" onClick={closeMenu}>About</Link>
