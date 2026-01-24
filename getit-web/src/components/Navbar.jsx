@@ -29,12 +29,6 @@ const Navbar = ({ userRole, setUserRole }) => {
 
           {isLoggedIn ? (
             <>
-              {/* 1. Dashboard: 관리자가 아닐 때만 보임 */}
-              {userRole !== 'ADMIN' && (
-                <Link to="/dashboard" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
-                  <LayoutDashboard size={18} /> Dashboard
-                </Link>
-              )}
               
               <Link to="/lecture" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
                 <PlayCircle size={18} /> Lecture
@@ -53,6 +47,13 @@ const Navbar = ({ userRole, setUserRole }) => {
                   className="text-red-400 font-bold hover:text-red-300 flex items-center gap-1 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20"
                 >
                   <Settings size={16} /> Admin Page
+                </Link>
+              )}
+
+              {/* 1. Dashboard: 관리자가 아닐 때만 보임 */}
+              {userRole !== 'ADMIN' && (
+                <Link to="/dashboard" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                  <LayoutDashboard size={18} /> Dashboard
                 </Link>
               )}
               
@@ -87,9 +88,6 @@ const Navbar = ({ userRole, setUserRole }) => {
           
           {isLoggedIn ? (
             <>
-              {userRole !== 'ADMIN' && (
-                 <Link to="/dashboard" onClick={closeMenu} className="text-cyan-400">Dashboard</Link>
-              )}
               <Link to="/lecture" onClick={closeMenu} className="text-cyan-400">Lecture</Link>
               <Link to="/invest" onClick={closeMenu} className="text-cyan-400">Invest</Link>
               
@@ -97,6 +95,10 @@ const Navbar = ({ userRole, setUserRole }) => {
                 <Link to="/admin" onClick={closeMenu} className="text-red-400 flex items-center gap-2 border border-red-500/50 px-4 py-2 rounded-xl bg-red-900/20">
                   <Settings size={20} /> Admin Page
                 </Link>
+              )}
+
+              {userRole !== 'ADMIN' && (
+                 <Link to="/dashboard" onClick={closeMenu} className="text-cyan-400">Dashboard</Link>
               )}
 
               <button onClick={handleLogout} className="text-gray-400 mt-4 flex items-center gap-2">
