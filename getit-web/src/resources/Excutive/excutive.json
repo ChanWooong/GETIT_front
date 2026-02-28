@@ -1,0 +1,136 @@
+{
+  "list": [
+    {
+      "role": "회장",
+      "name": "박재민",
+      "major": "컴퓨터학부 글솝 22",
+      "desc": "함께 모이면 우리는 바다가 된다 🌊",
+      "image": "",
+      "links": {
+        "github": "https://github.com/jmespoir",
+        "email": "mailto:maro3534@knu.ac.kr",
+        "instagram": "https://www.instagram.com/zzaemmin0418"
+      }
+    },
+    {
+      "role": "부회장",
+      "name": "오찬웅",
+      "major": "컴퓨터학부 글솝 22",
+      "desc": "열심히 하겠습니다~",
+      "image": "",
+      "links": {
+        "github": "https://github.com/ChanWooong/",
+        "email": "mailto:oco466kr@knu.ac.kr",
+        "instagram": "https://www.instagram.com/_wooooooong_/"
+      }
+    },
+    {
+      "role": "총무",
+      "name": "윤지민",
+      "major": "컴퓨터학부 글솝 22",
+      "desc": "",
+      "image": "",
+      "links": {
+        "github": "https://github.com/Y-Jimin/",
+        "email": "mailto:jak2889@naver.com",
+        "instagram": "https://www.instagram.com/1a._supernova/"
+      }
+    },
+    {
+      "role": "SW 운영진",
+      "name": "김진현",
+      "major": "컴퓨터학부 글솝 21",
+      "desc": "이제는 더이상 물러날 곳이 없다",
+      "image": "",
+      "links": {
+        "github": "https://github.com/kimjhyun0627",
+        "email": "mailto:kimjhyun0627@gmail.com",
+        "instagram": "https://www.instagram.com/jin_r_mi_one"
+      }
+    },
+    {
+      "role": "SW 운영진",
+      "name": "이정원",
+      "major": "컴퓨터학부 글솝 22",
+      "desc": "아자자 화이팅!!",
+      "image": "",
+      "links": {
+        "github": "",
+        "email": "mailto:vkqmfm9861@gmail.com",
+        "instagram": "https://www.instagram.com/garden_i2e/"
+      }
+    },
+    {
+      "role": "SW 운영진",
+      "name": "김예원",
+      "major": "컴퓨터학부 인컴 25",
+      "desc": "잘 부탁드립니다",
+      "image": "",
+      "links": {
+        "github": "https://github.com/kcalf",
+        "email": "mailto:clanguage0417@gmail.com",
+        "instagram": "https://www.instagram.com/kca_lf/"
+      }
+    },
+    {
+      "role": "SW 운영진",
+      "name": "강연우",
+      "major": "컴퓨터학부 플솝 25",
+      "desc": "잘 부탁드립니다!",
+      "image": "",
+      "links": {
+        "github": "",
+        "email": "mailto:yeonwoo200412@gmail.com",
+        "instagram": "https://www.instagram.com/yeonew_04/"
+      }
+    },
+    {
+      "role": "SW 운영진",
+      "name": "송지후",
+      "major": "컴퓨터학부 플솝 25",
+      "desc": "",
+      "image": "",
+      "links": {
+        "github": "https://github.com/arcuar",
+        "email": "mailto:hoo@knu.ac.kr",
+        "instagram": "https://www.instagram.com/arcuar_/"
+      }
+    },
+    {
+      "role": "창업 운영진",
+      "name": "김고은",
+      "major": "컴퓨터학부 플솝 25",
+      "desc": "안녕하세요~!",
+      "image": "",
+      "links": {
+        "github": "",
+        "email": "mailto:ggim1128@naver.com",
+        "instagram": "https://www.instagram.com/high.ag_1128/"
+      }
+    },
+    {
+      "role": "창업 운영진",
+      "name": "김기석",
+      "major": "컴퓨터학부 글솝 22",
+      "desc": "아자자 화이팅!!",
+      "image": "",
+      "links": {
+        "github": "",
+        "email": "mailto:kks12081@naver.com",
+        "instagram": "https://www.instagram.com/kiim._k/"
+      }
+    },
+    {
+      "role": "창업 운영진",
+      "name": "안소민",
+      "major": "전자공학부 인공지능 24",
+      "desc": "",
+      "image": "",
+      "links": {
+        "github": "",
+        "email": "mailto:somin.annn@gmail.com",
+        "instagram": "https://www.instagram.com/5.32oz/"
+      }
+    }
+  ]
+}
