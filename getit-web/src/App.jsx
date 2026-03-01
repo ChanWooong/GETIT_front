@@ -6,14 +6,14 @@ import Home from './pages/Open/Home';
 import About from './pages/Open/About';
 import Project from './pages/Open/Project';
 import Recruit from './pages/Open/Recruit';
-import Signup from './pages/Auth/Signup';
+import Signup from './pages/Auth/Singup';
 import Login from './pages/Auth/Login';
-import Lecture from './pages/Member/Lecture';
-import LectureDetail from './pages/Member/LectureDetail';
+import Lecture from './pages/Member/LectureList.jsx';
+import LectureDetail from './pages/Member/LectureDetail/index.jsx';
 import Invest from './pages/Invest';
 import Executives from './pages/Open/Excutives';
 import Dashboard from './pages/Dashboard';
-import AdminPage from './pages/Admin/AdminPage';
+import AdminPage from './pages/Admin/AdminPage/index.jsx';
 
 function App() {
   const [userRole, setUserRole] = useState('GUEST'); 

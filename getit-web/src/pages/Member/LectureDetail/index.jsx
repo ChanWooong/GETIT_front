@@ -19,31 +19,34 @@ const LectureDetailCombined = () => {
   const [showWarning, setShowWarning] = useState(false); // 경고 메시지 표시
 
   useEffect(() => {
-    // 유튜브 API 로드
-    if (!window.YT) {
+  const initPlayer = () => {
+    if (playerRef.current) return; // Already initialized
+    playerRef.current = new window.YT.Player('youtube-player', {
+      videoId: 'M7lc1UVf-VE',
+      playerVars: {
+        controls: 1,
+        disablekb: 1,
+        rel: 0,
+      },
+      events: {
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange,
+    },
+    });
+  };
+
+  if (window.YT && window.YT.Player) {
+    initPlayer();
+  } else {
       const tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
       const firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-
-    window.onYouTubeIframeAPIReady = () => {
-      playerRef.current = new window.YT.Player('youtube-player', {
-        videoId: 'M7lc1UVf-VE', // 영상 ID
-        playerVars: {
-          controls: 1,
-          disablekb: 1, // 키보드 이동 방지
-          rel: 0,
-        },
-        events: {
-          'onReady': onPlayerReady,
-          'onStateChange': onPlayerStateChange,
-        },
-      });
-    };
-
+      window.onYouTubeIframeAPIReady = initPlayer;
+  }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (playerRef.current?.destroy) playerRef.current.destroy();
     };
   }, []);
 
