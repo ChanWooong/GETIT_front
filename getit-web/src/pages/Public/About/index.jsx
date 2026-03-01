@@ -6,9 +6,9 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
-import springSchedule from "../../resources/springSchedule.json";
-import fallSchedule from "../../resources/fallSchedule.json";
-import Schedule from "../../components/Schedule";
+import springSchedule from "../../../resources/springSchedule.json";
+import fallSchedule from "../../../resources/fallSchedule.json";
+import Schedule from "../../../components/Schedule";
 
 function About() {
   const springScheduleList = springSchedule.Schedule; // 1학기 일정

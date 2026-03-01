@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
-import Home from './pages/Open/Home';
-import About from './pages/Open/About';
-import Project from './pages/Open/Project';
-import Recruit from './pages/Open/Recruit';
-import Signup from './pages/Auth/Signup';
-import Login from './pages/Auth/Login';
-import Lecture from './pages/Member/Lecture';
-import LectureDetail from './pages/Member/LectureDetail';
+import Home from './pages/Public/Home/index.jsx';
+import About from './pages/Public/About/index.jsx';
+import Recruit from './pages/Public/Recruit/index.jsx';
+import Signup from './pages/Auth/Signup/index.jsx';
+import Project from './pages/Public/Project/index.jsx';
+import Login from './pages/Auth/Login/index.jsx';
+import Lecture from './pages/Member/LectureList/index.jsx';
+import LectureDetail from './pages/Member/LectureDetail/index.jsx';
 import Invest from './pages/Invest';
-import Executives from './pages/Open/Excutives';
+import Executives from './pages/Public/Excutives/index.jsx';
 import Dashboard from './pages/Dashboard';
-import AdminPage from './pages/Admin/AdminPage';
+import AdminPage from './pages/Admin/AdminPage/index.jsx';
 
 function App() {
   const [userRole, setUserRole] = useState('GUEST'); 
