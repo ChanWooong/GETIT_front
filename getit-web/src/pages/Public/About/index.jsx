@@ -6,8 +6,8 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
-import springSchedule from "../../../resources/springSchedule.json";
-import fallSchedule from "../../../resources/fallSchedule.json";
+import springSchedule from "../../../resources/Schedule/springSchedule.json";
+import fallSchedule from "../../../resources//Schedule/fallSchedule.json";
 import Schedule from "../../../components/Schedule";
 
 function About() {
