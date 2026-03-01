@@ -72,16 +72,16 @@ function About() {
             {/* 1학기 카드 */}
             <div className="bg-gradient-to-br from-blue-900/40 to-black border border-blue-500/30 p-8 rounded-3xl relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
               <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-                Semester 1
+                1학기
               </div>
               <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center text-blue-400 mb-6">
                 <BookOpen size={28} />
               </div>
               <h4 className="text-2xl font-bold mb-2">
-                Education & Mini Hackathon
+                기초부터 실전까지, 단계적 성장
               </h4>
               <p className="text-blue-200/80 mb-6 font-medium">
-                "기초를 다지고 아이디어를 구현해봅니다"
+                "기초를 다지고 본인의 아이디어를 한 단계 업그레이드 하는 시기"
               </p>
               <ul className="space-y-3 text-gray-400 text-sm">
                 <li className="flex items-start gap-2">
@@ -89,16 +89,16 @@ function About() {
                     size={16}
                     className="text-blue-400 mt-0.5 shrink-0"
                   />
-                  <span>
-                    <b>2주 1회 세미나</b>를 통한 단계별 교육 진행
-                  </span>
+                  <span>온라인 영상 강의 제공 (반복 학습 가능)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle
                     size={16}
                     className="text-blue-400 mt-0.5 shrink-0"
                   />
-                  <span>온라인 영상 강의 제공 (반복 학습 가능)</span>
+                  <span>
+                    <b>세미나</b>를 통한 온라인 강의에서 배울 수 없는 지식 전달
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle
@@ -115,14 +115,14 @@ function About() {
             {/* 2학기 카드 */}
             <div className="bg-gradient-to-br from-purple-900/40 to-black border border-purple-500/30 p-8 rounded-3xl relative overflow-hidden group hover:-translate-y-2 transition-transform duration-300">
               <div className="absolute top-0 right-0 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl">
-                Semester 2
+                2학기
               </div>
               <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 mb-6">
                 <MonitorPlay size={28} />
               </div>
-              <h4 className="text-2xl font-bold mb-2">Real Project & Deploy</h4>
+              <h4 className="text-2xl font-bold mb-2">실전 창업 프로세스</h4>
               <p className="text-purple-200/80 mb-6 font-medium">
-                "실제 사용자가 쓰는 서비스를 만듭니다"
+                "실제 사용자가 쓰는 서비스를 만들어 유저를 유치하는 기간"
               </p>
               <ul className="space-y-3 text-gray-400 text-sm">
                 <li className="flex items-start gap-2">
@@ -139,14 +139,14 @@ function About() {
                     size={16}
                     className="text-purple-400 mt-0.5 shrink-0"
                   />
-                  <span>실제 서버 배포(Deploy) 및 운영 경험</span>
+                  <span>실제 서버 배포(Deploy) 및 서비스 운영</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle
                     size={16}
                     className="text-purple-400 mt-0.5 shrink-0"
                   />
-                  <span>최종 해커톤 대회를 통한 프로젝트 완주</span>
+                  <span>직접 만든 서비스를 사용자에게 마케팅 해보는 경험</span>
                 </li>
               </ul>
             </div>
