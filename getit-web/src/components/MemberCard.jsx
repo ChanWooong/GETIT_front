@@ -1,6 +1,5 @@
 import React from 'react';
 import { Github, Instagram, Mail, ExternalLink } from 'lucide-react';
-
 function MemberCard({ member }) {
   // 역할에 따라 카드 색상을 구분
   let borderColor = "border-cyan-400";
@@ -28,14 +27,10 @@ function MemberCard({ member }) {
         <div className="relative shrink-0">
           <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-cyan-400 transition-colors">
             <img
-              src={member.image}
+              src={`/${member.image}`} // 이미지 경로 수정
               alt={member.name}
               className="w-full h-full object-cover"
             />
-          </div>
-          {/* 장식용 작은 원 */}
-          <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#110b29] rounded-full flex items-center justify-center border border-white/10">
-            <span className="text-lg">👋</span>
           </div>
         </div>
 
