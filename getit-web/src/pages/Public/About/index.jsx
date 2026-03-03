@@ -9,6 +9,7 @@ import {
 import springSchedule from "../../../resources/Schedule/springSchedule.json";
 import fallSchedule from "../../../resources//Schedule/fallSchedule.json";
 import Schedule from "../../../components/Schedule";
+import Footer from "../../../components/Footer";
 
 function About() {
   const springScheduleList = springSchedule.Schedule; // 1학기 일정
@@ -159,7 +160,10 @@ function About() {
         <div>
           <Schedule scheduleList={fallScheduleList} semester="2" />
         </div>
+        {/* 5. 푸터 섹션 */}
+        <Footer />
       </div>
+      
     </div>
   );
 }

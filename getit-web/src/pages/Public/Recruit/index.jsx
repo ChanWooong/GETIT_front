@@ -10,7 +10,7 @@ import {
   Rocket,    
   Flag       
 } from 'lucide-react';
-
+import Footer from "../../../components/Footer";
 const Recruit = () => {
   const navigate = useNavigate();
   
@@ -180,8 +180,9 @@ const Recruit = () => {
               </div>
             ))}
           </div>
+          {/* 5. 푸터 섹션 */}
+          <Footer />
         </div>
-
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-import React from "react";
-import { Sparkles, Mail } from "lucide-react";
+import { Sparkles ,Instagram} from "lucide-react";
 import memberList from "../../../resources/Executive/executive.json";
 import MemberCard from "../../../components/MemberCard";
+import Footer from "../../../components/Footer";
 const Executives = () => {
   // 👥 운영진 데이터 (여기에 실제 정보를 입력하세요)
   const members = memberList?.list || [];
@@ -37,20 +37,9 @@ const Executives = () => {
             <MemberCard member={member} idx={idx} key={idx} />
           ))}
         </div>
-
-        {/* 3. 하단 컨택트 섹션 */}
-        <div className="mt-24 text-center border-t border-white/10 pt-16">
-          <p className="text-gray-400 mb-6">
-            운영진에게 궁금한 점이 있으신가요? 언제든지 연락주세요!
-          </p>
-          <a
-            href="mailto:getit0official@gmail.com"
-            className="inline-flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors border-b border-cyan-400/30 pb-1 hover:border-cyan-400"
-          >
-            <Mail size={18} />
-            getit0official@gmail.com
-          </a>
-        </div>
+        
+        {/* 3. 푸터 섹션 */}
+        <Footer />
       </div>
     </div>
   );

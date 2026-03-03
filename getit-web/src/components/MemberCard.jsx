@@ -28,7 +28,7 @@ function MemberCard({ member }) {
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
         {/* 프로필 이미지 영역 */}
         <div className="relative shrink-0">
-          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-cyan-400 transition-colors">
+          <div className={`w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 group-hover:${borderColor} transition-colors`}>
             <img
               src={`/${member.image}`} // 이미지 경로 수정
               alt={member.name}
