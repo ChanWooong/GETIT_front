@@ -2,9 +2,11 @@ import React from 'react';
 import { PlayCircle, Send, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Home = ({ isLoggedIn }) => {
+const Home = ({ userRole }) => {
   const navigate = useNavigate();
-
+  const isLoggedIn = userRole !== 'GUEST';
+  const isApprovedMember = userRole === 'ROLE_MEMBER' || userRole === 'ROLE_ADMIN';
+  const isPending = userRole === 'ROLE_GUEST'; 
   return (
     <div className="min-h-screen bg-[#110b29] text-white font-sans overflow-x-hidden">
       <header className="relative w-full h-screen flex flex-col justify-center items-center text-center px-4 pt-20">
@@ -35,7 +37,7 @@ const Home = ({ isLoggedIn }) => {
             상상을 현실로 만드는 IT 창업 동아리, <b>GET IT</b>입니다.
           </p>
           <div className="flex flex-col md:flex-row gap-4 mt-8">
-            {isLoggedIn ? (
+            {isApprovedMember ? (
               <button 
                 onClick={() => navigate('/lecture')}
                 className="bg-cyan-500 text-[#110b29] font-bold py-4 px-8 rounded-full hover:bg-cyan-400 transition-all transform hover:scale-105 flex items-center gap-2 shadow-[0_0_20px_rgba(34,211,238,0.4)]"
