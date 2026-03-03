@@ -35,10 +35,11 @@ if(token) {
   localStorage.setItem('accessToken', token); 
   localStorage.setItem('isNewMember', params.get('isNewMember'));
   localStorage.setItem('hasInfo', params.get('hasInfo'));
+  window.history.replaceState({}, document.title, window.location.pathname); // 토큰 저장 후 URL 정리
 
   if(isNew && !hasInfo) {
     alert("서비스 이용을 위해 추가 정보 입력이 필요합니다.");
-    window.location.href = '/profileSetup';
+    window.location.replace('/profileSetup');
   }
 }
 
@@ -56,25 +57,29 @@ function App() {
     return 'GUEST';
   }); 
   
-  const isMember = userRole === 'MEMBER';
-  const isAdmin = userRole === 'ADMIN';
+  const isMember = userRole === 'ROLE_MEMBER';
+  const isAdmin = userRole === 'ROLE_ADMIN';
+  const isApproved = isAdmin || isMember;
 
   return (
     <BrowserRouter>
       <NavigationWrapper userRole={userRole} setUserRole={setUserRole} />
       
       <Routes>
-        <Route path="/" element={<Home isLoggedIn={userRole !== 'GUEST'} />} />
+        <Route path="/" element={<Home userRole={userRole} />} />
         <Route path="/about" element={<About />} />
         <Route path="/project" element={<Project />} />
         <Route path="/executives" element={<Executives />} />
         <Route path="/recruit" element={<Recruit />} />
-        <Route path="/apply" element={<Apply />} />
+        <Route
+          path="/apply"
+          element={userRole !== 'GUEST' ? <Apply /> : <Navigate to="/login" replace />} 
+        />
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
         <Route path="/profileSetup" element={<ProfileSetup />} />
       
 
-        {isMember && (
+        {isApproved && (
           <>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/lecture" element={<Lecture />} />
@@ -83,7 +88,7 @@ function App() {
           </>
         )}
 
-        {userRole === 'ADMIN' ? (
+        {isAdmin ? (
           <Route path="/admin" element={<AdminPage />} />
         ) : (
           <Route path="/admin" element={<Navigate to="/" replace />} />

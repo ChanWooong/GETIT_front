@@ -6,9 +6,10 @@ const Login = () => {
   const navigate = useNavigate();
 
   // 백엔드 OAuth2 엔드포인트 URL (환경 변수로 관리하는 것이 좋습니다)
-  const GOOGLE_AUTH_URL = "http://localhost:8080/oauth2/authorization/google";
-  const KAKAO_AUTH_URL = "http://localhost:8080/oauth2/authorization/kakao";
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+  
+  const GOOGLE_AUTH_URL = `${API_BASE_URL}/oauth2/authorization/google`;
+  const KAKAO_AUTH_URL = `${API_BASE_URL}/oauth2/authorization/kakao`;
   const handleSocialLogin = (url) => {
     // OAuth2 흐름은 보통 window.location.href를 통해 백엔드 인증 페이지로 이동합니다.
     window.location.href = url;

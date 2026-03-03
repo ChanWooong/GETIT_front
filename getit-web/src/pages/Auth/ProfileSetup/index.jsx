@@ -34,7 +34,13 @@ const ProfileSetup = () => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await axios.post('http://localhost:8080/api/member/info', formData, {
+      if(!token){
+        alert("로그인이 필요합니다.");
+        navigate('/login', { replace: true });
+        return;
+      };
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
+      const response = await axios.post(`${baseUrl}/api/member/info`, formData, {
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
@@ -61,11 +67,11 @@ const ProfileSetup = () => {
         <ProfileHeader />
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <InfoInput label="이름" icon={User} name="name" placeholder="성함을 입력하세요." onChange={handleChange} />
+          <InfoInput label="이름" icon={User} name="name" placeholder="성함을 입력하세요" onChange={handleChange} />
           <InfoInput label="학번" icon={Hash} name="studentId" placeholder="숫자 10자리" maxLength="10" pattern="[0-9]{10}" onChange={handleChange} />
           <CollegeSelect value={formData.college} onChange={handleChange} />
           <InfoInput label="학부(과) - 세부 전공" icon={BookOpen} name="department" placeholder="정확한 명칭으로 적어주세요." onChange={handleChange} />
-          <InfoInput label="전화번호" icon={Phone} name="cellNum" placeholder="010-1234-5678" pattern="010-\d{3,4}-\d{4}" onChange={handleChange} />
+          <InfoInput label="전화번호" icon={Phone} name="cellNum" placeholder="010-1234-5678" pattern="010-[0-9]{3,4}-[0-9]{4}" onChange={handleChange} />
           <SetupButton isLoading={isLoading} />
         </form>
       </div>
