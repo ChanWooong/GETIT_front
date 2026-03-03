@@ -1,9 +1,11 @@
 import React from 'react';
 import { PlayCircle, Send, LogIn } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '../../../store/appStore';
 
 const Home = ({ userRole }) => {
   const navigate = useNavigate();
+  const { generationText } = useAppStore();
   const isLoggedIn = userRole !== 'GUEST';
   const isApprovedMember = userRole === 'ROLE_MEMBER' || userRole === 'ROLE_ADMIN';
   const isPending = userRole === 'ROLE_GUEST'; 
@@ -49,7 +51,7 @@ const Home = ({ userRole }) => {
                 onClick={() => navigate('/recruit')}
                 className="bg-white text-[#110b29] font-bold py-4 px-8 rounded-full hover:bg-gray-100 transition-all transform hover:scale-105 flex items-center gap-2 shadow-lg"
               >
-                <Send size={20} /> 9기 지원하러 가기
+                <Send size={20} /> {generationText} 지원하러 가기
               </button>
             )}
             

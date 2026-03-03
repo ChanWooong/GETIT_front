@@ -6,11 +6,14 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
+import { useAppStore } from '../../../store/appStore';
 import springSchedule from "../../../resources/Schedule/springSchedule.json";
 import fallSchedule from "../../../resources//Schedule/fallSchedule.json";
 import Schedule from "../../../components/Schedule";
+import Footer from "../../../components/ContactFooter";
 
 function About() {
+  const { generationText } = useAppStore();
   const springScheduleList = springSchedule.Schedule; // 1학기 일정
   const fallScheduleList = fallSchedule.Schedule; // 2학기 2일정
   return (
@@ -30,7 +33,7 @@ function About() {
         {/* 1. 타이틀 섹션 (수정됨) */}
         <div className="text-center mb-24 animate-fade-in-up">
           <span className="text-cyan-400 font-bold tracking-widest uppercase text-sm border border-cyan-400/30 px-3 py-1 rounded-full">
-            GET IT 9기
+            GET IT {generationText}
           </span>
           <h2 className="text-4xl md:text-6xl font-black mt-8 mb-8 leading-tight relative z-10">
             <span className="block text-gray-300 text-2xl md:text-4xl font-bold mb-2 tracking-tight opacity-80">
@@ -65,7 +68,7 @@ function About() {
             Curriculum
           </h3>
           <p className="text-center text-gray-400 mb-12 max-w-2xl mx-auto ">
-            GET IT 9기는 1년동안 두 학기로 나누어 운영됩니다. <br />
+            GET IT {generationText}는 1년동안 두 학기로 나누어 운영됩니다. <br />
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -159,7 +162,10 @@ function About() {
         <div>
           <Schedule scheduleList={fallScheduleList} semester="2" />
         </div>
+        {/* 5. 푸터 섹션 */}
+        <Footer />
       </div>
+      
     </div>
   );
 }
