@@ -1,5 +1,5 @@
 import React from 'react';
-import { PROJECT_PAGE } from '../constants';
+import { PROJECT_PAGE } from '../../constants';
 
 const ProjectHeader = () => (
   <div className="text-center mb-16 space-y-4">

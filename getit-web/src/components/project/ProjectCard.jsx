@@ -1,6 +1,6 @@
 import React from 'react';
 import { Github, ExternalLink, Folder, Code, Smartphone, Cpu } from 'lucide-react';
-import { PROJECT_PAGE } from '../constants';
+import { PROJECT_PAGE } from '../../constants';
 
 const CATEGORY_ICONS = {
   Web: Code,

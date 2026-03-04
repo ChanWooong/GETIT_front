@@ -1,5 +1,5 @@
 import React from 'react';
-import { PROJECT_CATEGORIES } from '../..constants';
+import { PROJECT_CATEGORIES } from '../../constants';
 
 const ProjectFilter = ({ value, onChange }) => (
   <div className="flex justify-center gap-4 mb-12 flex-wrap">

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { PROJECT_CATEGORIES } from '../../../constants';
 import projectsData from '../../../resources/Project/projects.json';
-import ProjectHeader from '../../../components/ProjectHeader';
-import ProjectFilter from '../../../components/ProjectFilter';
-import ProjectCard from '../../../components/ProjectCard';
+import ProjectHeader from '../../../components/project/ProjectHeader';
+import ProjectFilter from '../../../components/project/ProjectFilter';
+import ProjectCard from '../../../components/project/ProjectCard';
 
 const Project = () => {
   const [filter, setFilter] = useState(PROJECT_CATEGORIES[0]);
