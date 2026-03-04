@@ -4,7 +4,7 @@ import { Menu, X, LogOut, PlayCircle, TrendingUp, Settings } from 'lucide-react'
 import { ROLES } from '../constants';
 
 const Navbar = ({ auth }) => {
-  const { userRole, setUserRole, isLoggedIn, isApproved } = auth ?? {};
+  const { userRole, setUserRole, isLoggedIn, isApproved, isAdmin, isMember } = auth ?? {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 

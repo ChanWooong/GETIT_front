@@ -43,7 +43,7 @@ if(token) {
 
 function App() {
   const auth = useAuth();
-  const { userRole, setUserRole, isLoggedIn, isApproved, isAdmin } = auth;
+  const { userRole, setUserRole, isLoggedIn, isApproved, isAdmin, isMember } = auth;
 
   return (
     <BrowserRouter>
