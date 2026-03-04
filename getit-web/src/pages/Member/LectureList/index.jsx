@@ -27,8 +27,8 @@ const Lecture = () => {
         return res.json();
       })
       .then((data) => {
-        setSwLectures(data.swTrack ?? []);
-        setStartupLectures(data.startupTrack ?? []);
+        setSwLectures(Array.isArray(data?.swTrack) ? data.swTrack : []);
+        setStartupLectures(Array.isArray(data?.startupTrack) ? data.startupTrack : []);
       })
       .catch((err) => {
         setError(err.message || '강의 목록을 불러오지 못했습니다.');
