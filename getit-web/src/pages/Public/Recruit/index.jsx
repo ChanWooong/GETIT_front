@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '../../../store/appStore';
 import { 
   Calendar, 
   ChevronDown, 
@@ -10,9 +11,12 @@ import {
   Rocket,    
   Flag       
 } from 'lucide-react';
-
+import Footer from "../../../components/ContactFooter";
+import scheduleData from "../../../resources/Recruit/Schedule.json";
+import faqData from "../../../resources/Recruit/FAQ.json";
 const Recruit = () => {
   const navigate = useNavigate();
+  const { generation, generationText } = useAppStore();
   
   // 🔥 모집 상태 및 로그인 상태 체크
   const isRecruiting = true; 
@@ -50,20 +54,10 @@ const Recruit = () => {
   ];
 
   // 모집 일정 데이터
-  const schedule = [
-    { step: "01", title: "서류 접수", date: "3.12 ~ 3.14" },
-    { step: "02", title: "서류 발표", date: "3.15" },
-    { step: "03", title: "면접 심사", date: "3.16 ~ 3.18" },
-    { step: "04", title: "최종 합격", date: "3.19" }
-  ];
+  const schedule = scheduleData.data || [];
 
   // FAQ 데이터
-  const faqs = [
-    { q: "코딩을 한 번도 안 해본 비전공자도 지원 가능한가요?", a: "네, 가능합니다! GET IT은 실력보다 열정을 중요하게 생각합니다. 신입 기수 교육 커리큘럼이 준비되어 있으니 걱정 마세요." },
-    { q: "정기 모임은 언제인가요?", a: "2주에 한번 목요일 저녁 7시에 정기 세미나가 있으며, 시험 기간 2주는 휴식기를 갖습니다." },
-    { q: "회비가 있나요?", a: "네, 동아리 운영 및 서버 비용 등을 위해 학기당 2만원의 회비가 있습니다." },
-    { q: "재학생만 지원 가능한가요?", a: "기본적으로 재학생 및 휴학생을 대상으로 하지만, 졸업 유예생의 경우 면접 시 논의 가능합니다." }
-  ];
+  const faqs = faqData.data || [];
 
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const toggleFaq = (index) => setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -78,7 +72,7 @@ const Recruit = () => {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
             <Sparkles size={16} className="text-cyan-400" />
             <span className="text-sm font-bold tracking-wider text-cyan-400 uppercase">
-              Recruiting 9th Members
+              Recruiting {generation}th Members
             </span>
           </div>
           
@@ -91,7 +85,7 @@ const Recruit = () => {
           
           <p className="text-gray-400 text-lg max-w-xl mx-auto mb-10 leading-relaxed">
             당신의 아이디어가 세상에 닿을 때까지.<br />
-            GET IT과 함께 성장할 9기 멤버를 찾습니다.
+            GET IT과 함께 성장할 {generationText} 멤버를 찾습니다.
           </p>
 
           {/* 지원하기 버튼 (로그인 체크 로직 적용) */}
@@ -100,7 +94,7 @@ const Recruit = () => {
               onClick={handleApplyClick}
               className="inline-flex items-center gap-3 bg-cyan-500 text-[#110b29] px-10 py-5 rounded-full font-black text-xl hover:bg-cyan-400 hover:scale-105 transition-all shadow-[0_0_30px_rgba(34,211,238,0.4)] active:scale-95"
             >
-              9기 지원하러 가기 <Send size={22} />
+              {generationText} 지원하러 가기 <Send size={22} />
             </button>
           ) : (
             <button disabled className="bg-gray-800 text-gray-500 px-10 py-5 rounded-full font-bold text-xl cursor-not-allowed border border-white/5">
@@ -180,8 +174,13 @@ const Recruit = () => {
               </div>
             ))}
           </div>
-        </div>
 
+
+          {/* 5. 푸터 섹션 */}
+          <Footer />
+
+          
+        </div>
       </div>
     </div>
   );

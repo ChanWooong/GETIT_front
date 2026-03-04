@@ -1,14 +1,16 @@
-import React from "react";
-import { Sparkles, Mail } from "lucide-react";
-import memberList from "../../../resources/Schedule/springSchedule.json";
+import { Sparkles ,Instagram} from "lucide-react";
+import { useAppStore } from '../../../store/appStore';
+import memberList from "../../../resources/Executive/executive.json";
 import MemberCard from "../../../components/MemberCard";
+import Footer from "../../../components/ContactFooter";
 const Executives = () => {
+  const { generationText } = useAppStore();
   // 👥 운영진 데이터 (여기에 실제 정보를 입력하세요)
   const members = memberList?.list || [];
   return (
     <div className="min-h-screen w-full bg-[#110b29] text-white pt-32 pb-20 px-6">
       <div className="max-w-5xl mx-auto">
-        {/* 1. 헤더 섹션 (Recruit 페이지와 통일감 유지) */}
+        {/* 1. 헤더 섹션 */}
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6">
             <Sparkles size={16} className="text-cyan-400" />
@@ -25,7 +27,7 @@ const Executives = () => {
           </h2>
 
           <p className="text-gray-400 text-lg max-w-xl mx-auto">
-            GET IT 9기를 이끌어갈 운영진을 소개합니다.
+            GET IT {generationText}을 이끌어갈 운영진을 소개합니다.
             <br />
             열정 가득한 여러분을 기다리고 있습니다.
           </p>
@@ -35,7 +37,7 @@ const Executives = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {members?.map((member, idx) => (
             <MemberCard member={member} idx={idx} key={idx} />
-        ))}
+          ))}
         </div>
 
         {/* 3. 하단 컨택트 섹션 */}
@@ -51,6 +53,8 @@ const Executives = () => {
             공식 이메일로 문의하기
           </a>
         </div>
+        {/* 3. 푸터 섹션 */}
+        <Footer />
       </div>
     </div>
   );

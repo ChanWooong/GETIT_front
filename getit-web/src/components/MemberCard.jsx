@@ -1,20 +1,25 @@
 import React from 'react';
-import { Github, Instagram, Mail, ExternalLink } from 'lucide-react';
-
+import { Github, Instagram, Mail, ExternalLink, Copy } from 'lucide-react';
+import CopyEmail from './EmailButton';
 function MemberCard({ member }) {
+
+
   // 역할에 따라 카드 색상을 구분
   let borderColor = "border-cyan-400";
   let badgeBg = "bg-cyan-400";
   let badgeText = "GENERAL";
+  let groundHoverBorderColor = "group-hover:border-cyan-400";
 
   if (member.role.includes("SW")) {
     borderColor = "border-green-400";
     badgeBg = "bg-green-400";
     badgeText = "SOFTWARE";
+    groundHoverBorderColor = "group-hover:border-green-400";
   } else if (member.role.includes("창업")) {
     borderColor = "border-pink-400";
     badgeBg = "bg-pink-400";
     badgeText = "STARTUP";
+    groundHoverBorderColor = "group-hover:border-pink-400";
   }
 
   return (
@@ -26,16 +31,12 @@ function MemberCard({ member }) {
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
         {/* 프로필 이미지 영역 */}
         <div className="relative shrink-0">
-          <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-cyan-400 transition-colors">
+          <div className={`w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 ${groundHoverBorderColor} transition-colors`}>
             <img
-              src={member.image}
+              src={`/${member.image}`} // 이미지 경로 수정
               alt={member.name}
               className="w-full h-full object-cover"
             />
-          </div>
-          {/* 장식용 작은 원 */}
-          <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#110b29] rounded-full flex items-center justify-center border border-white/10">
-            <span className="text-lg">👋</span>
           </div>
         </div>
 
@@ -72,14 +73,6 @@ function MemberCard({ member }) {
                 className="p-2 rounded-full bg-white/5 hover:bg-white/20 hover:text-pink-400 text-gray-400 transition-all"
               >
                 <Instagram size={18} />
-              </a>
-            )}
-            {member.links.email && (
-              <a
-                href={member.links.email}
-                className="p-2 rounded-full bg-white/5 hover:bg-white/20 hover:text-cyan-400 text-gray-400 transition-all"
-              >
-                <Mail size={18} />
               </a>
             )}
             {member.links.blog && (

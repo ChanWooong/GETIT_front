@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import { useAppStore } from '../../../store/appStore';
 import ApplyHeader from './components/ApplyHeader';
 import QuestionField from './components/QuestionField';
 import SubmitButton from './components/SubmitButton';
 
 const Apply = () => {
+  const { generationText } = useAppStore();
   const [isLoading, setIsLoading] = useState(false);
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '' });
 
   const questions = [
-    { id: 'q1', label: '1. GET IT 9기에 지원하게 된 동기는 무엇인가요?' },
+    { id: 'q1', label: `1. GET IT ${generationText}에 지원하게 된 동기는 무엇인가요?` },
     { id: 'q2', label: '2. 본인이 경험한 프로젝트 중 가장 기억에 남는 기술적 도전은?' },
     { id: 'q3', label: '3. 협업 과정에서 갈등이 생겼을 때 본인만의 해결 방법이 있나요?' },
     { id: 'q4', label: '4. 이번 기수 동안 본인이 반드시 이루고 싶은 목표가 있다면?' },

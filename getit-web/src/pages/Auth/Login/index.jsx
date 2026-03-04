@@ -1,9 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '../../../store/appStore';
 import { MessageCircle } from 'lucide-react'; // 카카오 아이콘 대용 (또는 커스텀 SVG)
 
 const Login = () => {
   const navigate = useNavigate();
+  const { generationText } = useAppStore();
 
   // 백엔드 OAuth2 엔드포인트 URL (환경 변수로 관리하는 것이 좋습니다)
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
@@ -21,7 +23,7 @@ const Login = () => {
         
         <div className="text-center mb-10">
           <h2 className="text-4xl font-black italic mb-3 tracking-tighter">GET IT</h2>
-          <p className="text-gray-400 text-sm font-medium">9기 멤버십 서비스에 로그인하세요</p>
+          <p className="text-gray-400 text-sm font-medium">{generationText} 멤버십 서비스에 로그인하세요</p>
         </div>
 
         <div className="space-y-4">
