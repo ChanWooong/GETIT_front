@@ -6,8 +6,7 @@ const Login = () => {
   const { generationText } = useAppStore();
 
   // 백엔드 OAuth2 엔드포인트 URL (환경 변수로 관리하는 것이 좋습니다)
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
-  
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL 
   const GOOGLE_AUTH_URL = `${API_BASE_URL}/oauth2/authorization/google`;
   const KAKAO_AUTH_URL = `${API_BASE_URL}/oauth2/authorization/kakao`;
   const handleSocialLogin = (url) => {
