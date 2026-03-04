@@ -44,7 +44,7 @@ const Executives = () => {
             운영진에게 궁금한 점이 있으신가요?
           </p>
           <a
-            href="mailto:contact@getit.com"
+            href="mailto:getit0official@gmail.com"
             className="inline-flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors border-b border-cyan-400/30 pb-1 hover:border-cyan-400"
           >
             <Mail size={18} />
