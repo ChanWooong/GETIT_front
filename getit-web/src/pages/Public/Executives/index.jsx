@@ -40,6 +40,19 @@ const Executives = () => {
           ))}
         </div>
 
+        {/* 3. 하단 컨택트 섹션 */}
+        <div className="mt-24 text-center border-t border-white/10 pt-16">
+          <p className="text-gray-400 mb-6">
+            운영진에게 궁금한 점이 있으신가요?
+          </p>
+          <a
+            href="mailto:getit0official@gmail.com"
+            className="inline-flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors border-b border-cyan-400/30 pb-1 hover:border-cyan-400"
+          >
+            <Mail size={18} />
+            공식 이메일로 문의하기
+          </a>
+        </div>
         {/* 3. 푸터 섹션 */}
         <Footer />
       </div>
