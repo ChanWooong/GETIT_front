@@ -1,101 +1,28 @@
 import React, { useState } from 'react';
-import { Github, ExternalLink, Folder, Code, Smartphone, Cpu } from 'lucide-react';
+import { PROJECT_CATEGORIES } from '../../../constants';
 import projectsData from '../../../resources/Project/projects.json';
-
-const projects = projectsData;
+import ProjectHeader from '../../../components/ProjectHeader';
+import ProjectFilter from '../../../components/ProjectFilter';
+import ProjectCard from '../../../components/ProjectCard';
 
 const Project = () => {
-  const [filter, setFilter] = useState('All');
+  const [filter, setFilter] = useState(PROJECT_CATEGORIES[0]);
 
   const filteredProjects =
-    filter === 'All' ? projects : projects.filter((p) => p.category === filter);
+    filter === PROJECT_CATEGORIES[0]
+      ? projectsData
+      : projectsData.filter((p) => p.category === filter);
 
   return (
     <div className="min-h-screen bg-[#110b29] text-white pt-24 pb-20 px-6 font-sans">
-      
       <div className="max-w-7xl mx-auto">
-        
-        {/* 1. 헤더 섹션 */}
-        <div className="text-center mb-16 space-y-4">
-          <h2 className="text-4xl md:text-6xl font-black italic tracking-tighter">
-            OUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">PROJECTS</span>
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            우리가 밤새워 만든 결과물들입니다.<br/>
-            작은 아이디어에서 시작해 실제 서비스가 되기까지의 여정을 확인해보세요.
-          </p>
-        </div>
-
-        {/* 2. 카테고리 필터 버튼 */}
-        <div className="flex justify-center gap-4 mb-12 flex-wrap">
-          {["All", "Web", "App", "AI"].map((item) => (
-            <button
-              key={item}
-              onClick={() => setFilter(item)}
-              className={`px-6 py-2 rounded-full font-bold transition-all duration-300 border border-white/10
-                ${filter === item 
-                  ? "bg-cyan-500 text-black scale-105 shadow-[0_0_20px_rgba(34,211,238,0.5)]" 
-                  : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-                }`}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-
-        {/* 3. 프로젝트 카드 그리드 */}
+        <ProjectHeader />
+        <ProjectFilter value={filter} onChange={setFilter} />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredProjects.map((project) => (
-            <div 
-              key={project.id}
-              className="group bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-900/20"
-            >
-              {/* 썸네일 영역 (이미지 대신 그라데이션 박스) */}
-              <div className={`h-48 w-full bg-gradient-to-br ${project.color} relative overflow-hidden`}>
-                <div className="absolute inset-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                  <Folder size={64} className="text-white/50" />
-                </div>
-                {/* 카테고리 뱃지 */}
-                <span className="absolute top-4 left-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-                  {project.category === 'Web' && <Code size={12} />}
-                  {project.category === 'App' && <Smartphone size={12} />}
-                  {project.category === 'AI' && <Cpu size={12} />}
-                  {project.category}
-                </span>
-              </div>
-
-              {/* 내용 영역 */}
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-3 group-hover:text-cyan-400 transition-colors">
-                  {project.title}
-                </h3>
-                <p className="text-gray-400 text-sm mb-6 line-clamp-2 h-10">
-                  {project.desc}
-                </p>
-
-                {/* 기술 스택 태그 */}
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {project.tech.map((t, i) => (
-                    <span key={i} className="text-xs font-medium px-2.5 py-1 rounded bg-white/10 text-gray-300">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-
-                {/* 링크 버튼 */}
-                <div className="flex justify-between items-center pt-6 border-t border-white/10">
-                  <a href={project.links.github} className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm">
-                    <Github size={18} /> Source Code
-                  </a>
-                  <a href={project.links.demo} className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-bold">
-                    Live Demo <ExternalLink size={16} />
-                  </a>
-                </div>
-              </div>
-            </div>
+            <ProjectCard key={project.id} project={project} />
           ))}
         </div>
-
       </div>
     </div>
   );

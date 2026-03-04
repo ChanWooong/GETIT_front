@@ -43,3 +43,16 @@ export const MESSAGES = {
   APPLY_LOGIN_REQUIRED: '지원서 작성을 위해 먼저 로그인이 필요합니다.',
   LECTURE_LOCKED: '아직 오픈되지 않은 강의입니다.',
 };
+
+/** Project 페이지 헤더·설명 문구 */
+export const PROJECT_PAGE = {
+  TITLE_MAIN: 'OUR',
+  TITLE_HIGHLIGHT: 'PROJECTS',
+  SUBTITLE: '우리가 밤새워 만든 결과물들입니다.',
+  DESCRIPTION: '작은 아이디어에서 시작해 실제 서비스가 되기까지의 여정을 확인해보세요.',
+  LINK_SOURCE: 'Source Code',
+  LINK_DEMO: 'Live Demo',
+};
+
+/** Project 페이지 카테고리 필터 목록 (첫 항목이 기본값) */
+export const PROJECT_CATEGORIES = ['All', 'Web', 'App', 'AI'];
