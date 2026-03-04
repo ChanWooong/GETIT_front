@@ -13,7 +13,7 @@ import LectureDetail from './pages/Member/LectureDetail/index.jsx';
 import Invest from './pages/Invest';
 import Executives from './pages/Public/Executives/index.jsx';
 import Dashboard from './pages/Dashboard';
-import AdminPage from './pages/Admin/AdminPage/index.jsx';
+import AdminPage from './pages/Admin/index.jsx';
 import Apply from './pages/Public/Apply/index.jsx';
 
 

@@ -107,7 +107,7 @@ const Recruit = () => {
         {/* 2. 인재상 섹션 */}
         <div className="mb-32">
           <h3 className="text-3xl font-bold mb-12 text-center">
-            이런 분들을 <span className="text-cyan-400 italic">찾고 있어요!</span>
+            이런 분들을 <span className="text-cyan-400 italic">찾고 있습니다!</span>
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

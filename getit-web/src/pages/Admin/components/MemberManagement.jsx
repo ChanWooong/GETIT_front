@@ -1,0 +1,67 @@
+import React from 'react';
+import { CheckCircle } from 'lucide-react';
+
+const MemberManagement = () => {
+  // 📂 실제로는 API에서 가져와야 할 부원 데이터
+  const members = [
+    { id: 1, name: "김철수", lectureCount: 8, totalLectures: 10, hwProgress: 85 },
+    { id: 2, name: "이영희", lectureCount: 3, totalLectures: 10, hwProgress: 40 },
+    { id: 3, name: "박민수", lectureCount: 10, totalLectures: 10, hwProgress: 100 },
+    { id: 4, name: "최수진", lectureCount: 1, totalLectures: 10, hwProgress: 10 },
+    { id: 5, name: "정재민", lectureCount: 6, totalLectures: 10, hwProgress: 60 },
+  ];
+
+  return (
+    <div className="animate-in fade-in duration-500 text-left">
+      <div className="flex justify-between items-center mb-8">
+        <h3 className="text-xl font-bold">8기 부원 학습 현황</h3>
+        <span className="text-sm text-gray-500 font-mono text-right">Total: {members.length} Members</span>
+      </div>
+      
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse min-w-[600px]">
+          <thead>
+            <tr className="border-b border-white/10 text-gray-400 text-sm uppercase tracking-wider">
+              <th className="p-4">Name</th>
+              <th className="p-4">Video Progress</th>
+              <th className="p-4">Homework</th>
+              <th className="p-4 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {members.map((member) => (
+              <tr key={member.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                <td className="p-4 font-bold">{member.name}</td>
+                <td className="p-4 text-cyan-400 font-bold text-lg">
+                  {member.lectureCount} <span className="text-gray-600 text-sm font-normal">/ {member.totalLectures} 강</span>
+                </td>
+                <td className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full ${member.hwProgress === 100 ? 'bg-green-500' : 'bg-cyan-500'}`} 
+                        style={{ width: `${member.hwProgress}%` }} 
+                      />
+                    </div>
+                    <span className="text-xs w-8 text-right font-mono">{member.hwProgress}%</span>
+                  </div>
+                </td>
+                <td className="p-4 text-center">
+                  {member.hwProgress === 100 && member.lectureCount === member.totalLectures ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-black bg-green-400 px-2 py-0.5 rounded-full">
+                      <CheckCircle size={10} /> COMPLETED
+                    </span>
+                  ) : (
+                    <span className="text-xs text-gray-600 tracking-tighter uppercase font-medium">In Progress</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default MemberManagement;

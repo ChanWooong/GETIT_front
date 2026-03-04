@@ -34,7 +34,7 @@ const Navbar = ({ auth }) => {
           {isLoggedIn ? (
             <>
               {/* 💡 [핵심] 승인된 멤버에게만 보이는 메뉴 */}
-              {isApproved && (
+              {isMember && (
                 <>
                   <div className="h-4 w-px bg-gray-700 mx-2"></div>
                   <Link to="/lecture" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
@@ -50,9 +50,9 @@ const Navbar = ({ auth }) => {
               {userRole === ROLES.ADMIN && (
                 <Link 
                   to="/admin" 
-                  className="text-red-400 font-bold hover:text-red-300 flex items-center gap-1 bg-red-500/10 px-3 py-1 rounded-full border border-red-500/20"
+                  className="hover:text-cyan-400 transition-colors"
                 >
-                  <Settings size={16} /> Admin
+                 Admin
                 </Link>
               )}
               
