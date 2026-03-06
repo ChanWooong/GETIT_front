@@ -30,7 +30,7 @@ const MemberManagement = () => {
   return (
     <div className="animate-in fade-in duration-500 text-left">
       <div className="flex justify-between items-center mb-8">
-        <h3 className="text-xl font-bold">8기 부원 학습 현황</h3>
+        <h3 className="text-xl font-bold">{generationText} 부원 학습 현황</h3>
         <span className="text-sm text-gray-500 font-mono text-right">Total: {members.length} Members</span>
       </div>
       
