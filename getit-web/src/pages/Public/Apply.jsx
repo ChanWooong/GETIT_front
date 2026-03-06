@@ -30,6 +30,12 @@ useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) return;
     try {
+      const recruitResponse = await api.get('/api/recruitment/status');
+      if (!recruitResponse.data.isOpen) {
+        alert('현재 모집 기간이 아닙니다.');
+        navigate('/', { replace: true });
+        return;
+      }
       const meResponse = await api.get('/api/applies/me');
       if (meResponse.data.submitted) {
         alert("이미 지원서를 제출하셨습니다.");
