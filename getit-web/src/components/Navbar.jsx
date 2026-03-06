@@ -75,36 +75,46 @@ const Navbar = ({ auth }) => {
         </button>
       </div>
 
-      {/* --- 모바일 메뉴 --- */}
+      {/* --- 모바일 메뉴: 메뉴 버튼 클릭 시 화면 전체에 모든 메뉴 표시, 닫기는 X 하나만 --- */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-[#110b29] z-40 flex flex-col justify-center items-center gap-6 text-xl font-bold md:hidden text-white animate-fade-in overflow-y-auto pt-24 pb-12 px-4">
-          <Link to="/about" onClick={closeMenu} className="py-2">About</Link>
-          <Link to="/executives" onClick={closeMenu} className="py-2">Executives</Link>
-          <Link to="/recruit" onClick={closeMenu} className="py-2">Recruit</Link>
-          
-          {isLoggedIn ? (
-            <>
-              {isMember && (
-                <>
-                  <Link to="/lecture" onClick={closeMenu} className="text-cyan-400 py-2">Lecture</Link>
-                  <Link to="/invest" onClick={closeMenu} className="text-cyan-400 py-2">Invest</Link>
-                </>
-              )}
-              
-              {userRole === ROLES.ADMIN && (
-                <Link to="/admin" onClick={closeMenu} className="text-red-400 flex items-center gap-2 border border-red-500/50 px-4 py-2 rounded-xl bg-red-900/20">
-                  <Settings size={20} /> Admin Page
-                </Link>
-              )}
+        <div className="fixed inset-0 z-[60] md:hidden bg-[#110b29] flex flex-col h-[100dvh] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] animate-fade-in">
+          <div className="flex-shrink-0 flex justify-end items-center px-4 py-3 border-b border-white/5">
+            <button type="button" aria-label="메뉴 닫기" className="text-white min-w-[44px] min-h-[44px] flex items-center justify-center hover:opacity-80" onClick={closeMenu}>
+              <X size={28} />
+            </button>
+          </div>
+          <nav className="flex-1 min-h-0 flex flex-col justify-evenly px-4 py-4">
+            <Link to="/about" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">About</Link>
+            <Link to="/executives" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">Executives</Link>
+            <Link to="/recruit" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">Recruit</Link>
 
-
-              <button type="button" onClick={handleLogout} className="text-gray-400 mt-4 flex items-center gap-2 py-2">
-                <LogOut size={20} /> Logout
-              </button>
-            </>
-          ) : (
-            <Link to="/login" onClick={closeMenu} className="text-cyan-400 text-2xl mt-4 py-2">Login</Link>
-          )}
+            {isLoggedIn ? (
+              <>
+                {isMember && (
+                  <>
+                    <Link to="/lecture" onClick={closeMenu} className="py-3 px-4 rounded-xl text-cyan-400 hover:bg-cyan-500/10 transition-colors text-base font-medium flex items-center justify-center gap-2">
+                      <PlayCircle size={18} /> Lecture
+                    </Link>
+                    <Link to="/invest" onClick={closeMenu} className="py-3 px-4 rounded-xl text-cyan-400 hover:bg-cyan-500/10 transition-colors text-base font-medium flex items-center justify-center gap-2">
+                      <TrendingUp size={18} /> Invest
+                    </Link>
+                  </>
+                )}
+                {userRole === ROLES.ADMIN && (
+                  <Link to="/admin" onClick={closeMenu} className="py-3 px-4 rounded-xl text-red-400 border border-red-500/50 bg-red-900/20 hover:bg-red-900/30 transition-colors text-base font-medium flex items-center justify-center gap-2">
+                    <Settings size={18} /> Admin
+                  </Link>
+                )}
+                <button type="button" onClick={handleLogout} className="py-3 px-4 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors text-base font-medium flex items-center justify-center gap-2">
+                  <LogOut size={18} /> Logout
+                </button>
+              </>
+            ) : (
+              <Link to="/login" onClick={closeMenu} className="py-3 px-6 rounded-full bg-cyan-500 text-[#110b29] font-bold hover:bg-cyan-400 transition-colors text-base text-center">
+                Login
+              </Link>
+            )}
+          </nav>
         </div>
       )}
     </nav>
