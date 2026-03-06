@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../api/axios';
-import { useAppStore } from '../../../store/appStore';
-import { MESSAGES, APPLY_ANNOUNCE_DATE } from '../../../constants';
-import { answersToPayload, payloadToAnswers } from '../../../utils/applyForm';
-import ApplyHeader from './components/ApplyHeader';
-import QuestionField from './components/QuestionField';
-import SubmitButton from './components/SubmitButton';
-import questionData from '../../../resources/Apply/question.json';
+import api from '../../api/axios';
+import { useAppStore } from '../../store/appStore';
+import { MESSAGES, APPLY_ANNOUNCE_DATE } from '../../constants';
+import { answersToPayload, payloadToAnswers } from '../../utils/applyForm';
+import ApplyHeader from '../components/apply/ApplyHeader';
+import QuestionField from '../components/apply/QuestionField';
+import SubmitButton from '../../components/apply/SubmitButton';
+import questionData from '../../resources/Apply/question.json';
 
 const Apply = () => {
   const navigate = useNavigate();

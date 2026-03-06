@@ -6,11 +6,11 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
-import { useAppStore } from '../../../store/appStore';
-import springSchedule from "../../../resources/Schedule/springSchedule.json";
-import fallSchedule from "../../../resources//Schedule/fallSchedule.json";
-import Schedule from "../../../components/Schedule";
-import Footer from "../../../components/ContactFooter";
+import { useAppStore } from '../../store/appStore';
+import springSchedule from "../../resources/Schedule/springSchedule.json";
+import fallSchedule from "../../resources/Schedule/fallSchedule.json";
+import Schedule from "../../components/Schedule";
+import Footer from "../../components/ContactFooter";
 
 function About() {
   const { generationText } = useAppStore();

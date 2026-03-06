@@ -1,6 +1,6 @@
 import React from 'react';
 import { ClipboardCheck } from 'lucide-react';
-import { useAppStore } from '../../../../store/appStore';
+import { useAppStore } from '../../store/appStore';
 
 const ApplyHeader = () => {
   const { generationText } = useAppStore();

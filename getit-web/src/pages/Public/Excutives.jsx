@@ -1,8 +1,8 @@
 import { Sparkles ,Instagram, Mail} from "lucide-react";
-import { useAppStore } from '../../../store/appStore';
-import memberList from "../../../resources/Executive/executive.json";
-import MemberCard from "../../../components/MemberCard";
-import Footer from "../../../components/ContactFooter";
+import { useAppStore } from '../../store/appStore';
+import memberList from "../../resources/Executive/executive.json";
+import MemberCard from "../../components/MemberCard";
+import Footer from "../../components/ContactFooter";
 const Executives = () => {
   const { generationText } = useAppStore();
   // 👥 운영진 데이터 (여기에 실제 정보를 입력하세요)

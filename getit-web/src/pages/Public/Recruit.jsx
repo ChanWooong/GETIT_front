@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../../store/appStore';
+import { useAppStore } from '../../store/appStore';
 import { 
   Calendar, 
   ChevronDown, 
@@ -11,10 +11,10 @@ import {
   Rocket,    
   Flag       
 } from 'lucide-react';
-import { MESSAGES } from '../../../constants';
-import Footer from '../../../components/ContactFooter';
-import scheduleData from '../../../resources/Recruit/Schedule.json';
-import faqData from '../../../resources/Recruit/FAQ.json';
+import { MESSAGES } from '../../constants';
+import Footer from '../../components/ContactFooter';
+import scheduleData from '../../resources/Recruit/Schedule.json';
+import faqData from '../../resources/Recruit/FAQ.json';
 const Recruit = () => {
   const navigate = useNavigate();
   const { generation, generationText } = useAppStore();

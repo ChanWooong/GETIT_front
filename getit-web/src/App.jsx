@@ -3,19 +3,19 @@ import { useEffect } from 'react';
 import { MESSAGES, ROLES } from './constants';
 import { useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
-import Home from './pages/Public/Home/index.jsx';
-import About from './pages/Public/About/index.jsx';
-import Recruit from './pages/Public/Recruit/index.jsx';
+import Home from './pages/Public/Home/Home.jsx';
+import About from './pages/Public/About.jsx';
+import Recruit from './pages/Public/Recruit.jsx';
 import ProfileSetup from './pages/Auth/ProfileSetup/index.jsx';
-import Project from './pages/Public/Project/index.jsx';
+import Project from './pages/Public/Project.jsx';
 import Login from './pages/Auth/Login/index.jsx';
 import Lecture from './pages/Member/LectureList/index.jsx';
 import LectureDetail from './pages/Member/LectureDetail/index.jsx';
 import Invest from './pages/Invest';
-import Executives from './pages/Public/Executives/index.jsx';
+import Executives from './pages/Public/Excutives.jsx';
 import Dashboard from './pages/Dashboard';
 import AdminPage from './pages/Admin/index.jsx';
-import Apply from './pages/Public/Apply/index.jsx';
+import Apply from './pages/Public/Apply.jsx';
 
 
 const NavigationWrapper = ({ auth }) => {
