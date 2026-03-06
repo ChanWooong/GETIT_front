@@ -1,5 +1,5 @@
 import { Sparkles ,Instagram, Mail} from "lucide-react";
-import { useAppStore } from '../../store/appStore';
+import { useAppStore } from '../../hooks/appStore';
 import memberList from "../../resources/Executive/executive.json";
 import MemberCard from "../../components/MemberCard";
 import Footer from "../../components/ContactFooter";

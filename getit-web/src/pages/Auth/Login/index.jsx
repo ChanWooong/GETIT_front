@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppStore } from '../../../store/appStore';
+import { useAppStore } from '../../../hooks/appStore';
 import { MessageCircle } from 'lucide-react';
 
 const Login = () => {

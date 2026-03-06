@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../store/appStore';
+import { useAppStore } from '../../hooks/appStore';
 import { 
   Calendar, 
   ChevronDown, 

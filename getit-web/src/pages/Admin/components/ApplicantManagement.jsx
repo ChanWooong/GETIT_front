@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../../api/axios';
-import { useAppStore } from '../../../store/appStore';
+import { useAppStore } from '../../../hooks/appStore';
 import { ADMIN_APPLY_MESSAGES } from '../../../constants';
 import { Search, Eye, FileText } from 'lucide-react';
 

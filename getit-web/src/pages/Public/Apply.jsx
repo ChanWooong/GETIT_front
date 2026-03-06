@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
-import { useAppStore } from '../../store/appStore';
+import { useAppStore } from '../../hooks/appStore';
 import { MESSAGES, APPLY_ANNOUNCE_DATE } from '../../constants';
 import { answersToPayload, payloadToAnswers } from '../../utils/applyForm';
 import ApplyHeader from '../components/apply/ApplyHeader';

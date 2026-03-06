@@ -6,7 +6,7 @@ import {
   Calendar,
   CheckCircle,
 } from "lucide-react";
-import { useAppStore } from '../../store/appStore';
+import { useAppStore } from '../../hooks/appStore';
 import springSchedule from "../../resources/Schedule/springSchedule.json";
 import fallSchedule from "../../resources/Schedule/fallSchedule.json";
 import Schedule from "../../components/Schedule";
