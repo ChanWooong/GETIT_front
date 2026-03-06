@@ -23,15 +23,15 @@ const Lecture = () => {
     setError(null);
     fetch(url)
       .then((res) => {
-        if (!res.ok) throw new Error(res.statusText || '강의 목록을 불러오지 못했습니다.');
+        if (!res.ok) throw new Error(res.statusText || MESSAGES.LECTURE_LIST_ERROR);
         return res.json();
       })
       .then((data) => {
         setSwLectures(Array.isArray(data?.swTrack) ? data.swTrack : []);
         setStartupLectures(Array.isArray(data?.startupTrack) ? data.startupTrack : []);
       })
-      .catch((err) => {
-        setError(err.message || '강의 목록을 불러오지 못했습니다.');
+      .catch(() => {
+        setError(MESSAGES.LECTURE_LIST_ERROR);
         setSwLectures([]);
         setStartupLectures([]);
       })
@@ -51,7 +51,7 @@ const Lecture = () => {
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-[#110b29] text-white pt-32 pb-20 px-6 font-sans flex items-center justify-center">
-        <p className="text-gray-400">강의 목록을 불러오는 중...</p>
+        <p className="text-gray-400">{MESSAGES.LECTURE_LIST_LOADING}</p>
       </div>
     );
   }
@@ -60,7 +60,7 @@ const Lecture = () => {
     return (
       <div className="min-h-screen w-full bg-[#110b29] text-white pt-32 pb-20 px-6 font-sans flex flex-col items-center justify-center gap-4">
         <p className="text-red-400">{error}</p>
-        <p className="text-gray-500 text-sm">잠시 후 다시 시도해 주세요.</p>
+        <p className="text-gray-500 text-sm">{MESSAGES.LECTURE_LIST_RETRY}</p>
       </div>
     );
   }
