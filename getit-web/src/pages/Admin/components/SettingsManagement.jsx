@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, Calendar, ArrowLeft } from 'lucide-react';
 import api from '../../../api/axios';
-import { kstDateTimeLocalToUTC, utcISOToKstDateTimeLocal } from '../../../utils/dateUtils';
+import { kstToServerFormat, serverStoredToKstDateTimeLocal } from '../../../utils/dateUtils';
 
 const SettingsManagement = ({ onBack }) => {
   const [filter, setFilter] = useState('RECRUIT');
@@ -16,8 +16,8 @@ const SettingsManagement = ({ onBack }) => {
         const response = await api.get('/api/recruitment/status');
         const data = response.data;
         setIsOpen(data.isOpen ?? false);
-        if (data.startAt) setStartAt(utcISOToKstDateTimeLocal(data.startAt));
-        if (data.endAt) setEndAt(utcISOToKstDateTimeLocal(data.endAt));
+        if (data.startAt) setStartAt(serverStoredToKstDateTimeLocal(data.startAt));
+        if (data.endAt) setEndAt(serverStoredToKstDateTimeLocal(data.endAt));
       } catch (err) {
         console.error('모집 상태 조회 실패', err);
       }
@@ -27,16 +27,16 @@ const SettingsManagement = ({ onBack }) => {
 
   const handleSave = async () => {
     if (!startAt || !endAt) return alert('시작/종료 시간을 모두 입력해주세요.');
-    const startUTC = kstDateTimeLocalToUTC(startAt);
-    const endUTC = kstDateTimeLocalToUTC(endAt);
-    if (!startUTC || !endUTC) return alert('시작/종료 시간 형식을 확인해주세요.');
-    if (startUTC >= endUTC) return alert('종료 시간이 시작 시간보다 늦어야 합니다.');
+    const startKst = kstToServerFormat(startAt);
+    const endKst = kstToServerFormat(endAt);
+    if (!startKst || !endKst) return alert('시작/종료 시간 형식을 확인해주세요.');
+    if (startKst >= endKst) return alert('종료 시간이 시작 시간보다 늦어야 합니다.');
 
     try {
       setLoading(true);
       await api.patch('/api/recruitment/status', {
-        startAt: startUTC,
-        endAt: endUTC,
+        startAt: startKst,
+        endAt: endKst,
       });
       alert('모집 기간이 설정되었습니다.');
       const response = await api.get('/api/recruitment/status');
@@ -91,7 +91,7 @@ const SettingsManagement = ({ onBack }) => {
           </div>
 
           <p className="text-gray-500 text-sm mb-4">
-            모집 기간은 <strong className="text-gray-400">한국 시간(KST)</strong> 기준입니다. 서버에서 UTC로 저장·비교합니다.
+            모집 기간은 <strong className="text-gray-400">한국 시간(KST)</strong> 기준입니다. 서버에서 KST에서 10시간을 뺀 값으로 저장합니다.
           </p>
           <div className="space-y-4">
             <div>
