@@ -6,7 +6,7 @@ import { UserCheck, Search, Loader2, UserX, Shield } from 'lucide-react';
 /**
  * Admin 권한 설정: 승인 대기 가입자 목록 및 역할 지정 (게스트 / 멤버 / 관리자)
  * - GET /api/admin/members/pending: 승인 대기 사용자 목록
- * - PATCH /api/admin/members/{id}/role: 역할 지정 (body: { role: 'GUEST' | 'ROLE_MEMBER' | 'ROLE_ADMIN' })
+ * - PATCH /api/admin/members/{id}/role: 역할 지정 (body: { role: 'ROLE_GUEST' | 'ROLE_MEMBER' | 'ROLE_ADMIN' })
  */
 const formatDate = (dateStr) => {
   if (!dateStr) return '-';

@@ -7,9 +7,9 @@ export const IMAGES = {
   // 예: LOGO: '/images/logo.png',
 };
 
-/** 역할 (JWT role 값과 동일) */
+/** 역할 (백엔드 DB/JWT와 동일: ROLE_ADMIN, ROLE_GUEST, ROLE_MEMBER) */
 export const ROLES = {
-  GUEST: 'GUEST',
+  GUEST: 'ROLE_GUEST',
   MEMBER: 'ROLE_MEMBER',
   ADMIN: 'ROLE_ADMIN',
 };

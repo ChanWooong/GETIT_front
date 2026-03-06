@@ -7,7 +7,8 @@ function resolveInitialRole() {
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
     if (!token) return ROLES.GUEST;
     const decoded = jwtDecode(token);
-    return decoded.role || ROLES.GUEST;
+    const role = decoded.role ?? (Array.isArray(decoded.authorities) && decoded.authorities[0]) ?? null;
+    return role || ROLES.GUEST;
   } catch {
     return ROLES.GUEST;
   }
