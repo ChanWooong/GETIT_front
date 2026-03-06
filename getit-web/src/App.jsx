@@ -12,7 +12,7 @@ import Login from './pages/Auth/Login/index.jsx';
 import Lecture from './pages/Member/LectureList/index.jsx';
 import LectureDetail from './pages/Member/LectureDetail/index.jsx';
 import Invest from './pages/Member/Invest';
-import Executives from './pages/Public/Excutives.jsx';
+import Executives from './pages/Public/Executives.jsx';
 import Dashboard from './pages/Member/Dashboard';
 import AdminPage from './pages/Admin/index.jsx';
 import Apply from './pages/Public/Apply.jsx';

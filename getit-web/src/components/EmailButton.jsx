@@ -32,7 +32,7 @@ function fallbackCopyToClipboard(text) {
   }
 }
 
-function CopyEmail({ email }) {
+function EmailButton({ email }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = async () => {
     try {
@@ -75,4 +75,4 @@ function CopyEmail({ email }) {
   );
 }
 
-export default CopyEmail;
+export default EmailButton;

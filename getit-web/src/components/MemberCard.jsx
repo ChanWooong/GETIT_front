@@ -1,6 +1,6 @@
 import React from 'react';
-import { Github, Instagram, Mail, ExternalLink, Copy } from 'lucide-react';
-import CopyEmail from './EmailButton';
+import { Github, Instagram, ExternalLink } from 'lucide-react';
+
 function MemberCard({ member }) {
 
 

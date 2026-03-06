@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { MESSAGES } from '../../../constants';
 
-const LectureDetailCombined = () => {
+const LectureDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -281,4 +281,4 @@ const LectureDetailCombined = () => {
   );
 };
 
-export default LectureDetailCombined;
+export default LectureDetail;
