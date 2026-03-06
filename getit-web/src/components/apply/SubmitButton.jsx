@@ -14,7 +14,6 @@ const SubmitButton = ({ isLoading, onSaveDraft }) => (
         <Save size={18} /> 임시 저장
       </button>
 
-      {/* 진짜 제출 버튼 */}
       <button 
         type="submit" 
         disabled={isLoading}
