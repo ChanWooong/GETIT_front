@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { MESSAGES, ROLES } from './constants';
 import { useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
@@ -35,12 +36,28 @@ if(token) {
   localStorage.setItem('hasInfo', params.get('hasInfo'));
 
   if(isNew && !hasInfo) {
-    alert(MESSAGES.PROFILE_SETUP_REQUIRED);
-    window.location.replace('/profileSetup');
+    // /profileSetup 직접 요청 시 서버가 404 낼 수 있으므로, 먼저 / 로 이동 후 클라이언트에서 리다이렉트
+    window.location.replace('/?redirect=profileSetup');
   } else {
-    // replaceState만으로는 React Router가 갱신되지 않으므로, 홈으로 완전 이동(한 번 새로고침됨)
     window.location.replace('/');
   }
+}
+
+function RedirectHandler() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('redirect') === 'profileSetup' && location.pathname === '/') {
+      const isNew = localStorage.getItem('isNewMember') === 'true';
+      const hasInfo = localStorage.getItem('hasInfo') === 'true';
+      if (isNew && !hasInfo) {
+        alert(MESSAGES.PROFILE_SETUP_REQUIRED);
+        navigate('/profileSetup', { replace: true });
+      }
+    }
+  }, [location.search, location.pathname, navigate]);
+  return null;
 }
 
 function App() {
@@ -49,6 +66,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <RedirectHandler />
       <NavigationWrapper auth={auth} />
       <Routes>
         <Route path="/" element={<Home isApprovedMember={isApproved} />} />
