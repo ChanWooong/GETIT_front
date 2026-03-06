@@ -4,6 +4,7 @@ import TabNavigation from './components/TabNavigation';
 import ApplicantManagement from './components/ApplicantManagement';
 import ApplicantModal from './components/ApplicantModal';
 import MemberManagement from './components/MemberManagement';
+import AuthManagement from './components/AuthManagement';
 
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('MEMBERS');
@@ -22,7 +23,7 @@ const AdminPage = () => {
               onSelect={setSelectedApplicant} // ✅ applicants prop 제거
             />
           )}
-          {activeTab === 'AUTH' && <div className="py-20 text-gray-500 italic">권한 시스템 준비 중</div>}
+          {activeTab === 'AUTH' && <AuthManagement />}
         </div>
       </div>
 
