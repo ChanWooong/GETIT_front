@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart2, Bell, Users } from 'lucide-react';
+import { BarChart2, Bell, Users } from 'lucide-react'; // Settings 제거
 
 const TabNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
@@ -8,10 +8,12 @@ const TabNavigation = ({ activeTab, setActiveTab }) => {
     { id: 'AUTH', label: '권한 설정', icon: Users },
   ];
 
+  if (activeTab === 'SETTINGS') return null; // ✅ SETTINGS일 때 탭 숨김
+
   return (
     <div className="flex gap-4 mb-8 overflow-x-auto pb-2 scrollbar-hide">
       {tabs.map((tab) => (
-        <button 
+        <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id)}
           className={`flex-shrink-0 flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
