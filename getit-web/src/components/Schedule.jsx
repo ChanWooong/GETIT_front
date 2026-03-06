@@ -18,17 +18,17 @@ function Schedule(props) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h3 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-2">
-        <Calendar className="text-cyan-400" size={28} />
+      <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6 text-center flex items-center justify-center gap-1.5">
+        <Calendar className="text-cyan-400" size={22} />
         GETIT {props.semester}학기 일정
       </h3>
-      <p className="text-center text-gray-400 mb-10 text-sm">
+      <p className="text-center text-gray-400 mb-5 sm:mb-8 text-xs sm:text-sm">
         GET IT {props.semester}학기 행사입니다.
         <br />
         <span className="text-gray-500">* 일정은 상황에 따라 변경될 수 있습니다.</span>
       </p>
 
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         {scheduleList.length > 0 ? (
           scheduleList.map((item, index) => {
             const range = isRange(item.date);
@@ -38,25 +38,25 @@ function Schedule(props) {
             return (
               <div
                 key={index}
-                className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 sm:p-5 rounded-2xl border transition-all ${
+                className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 sm:p-4 rounded-xl border transition-all ${
                   range
                     ? "bg-cyan-500/5 border-cyan-500/20 hover:bg-cyan-500/10"
                     : "bg-white/5 border-white/10 hover:bg-white/10"
                 }`}
               >
-                <div className="flex-shrink-0 w-full sm:w-[120px] font-semibold text-sm text-cyan-400">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                <div className="flex-shrink-0 w-full sm:w-[100px] font-semibold text-xs sm:text-sm text-cyan-400">
+                  <span className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white/5 border border-white/10">
                     {item.date || "날짜 없음"}
                   </span>
                 </div>
-                <div className="flex-1 font-medium text-white min-w-0">
+                <div className="flex-1 font-medium text-white min-w-0 text-sm sm:text-base">
                   {item.topic || "주제 없음"}
                 </div>
                 <div className="flex-shrink-0">
                   <span
-                    className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${config.className}`}
+                    className={`inline-flex items-center gap-1 text-[10px] sm:text-xs font-medium px-2 py-1 rounded-full border ${config.className}`}
                   >
-                    <Icon size={14} />
+                    <Icon size={12} />
                     {config.label}
                   </span>
                 </div>
@@ -64,7 +64,7 @@ function Schedule(props) {
             );
           })
         ) : (
-          <p className="text-center text-gray-400 py-8">일정이 없습니다.</p>
+          <p className="text-center text-gray-400 py-5 text-sm">일정이 없습니다.</p>
         )}
       </div>
     </div>
