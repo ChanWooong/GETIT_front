@@ -48,12 +48,21 @@ const Navbar = ({ auth }) => {
 
               {/* 관리자 전용 메뉴 */}
               {userRole === ROLES.ADMIN && (
-                <Link 
-                  to="/admin" 
-                  className="hover:text-cyan-400 transition-colors"
-                >
-                 Admin
-                </Link>
+                <>
+                  <div className="h-4 w-px bg-gray-700 mx-2"></div>
+                  <Link to="/lecture" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                    <PlayCircle size={18} /> Lecture
+                  </Link>
+                  <Link to="/invest" className="hover:text-cyan-400 transition-colors flex items-center gap-1">
+                    <TrendingUp size={18} /> Invest
+                  </Link>
+                  <Link 
+                    to="/admin" 
+                    className="hover:text-cyan-400 transition-colors"
+                    >
+                  Admin
+                  </Link>
+                </>
               )}
               
               <button onClick={handleLogout} className="text-gray-400 hover:text-white flex items-center gap-1 transition-colors pl-4">
@@ -109,9 +118,20 @@ const Navbar = ({ auth }) => {
                 {isMember && userRole === ROLES.ADMIN && <div className="border-t border-white/10 my-1" aria-hidden="true" />}
                 {/* 그룹 3: 관리자 */}
                 {userRole === ROLES.ADMIN && (
-                  <Link to="/admin" onClick={closeMenu} className="py-3 px-4 rounded-xl text-red-400 border border-red-500/50 bg-red-900/20 hover:bg-red-900/30 transition-colors text-base font-medium flex items-center justify-center gap-2">
-                    <Settings size={18} /> Admin
-                  </Link>
+                  <div>
+                    <div className="flex flex-col gap-1">
+                    <Link to="/lecture" onClick={closeMenu} className="py-3 px-4 rounded-xl text-cyan-400 hover:bg-cyan-500/10 transition-colors text-base font-medium flex items-center justify-center gap-2">
+                      <PlayCircle size={18} /> Lecture
+                    </Link>
+                    <Link to="/invest" onClick={closeMenu} className="py-3 px-4 rounded-xl text-cyan-400 hover:bg-cyan-500/10 transition-colors text-base font-medium flex items-center justify-center gap-2">
+                      <TrendingUp size={18} /> Invest
+                    </Link>
+                    </div>
+                    <Link to="/admin" onClick={closeMenu} className="py-3 px-4 rounded-xl text-red-400 border border-red-500/50 bg-red-900/20 hover:bg-red-900/30 transition-colors text-base font-medium flex items-center justify-center gap-2">
+                      <Settings size={18} /> Admin
+                    </Link>
+                </div>
+                  
                 )}
                 {/* 구분선 */}
                 <div className="border-t border-white/10 my-1" aria-hidden="true" />
