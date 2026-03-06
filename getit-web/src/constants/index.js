@@ -77,6 +77,18 @@ export const ADMIN_APPLY_MESSAGES = {
   MODAL_CLOSE: '닫기',
 };
 
+/** Admin 권한(멤버 승인) 관리 문구 */
+export const ADMIN_AUTH_MESSAGES = {
+  LOADING: '가입자 목록 로딩 중...',
+  LIST_ERROR: '가입자 목록을 불러오는 중 오류가 발생했습니다.',
+  APPROVE_SUCCESS: '멤버로 승인되었습니다.',
+  APPROVE_ERROR: '승인 처리 중 오류가 발생했습니다.',
+  APPROVE_CONFIRM: '이 가입자를 멤버로 승인하시겠습니까?',
+  NO_USERS: '승인 대기 중인 가입자가 없습니다.',
+  SEARCH_PLACEHOLDER: '이름·학번으로 검색...',
+  BUTTON_APPROVE: '멤버 승인',
+};
+
 /** Project 페이지 헤더·설명 문구 */
 export const PROJECT_PAGE = {
   TITLE_MAIN: 'OUR',
