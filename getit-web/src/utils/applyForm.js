@@ -22,6 +22,18 @@ const DEFAULT_ANSWERS = {
   q1: '', q2: '', q3: '', q4: '', q5: '', q6: '', q7: '', q8: '',
 };
 
+/**
+ * 지원서 answers가 제출 가능한지 검사.
+ * q8은 'agreed', 그 외 문항은 비어 있지 않아야 함.
+ */
+export function isApplicationComplete(answers) {
+  if (!answers || typeof answers !== 'object') return false;
+  return !Object.entries(answers).some(([id, val]) => {
+    const s = (val ?? '').toString().trim();
+    return id === 'q8' ? s !== 'agreed' : s === '';
+  });
+}
+
 /** API 응답 data → answers 객체 */
 export function payloadToAnswers(data) {
   if (!data) return { ...DEFAULT_ANSWERS };

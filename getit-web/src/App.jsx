@@ -44,7 +44,7 @@ function RedirectHandler() {
 
 function App() {
   const auth = useAuth();
-  const { userRole, setUserRole, isLoggedIn, isApproved, isAdmin,isMember } = auth;
+  const { userRole, isLoggedIn, isApproved, isAdmin, isMember } = auth;
 
   return (
     <BrowserRouter>
@@ -61,7 +61,7 @@ function App() {
           path="/apply"
           element={isLoggedIn ? <Apply /> : <Navigate to="/login" replace />}
         />
-        <Route path="/login" element={<Login setUserRole={setUserRole} />} />
+        <Route path="/login" element={<Login />} />
         <Route
           path="/profileSetup"
           element={isLoggedIn ? <ProfileSetup /> : <Navigate to="/login" replace />}

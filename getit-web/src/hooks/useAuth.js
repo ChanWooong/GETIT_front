@@ -43,6 +43,12 @@ export function useAuth() {
     setIsLoggedInState(role !== ROLES.GUEST);
   }, []);
 
+  const logout = useCallback(() => {
+    if (typeof window !== 'undefined') localStorage.removeItem('accessToken');
+    setUserRoleState(ROLES.GUEST);
+    setIsLoggedInState(false);
+  }, []);
+
   useEffect(() => {
     const { role, isLoggedIn } = resolveAuthFromToken();
     setUserRoleState(role);
@@ -57,6 +63,7 @@ export function useAuth() {
   return {
     userRole,
     setUserRole,
+    logout,
     isLoggedIn,
     isApproved,
     isAdmin,

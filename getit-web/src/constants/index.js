@@ -86,6 +86,7 @@ export const ADMIN_APPLY_MESSAGES = {
 export const ADMIN_MEMBER_MESSAGES = {
   LOADING: '데이터 로딩 중...',
   LIST_ERROR: '데이터 로드 실패',
+  SEARCH_PLACEHOLDER: '이름으로 검색...',
 };
 
 /** Admin 권한(역할 지정) 관리 문구 */

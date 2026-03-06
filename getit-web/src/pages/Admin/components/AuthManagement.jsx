@@ -2,7 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../../api/axios';
 import { parseMembersListResponse } from '../../../api/responseParsers';
 import { ADMIN_AUTH_MESSAGES, ROLES } from '../../../constants';
-import { UserCheck, Search, Loader2, UserX, Shield, Trash2 } from 'lucide-react';
+import LoadingState from '../../../components/admin/LoadingState';
+import ErrorState from '../../../components/admin/ErrorState';
+import SearchInput from '../../../components/admin/SearchInput';
+import { getRoleBadgeClass } from '../../../components/admin/roleUtils';
+import { UserCheck, Loader2, UserX, Shield, Trash2 } from 'lucide-react';
 
 /**
  * Admin 권한 설정: 전체 멤버 목록, 역할 필터, 역할 지정, 멤버 삭제
@@ -102,17 +106,8 @@ const AuthManagement = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-10 text-white text-center flex items-center justify-center gap-2">
-        <Loader2 size={20} className="animate-spin" />
-        {ADMIN_AUTH_MESSAGES.LOADING}
-      </div>
-    );
-  }
-  if (error) {
-    return <div className="p-10 text-red-400 text-center">{error}</div>;
-  }
+  if (loading) return <LoadingState message={ADMIN_AUTH_MESSAGES.LOADING} />;
+  if (error) return <ErrorState message={error} />;
 
   return (
     <div className="animate-in fade-in duration-500 text-left">
@@ -139,16 +134,12 @@ const AuthManagement = () => {
                 </button>
               ))}
             </div>
-            <div className="relative w-full md:w-56">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={ADMIN_AUTH_MESSAGES.SEARCH_PLACEHOLDER}
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all"
-              />
-            </div>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder={ADMIN_AUTH_MESSAGES.SEARCH_PLACEHOLDER}
+              className="w-full md:w-56"
+            />
           </div>
         </div>
       </div>
@@ -175,13 +166,7 @@ const AuthManagement = () => {
                 <td className="p-5 text-sm text-gray-400">{user.department ?? '-'}</td>
                 <td className="p-5 text-center">
                   <span
-                    className={`inline-flex text-xs font-bold px-2 py-1 rounded-full ${
-                      user.role === ROLES.ADMIN
-                        ? 'bg-red-500/20 text-red-400'
-                        : user.role === ROLES.MEMBER
-                          ? 'bg-cyan-500/20 text-cyan-400'
-                          : 'bg-white/10 text-gray-400'
-                    }`}
+                    className={`inline-flex text-xs font-bold px-2 py-1 rounded-full ${getRoleBadgeClass(user.role)}`}
                   >
                     {getRoleLabel(user.role)}
                   </span>

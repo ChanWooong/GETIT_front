@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../hooks/appStore';
-import { 
-  Calendar, 
-  ChevronDown, 
-  ChevronUp, 
-  Sparkles, 
-  Send, 
-  Lightbulb, 
-  Rocket,    
-  Flag       
+import { useAuth } from '../../hooks/useAuth';
+import {
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  Send,
+  Lightbulb,
+  Rocket,
+  Flag,
 } from 'lucide-react';
 import { MESSAGES } from '../../constants';
 import Footer from '../../components/ContactFooter';
 import scheduleData from '../../resources/Recruit/Schedule.json';
 import faqData from '../../resources/Recruit/FAQ.json';
+
 const Recruit = () => {
   const navigate = useNavigate();
   const { generation, generationText } = useAppStore();
-  
-  // 🔥 모집 상태 및 로그인 상태 체크
-  const isRecruiting = true; 
-  const isLoggedIn = !!localStorage.getItem('accessToken'); // 토큰 존재 여부 확인
+  const { isLoggedIn } = useAuth();
+
+  const isRecruiting = true;
 
   // 지원하기 버튼 클릭 핸들러
   const handleApplyClick = () => {

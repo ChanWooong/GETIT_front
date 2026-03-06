@@ -2,8 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import { useAppStore } from '../../hooks/appStore';
+import { useAuth } from '../../hooks/useAuth';
 import { MESSAGES, APPLY_ANNOUNCE_DATE } from '../../constants';
-import { answersToPayload, payloadToAnswers } from '../../utils/applyForm';
+import { answersToPayload, payloadToAnswers, isApplicationComplete } from '../../utils/applyForm';
 import ApplyHeader from '../../components/apply/ApplyHeader';
 import QuestionField from '../../components/apply/QuestionField';
 import SubmitButton from '../../components/apply/SubmitButton';
@@ -12,6 +13,7 @@ import questionData from '../../resources/Apply/question.json';
 const Apply = () => {
   const navigate = useNavigate();
   const { generationText } = useAppStore();
+  const { isLoggedIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const initialAnswers = useMemo(
     () => Object.fromEntries(questionData.map((q) => [q.id, ''])),
@@ -27,8 +29,7 @@ const Apply = () => {
 
   useEffect(() => {
     const loadDraft = async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) return;
+      if (!isLoggedIn) return;
       try {
         const response = await api.get('/api/applies/draft');
         if (response.data.success && response.data.data) {
@@ -40,10 +41,10 @@ const Apply = () => {
       }
     };
     loadDraft();
-  }, []);
+  }, [isLoggedIn]);
 
   const handleSaveDraft = async () => {
-    if (!localStorage.getItem('accessToken')) {
+    if (!isLoggedIn) {
       alert(MESSAGES.APPLY_LOGIN_REQUIRED);
       return;
     }
@@ -60,11 +61,7 @@ const Apply = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isIncomplete = Object.entries(answers).some(([id, val]) => {
-      const s = (val ?? '').toString().trim();
-      return id === 'q8' ? s !== 'agreed' : s === '';
-    });
-    if (isIncomplete) {
+    if (!isApplicationComplete(answers)) {
       return alert(MESSAGES.APPLY_ALL_REQUIRED);
     }
     if (!window.confirm(MESSAGES.APPLY_SUBMIT_CONFIRM)) return;

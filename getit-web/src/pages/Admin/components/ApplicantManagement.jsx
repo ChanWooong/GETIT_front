@@ -2,7 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../../api/axios';
 import { useAppStore } from '../../../hooks/appStore';
 import { ADMIN_APPLY_MESSAGES } from '../../../constants';
-import { Search, Eye, FileText } from 'lucide-react';
+import LoadingState from '../../../components/admin/LoadingState';
+import ErrorState from '../../../components/admin/ErrorState';
+import SearchInput from '../../../components/admin/SearchInput';
+import { Eye, FileText } from 'lucide-react';
 
 const ApplicantManagement = ({ onSelect }) => {
   const { generationText } = useAppStore();
@@ -58,8 +61,8 @@ const ApplicantManagement = ({ onSelect }) => {
     }
   };
 
-  if (loading) return <div className="p-10 text-white text-center">{ADMIN_APPLY_MESSAGES.LOADING}</div>;
-  if (error) return <div className="p-10 text-red-400 text-center">{error}</div>;
+  if (loading) return <LoadingState message={ADMIN_APPLY_MESSAGES.LOADING} />;
+  if (error) return <ErrorState message={error} />;
 
   return (
     <div className="animate-in fade-in duration-500 text-left">
@@ -68,16 +71,11 @@ const ApplicantManagement = ({ onSelect }) => {
           <FileText className="text-cyan-400" /> {generationText} 지원자 명단
           <span className="text-sm font-mono text-gray-500 ml-2">({filteredApplicants.length})</span>
         </h3>
-        <div className="relative w-full md:w-64">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={ADMIN_APPLY_MESSAGES.SEARCH_PLACEHOLDER}
-            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all"
-          />
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder={ADMIN_APPLY_MESSAGES.SEARCH_PLACEHOLDER}
+        />
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5">
