@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../../api/axios';
 import { User, Hash, BookOpen, Phone } from 'lucide-react';
 import { MESSAGES } from '../../../constants';
 
@@ -35,18 +35,12 @@ const ProfileSetup = () => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      if(!token){
+      if (!token) {
         alert(MESSAGES.LOGIN_REQUIRED);
         navigate('/login', { replace: true });
         return;
-      };
-      const baseUrl = import.meta.env.VITE_API_BASE_URL;
-      const response = await axios.post(`${baseUrl}/api/member/info`, formData, {
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        }
-      });
+      }
+      const response = await api.post('/api/member/info', formData);
       const successMsg = response.data?.message ?? MESSAGES.PROFILE_SUCCESS;
       alert(successMsg);
       navigate('/'); 

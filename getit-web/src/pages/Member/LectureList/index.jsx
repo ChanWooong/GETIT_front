@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PlayCircle, Lock, Clock, CheckCircle, Code, Briefcase, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import api from '../../../api/axios';
 import { MESSAGES, LECTURE_STATUS, LECTURE_TRACK, API } from '../../../constants';
 
 /**
@@ -18,17 +19,14 @@ const Lecture = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const url = `${API.BASE_URL}${API.PATHS.LECTURES}`;
     setLoading(true);
     setError(null);
-    fetch(url)
+    api
+      .get(API.PATHS.LECTURES)
       .then((res) => {
-        if (!res.ok) throw new Error(res.statusText || MESSAGES.LECTURE_LIST_ERROR);
-        return res.json();
-      })
-      .then((data) => {
-        setSwLectures(Array.isArray(data?.swTrack) ? data.swTrack : []);
-        setStartupLectures(Array.isArray(data?.startupTrack) ? data.startupTrack : []);
+        const data = res.data ?? {};
+        setSwLectures(Array.isArray(data.swTrack) ? data.swTrack : []);
+        setStartupLectures(Array.isArray(data.startupTrack) ? data.startupTrack : []);
       })
       .catch(() => {
         setError(MESSAGES.LECTURE_LIST_ERROR);
