@@ -30,11 +30,14 @@ const AuthManagement = () => {
       setLoading(true);
       setError(null);
       const response = await api.get('/api/admin/members/pending');
-      if (response.data?.success && Array.isArray(response.data.data)) {
-        setUsers(response.data.data);
-      } else {
-        setUsers([]);
-      }
+      const body = response?.data ?? response;
+      const list =
+        (body?.success && Array.isArray(body?.data) && body.data) ||
+        (Array.isArray(body?.data) && body.data) ||
+        (Array.isArray(body?.data?.content) && body.data.content) ||
+        (Array.isArray(body) && body) ||
+        [];
+      setUsers(list);
     } catch (err) {
       console.error('승인 대기 목록 로드 실패:', err);
       setError(ADMIN_AUTH_MESSAGES.LIST_ERROR);
@@ -116,8 +119,8 @@ const AuthManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+            {filteredUsers.map((user, index) => (
+              <tr key={user?.id ?? index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                 <td className="p-5 font-bold text-white">{user.name ?? '-'}</td>
                 <td className="p-5 text-sm text-gray-400 font-mono">{user.studentId ?? '-'}</td>
                 <td className="p-5 text-sm text-gray-400">{user.department ?? '-'}</td>
