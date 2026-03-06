@@ -14,35 +14,42 @@ function normalizeRole(role) {
   return role;
 }
 
-function resolveRoleFromToken() {
+function resolveAuthFromToken() {
   try {
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-    if (!token) return ROLES.GUEST;
+    if (!token) return { role: ROLES.GUEST, isLoggedIn: false };
     const decoded = jwtDecode(token);
     const raw = decoded.role ?? (Array.isArray(decoded.authorities) && decoded.authorities[0]) ?? decoded.authority ?? null;
-    return normalizeRole(raw) || ROLES.GUEST;
+    const role = normalizeRole(raw) || ROLES.GUEST;
+    return { role, isLoggedIn: true };
   } catch {
-    return ROLES.GUEST;
+    return { role: ROLES.GUEST, isLoggedIn: false };
   }
 }
 
 /**
  * 인증 상태와 역할 파생 값.
- * userRole, setUserRole, isLoggedIn, isApproved, isAdmin, isMember
+ * - ROLE_GUEST: 로그인했으나 미승인 (네비에는 LOGOUT 표시)
+ * - ROLE_MEMBER: 멤버 승인됨
+ * - ROLE_ADMIN: 관리자
  */
 export function useAuth() {
-  const [userRole, setUserRoleState] = useState(resolveRoleFromToken);
+  const initial = resolveAuthFromToken();
+  const [userRole, setUserRoleState] = useState(initial.role);
+  const [isLoggedInState, setIsLoggedInState] = useState(initial.isLoggedIn);
 
   const setUserRole = useCallback((role) => {
     setUserRoleState(role);
+    setIsLoggedInState(role !== ROLES.GUEST);
   }, []);
 
   useEffect(() => {
-    const synced = resolveRoleFromToken();
-    setUserRoleState((prev) => (prev !== synced ? synced : prev));
+    const { role, isLoggedIn } = resolveAuthFromToken();
+    setUserRoleState(role);
+    setIsLoggedInState(isLoggedIn);
   }, []);
 
-  const isLoggedIn = userRole !== ROLES.GUEST;
+  const isLoggedIn = isLoggedInState;
   const isApproved = userRole === ROLES.MEMBER || userRole === ROLES.ADMIN;
   const isAdmin = userRole === ROLES.ADMIN;
   const isMember = userRole === ROLES.MEMBER;

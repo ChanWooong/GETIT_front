@@ -4,8 +4,8 @@ import api from '../../api/axios';
 import { useAppStore } from '../../hooks/appStore';
 import { MESSAGES, APPLY_ANNOUNCE_DATE } from '../../constants';
 import { answersToPayload, payloadToAnswers } from '../../utils/applyForm';
-import ApplyHeader from '../../components/apply/ApplyHeader';
-import QuestionField from '../../components/apply/QuestionField';
+import ApplyHeader from '../components/apply/ApplyHeader';
+import QuestionField from '../components/apply/QuestionField';
 import SubmitButton from '../../components/apply/SubmitButton';
 import questionData from '../../resources/Apply/question.json';
 
