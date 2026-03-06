@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../../../api/axios';
+import { useAppStore } from '../../../hooks/appStore';
 import { CheckCircle } from 'lucide-react';
 
 const MemberManagement = () => {
+  const { generationText } = useAppStore();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,8 +14,10 @@ const MemberManagement = () => {
       try {
         setLoading(true);
         const response = await api.get('/api/admin/members');
-        if (response.data.success) {
-          setMembers(response.data.data);
+        if (response.data?.success && response.data?.data) {
+          setMembers(Array.isArray(response.data.data) ? response.data.data : []);
+        } else {
+          setMembers([]);
         }
       } catch (err) {
         console.error('데이터 로드 실패:', err);
@@ -24,7 +29,7 @@ const MemberManagement = () => {
     fetchMembers();
   }, []);
 
-  if (loading) return <div className="p-10 text-white text-center">{ADMIN_MEMBER_MESSAGES.LOADING}</div>;
+  if (loading) return <div className="p-10 text-white text-center">데이터 로딩 중...</div>;
   if (error) return <div className="p-10 text-red-400 text-center">{error}</div>;
 
   return (
