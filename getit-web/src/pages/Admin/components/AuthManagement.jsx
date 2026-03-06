@@ -74,7 +74,7 @@ const AuthManagement = () => {
     if (!window.confirm(ADMIN_AUTH_MESSAGES.ROLE_CONFIRM(user.name || '이름 없음', roleLabel))) return;
     try {
       setUpdatingId(user.id);
-      await api.patch(`/api/admin/members/${user.id}/approve`, { role: roleValue });
+      await api.patch(`/api/admin/members/${user.id}/role`, { role: roleValue });
       await fetchMembers();
       alert(ADMIN_AUTH_MESSAGES.ROLE_UPDATE_SUCCESS);
     } catch (err) {
