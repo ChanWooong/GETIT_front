@@ -50,12 +50,12 @@ function About() {
             <p className="text-gray-300 leading-relaxed text-lg">
               단순히 코드를 따라 치는 것은 멈추세요.{" "}
               <br className="hidden md:block" />
-              우리는 <b className="text-white">AI 바이브 코딩(Vibe Coding)</b>을
+              우리는 <b className="text-blue-400">AI 바이브 코딩(Vibe Coding)</b>을
               중심으로 아이디어를 현실로 만듭니다.
               <br />
               <br />
-              코딩 베이스가 없는 신입생도, 개발이 낯선 타과생도 괜찮습니다.
-              <br />웹 구동 원리를 이해하고 AI를 이용하는 <b>'Maker'</b>로
+              코딩 베이스가 없는 <b className="text-blue-400">신입생</b>도, 개발이 낯선 <b className="text-blue-400">타과생</b>도 괜찮습니다.
+              <br />웹 구동 원리를 이해하고 AI를 이용하는 <b className="text-blue-400">'Maker'</b>로
               성장시켜 드립니다.
             </p>
           </div>
