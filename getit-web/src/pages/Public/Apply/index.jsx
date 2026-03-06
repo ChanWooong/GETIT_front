@@ -1,6 +1,5 @@
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
 import { useAppStore } from '../../../store/appStore';
 import { MESSAGES } from '../../../constants';
 import applyQuestionsData from '../../../resources/Apply/ApplyQuestions.json';
@@ -12,7 +11,6 @@ import questionData from '../../../resources/Apply/question.json';
 const applyQuestions = applyQuestionsData;
 
 const Apply = () => {
-  const navigate = useNavigate();
   const { generationText } = useAppStore();
   const [isLoading, setIsLoading] = useState(false);
   const initialAnswers = useMemo(
@@ -23,16 +21,17 @@ const Apply = () => {
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  // ✅ JSON에서 가져오되 q1은 generationText 동적 적용
+  // q1만 generationText 삽입 (예: "1. GET IT 16기에 지원하게 된...")
   const questions = questionData.map((q) =>
     q.id === 'q1'
-      ? { ...q, label: `1. GET IT ${generationText}${q.label}` }
+      ? { ...q, label: q.label.replace('GET IT', `GET IT ${generationText}`) }
       : q
   );
 
   useEffect(() => {
     const loadDraft = async () => {
       const token = localStorage.getItem('accessToken');
+      if (!token) return;
       try {
         const response = await axios.get(`${API_BASE_URL}/api/applies/draft`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -51,6 +50,10 @@ const Apply = () => {
 
   const handleSaveDraft = async () => {
     const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert(MESSAGES.APPLY_LOGIN_REQUIRED);
+      return;
+    }
     try {
       setIsLoading(true);
       await axios.put(`${API_BASE_URL}/api/applies/draft`, {
