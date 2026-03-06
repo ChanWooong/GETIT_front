@@ -63,6 +63,7 @@ function RedirectHandler() {
 function App() {
   const auth = useAuth();
   const { userRole, setUserRole, isApproved, isAdmin,isMember } = auth;
+  const params = new URLSearchParams(location.search);
   const token = params.get('token'); 
   return (
     <BrowserRouter>
