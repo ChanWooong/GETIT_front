@@ -25,7 +25,6 @@ export function useAuth() {
     setUserRoleState(role);
   }, []);
 
-  const isLoggedIn = userRole !== ROLES.GUEST;
   const isApproved = userRole === ROLES.MEMBER || userRole === ROLES.ADMIN;
   const isAdmin = userRole === ROLES.ADMIN;
   const isMember = userRole === ROLES.MEMBER;
@@ -33,7 +32,6 @@ export function useAuth() {
   return {
     userRole,
     setUserRole,
-    isLoggedIn,
     isApproved,
     isAdmin,
     isMember,
