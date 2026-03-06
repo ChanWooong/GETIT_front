@@ -79,7 +79,10 @@ function App() {
           element={isLoggedIn ? <Apply /> : <Navigate to="/login" replace />}
         />
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
-        <Route path="/profileSetup" element={<ProfileSetup />} />
+        <Route
+          path="/profileSetup"
+          element={isLoggedIn ? <ProfileSetup /> : <Navigate to="/login" replace />}
+        />
         {/* OAuth 콜백으로 /token 도착 시 홈으로 (토큰 처리 후 replace가 안 된 경우 대비) */}
         <Route path="/token" element={<Navigate to="/" replace />} />
 
@@ -97,6 +100,9 @@ function App() {
         ) : (
           <Route path="/admin" element={<Navigate to="/" replace />} />
         )}
+
+        {/* 미승인 사용자의 멤버 전용 경로·알 수 없는 경로 → 홈 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

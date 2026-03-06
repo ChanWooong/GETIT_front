@@ -4,6 +4,7 @@ import {
   ArrowLeft, PlayCircle, AlertTriangle, FileText, 
   Upload, Check, X, Download, MessageCircle, Send 
 } from 'lucide-react';
+import { MESSAGES } from '../../../constants';
 
 const LectureDetailCombined = () => {
   const { id } = useParams();
@@ -14,12 +15,21 @@ const LectureDetailCombined = () => {
   // ==========================================
   const playerRef = useRef(null);
   const timerRef = useRef(null);
+  const loadTimeoutRef = useRef(null);
   const serverSavedTime = 120; // 서버에서 가져온 지난 시청 기록 (예: 120초)
   const maxWatchedTimeRef = useRef(serverSavedTime); // 실제 시청한 최대 지점
   const [showWarning, setShowWarning] = useState(false); // 경고 메시지 표시
+  const [videoLoadError, setVideoLoadError] = useState(false);
 
   useEffect(() => {
+    loadTimeoutRef.current = setTimeout(() => setVideoLoadError(true), 10000);
+
   const initPlayer = () => {
+    if (loadTimeoutRef.current) {
+      clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = null;
+    }
+    setVideoLoadError(false);
     if (playerRef.current) return; // Already initialized
     playerRef.current = new window.YT.Player('youtube-player', {
       videoId: 'M7lc1UVf-VE',
@@ -45,6 +55,7 @@ const LectureDetailCombined = () => {
       window.onYouTubeIframeAPIReady = initPlayer;
   }
     return () => {
+      if (loadTimeoutRef.current) clearTimeout(loadTimeoutRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
       if (playerRef.current?.destroy) playerRef.current.destroy();
     };
@@ -146,6 +157,15 @@ const LectureDetailCombined = () => {
           {/* 영상 컨테이너 */}
           <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/10 group">
             <div id="youtube-player" className="w-full h-full"></div>
+            
+            {/* 영상 로드 실패 */}
+            {videoLoadError && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 z-40 p-6 text-center">
+                <AlertTriangle size={48} className="text-red-400 mb-4" />
+                <p className="text-white font-bold text-lg">{MESSAGES.LECTURE_VIDEO_LOAD_ERROR}</p>
+                <p className="text-gray-400 text-sm mt-2">네트워크를 확인하거나 잠시 후 다시 시도해 주세요.</p>
+              </div>
+            )}
             
             {/* 스킵 경고 오버레이 */}
             {showWarning && (

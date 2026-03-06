@@ -56,6 +56,10 @@ export const MESSAGES = {
   APPLY_SUBMIT_CONFIRM: '제출 후에는 수정이 불가능합니다. 제출하시겠습니까?',
   APPLY_SUBMIT_ERROR: '제출 중 오류가 발생했습니다.',
   LECTURE_LOCKED: '아직 오픈되지 않은 강의입니다.',
+  LECTURE_LIST_ERROR: '강의 목록을 불러오지 못했습니다.',
+  LECTURE_LIST_RETRY: '잠시 후 다시 시도해 주세요.',
+  LECTURE_LIST_LOADING: '강의 목록을 불러오는 중...',
+  LECTURE_VIDEO_LOAD_ERROR: '영상을 불러올 수 없습니다.',
 };
 
 /** 지원서 제출 완료 시 발표일 등 (문구에 삽입) */
@@ -75,6 +79,13 @@ export const ADMIN_APPLY_MESSAGES = {
   REVIEW_TITLE: 'Application Review',
   VIEW_BUTTON: '보기',
   MODAL_CLOSE: '닫기',
+  DETAIL_ERROR: '지원서를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+};
+
+/** Admin 부원 학습 현황 문구 */
+export const ADMIN_MEMBER_MESSAGES = {
+  LOADING: '데이터 로딩 중...',
+  LIST_ERROR: '데이터 로드 실패',
 };
 
 /** Admin 권한(역할 지정) 관리 문구 */

@@ -1,6 +1,6 @@
 {
   "Schedule": [
-    { "date": "3월 2주차", "topic": "GETIT Chat", "type": "Event" },
+    { "date": "3월 3주차", "topic": "GETIT Chat", "type": "Event" },
     { "date": "4월 2주차", "topic": "WEB 세미나", "type": "Seminar" },
     { "date": "4월 4주차", "topic": "GIT 세미나", "type": "Seminar" },
     { "date": "5월 4주차", "topic": "GETIT 해커톤", "type": "Event" },

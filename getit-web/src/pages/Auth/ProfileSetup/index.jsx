@@ -47,7 +47,7 @@ const ProfileSetup = () => {
           'Authorization': `Bearer ${token}` 
         }
       });
-      const successMsg = response.data || MESSAGES.PROFILE_SUCCESS;
+      const successMsg = response.data?.message ?? MESSAGES.PROFILE_SUCCESS;
       alert(successMsg);
       navigate('/'); 
     } catch (error) {

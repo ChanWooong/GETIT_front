@@ -54,6 +54,7 @@ const ApplicantManagement = ({ onSelect }) => {
       });
     } catch (err) {
       console.error('상세 데이터 로드 실패:', err);
+      alert(ADMIN_APPLY_MESSAGES.DETAIL_ERROR);
     }
   };
 
