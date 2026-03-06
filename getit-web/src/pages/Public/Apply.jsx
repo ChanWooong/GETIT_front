@@ -33,7 +33,6 @@ useEffect(() => {
       const meResponse = await api.get('/api/applies/me');
       if (meResponse.data.submitted) {
         alert("이미 지원서를 제출하셨습니다.");
-        navigate('/', { replace: true });
         return;
       }
 
