@@ -25,22 +25,29 @@ const Apply = () => {
       : q
   );
 
-  useEffect(() => {
-    const loadDraft = async () => {
-      const token = localStorage.getItem('accessToken');
-      if (!token) return;
-      try {
-        const response = await api.get('/api/applies/draft');
-        if (response.data.success && response.data.data) {
-          setAnswers(payloadToAnswers(response.data.data));
-          alert(MESSAGES.APPLY_DRAFT_LOADED);
-        }
-      } catch (err) {
-        console.log('임시 저장 데이터가 없거나 불러오기 실패', err);
+useEffect(() => {
+  const checkAndLoad = async () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return;
+    try {
+      const meResponse = await api.get('/api/applies/me');
+      if (meResponse.data.submitted) {
+        alert("이미 지원서를 제출하셨습니다.");
+        navigate('/', { replace: true });
+        return;
       }
-    };
-    loadDraft();
-  }, []);
+
+      const draftResponse = await api.get('/api/applies/draft');
+      if (draftResponse.data.success && draftResponse.data.data) {
+        setAnswers(payloadToAnswers(draftResponse.data.data));
+        alert(MESSAGES.APPLY_DRAFT_LOADED);
+      }
+    } catch (err) {
+      console.log('임시저장 불러오기 실패', err);
+    }
+  };
+  checkAndLoad();
+}, []);
 
   const handleSaveDraft = async () => {
     if (!localStorage.getItem('accessToken')) {
