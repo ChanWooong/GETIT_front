@@ -1,7 +1,7 @@
 import React from 'react';
 import { PlayCircle, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAppStore } from '../../../store/appStore';
+import { useAppStore } from '../../hooks/appStore';
 
 const Home = ({ isApprovedMember }) => {
   const navigate = useNavigate();

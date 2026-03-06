@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { MESSAGES, ROLES } from './constants';
 import { useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
-import Home from './pages/Public/Home/Home.jsx';
+import Home from './pages/Public/Home.jsx';
 import About from './pages/Public/About.jsx';
 import Recruit from './pages/Public/Recruit.jsx';
 import ProfileSetup from './pages/Auth/ProfileSetup/index.jsx';
