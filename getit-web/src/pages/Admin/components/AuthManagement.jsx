@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../../api/axios';
+import { parseMembersListResponse } from '../../../api/responseParsers';
 import { ADMIN_AUTH_MESSAGES, ROLES } from '../../../constants';
 import { UserCheck, Search, Loader2, UserX, Shield, Trash2 } from 'lucide-react';
 
@@ -39,13 +40,7 @@ const AuthManagement = () => {
       setLoading(true);
       setError(null);
       const response = await api.get('/api/admin/members');
-      const body = response?.data ?? response;
-      const list =
-        (body?.success && Array.isArray(body?.data) && body.data) ||
-        (Array.isArray(body?.data) && body.data) ||
-        (Array.isArray(body) && body) ||
-        [];
-      setUsers(list);
+      setUsers(parseMembersListResponse(response));
     } catch (err) {
       console.error('멤버 목록 로드 실패:', err);
       setError(ADMIN_AUTH_MESSAGES.LIST_ERROR);

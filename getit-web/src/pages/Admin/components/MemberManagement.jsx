@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../api/axios';
+import { parseMembersListResponse } from '../../../api/responseParsers';
 import { useAppStore } from '../../../hooks/appStore';
 import { ADMIN_MEMBER_MESSAGES } from '../../../constants';
 import { CheckCircle } from 'lucide-react';
@@ -15,11 +16,7 @@ const MemberManagement = () => {
       try {
         setLoading(true);
         const response = await api.get('/api/admin/members');
-        if (response.data?.success && response.data?.data) {
-          setMembers(Array.isArray(response.data.data) ? response.data.data : []);
-        } else {
-          setMembers([]);
-        }
+        setMembers(parseMembersListResponse(response));
       } catch (err) {
         console.error('데이터 로드 실패:', err);
         setError(ADMIN_MEMBER_MESSAGES.LIST_ERROR);
