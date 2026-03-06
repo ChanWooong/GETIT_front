@@ -2,19 +2,35 @@ import React from 'react';
 import { CheckCircle } from 'lucide-react';
 
 const MemberManagement = () => {
-  // 📂 실제로는 API에서 가져와야 할 부원 데이터
-  const members = [
-    { id: 1, name: "김철수", lectureCount: 8, totalLectures: 10, hwProgress: 85 },
-    { id: 2, name: "이영희", lectureCount: 3, totalLectures: 10, hwProgress: 40 },
-    { id: 3, name: "박민수", lectureCount: 10, totalLectures: 10, hwProgress: 100 },
-    { id: 4, name: "최수진", lectureCount: 1, totalLectures: 10, hwProgress: 10 },
-    { id: 5, name: "정재민", lectureCount: 6, totalLectures: 10, hwProgress: 60 },
-  ];
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get('/api/admin/members');
+        if (response.data.success) {
+          setMembers(response.data.data);
+        }
+      } catch (err) {
+        console.error('데이터 로드 실패:', err);
+        setError('데이터 로드 실패');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMembers();
+  }, []);
+
+  if (loading) return <div className="p-10 text-white text-center">{ADMIN_MEMBER_MESSAGES.LOADING}</div>;
+  if (error) return <div className="p-10 text-red-400 text-center">{error}</div>;
 
   return (
     <div className="animate-in fade-in duration-500 text-left">
       <div className="flex justify-between items-center mb-8">
-        <h3 className="text-xl font-bold">8기 부원 학습 현황</h3>
+        <h3 className="text-xl font-bold">{generationText} 부원 학습 현황</h3>
         <span className="text-sm text-gray-500 font-mono text-right">Total: {members.length} Members</span>
       </div>
       
