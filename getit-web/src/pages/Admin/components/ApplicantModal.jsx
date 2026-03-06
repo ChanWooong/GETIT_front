@@ -38,7 +38,30 @@ const ApplicantModal = ({ applicant, onClose }) => {
           <h3 className="text-4xl font-black mt-2 italic">
             {applicant.name || ADMIN_APPLY_MESSAGES.NO_NAME}<span className="text-cyan-400">.</span>
           </h3>
-          <p className="text-gray-400 text-sm mt-1">{applicant.department || ADMIN_APPLY_MESSAGES.NO_DEPARTMENT}</p>
+          <div className="mt-4 p-4 rounded-2xl bg-white/5 border border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+            <div>
+              <span className="text-gray-500 block mb-0.5">학번</span>
+              <span className="text-white font-medium">{applicant.studentId ?? ADMIN_APPLY_MESSAGES.NO_STUDENT_ID}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 block mb-0.5">전화번호</span>
+              <span className="text-white font-medium">{applicant.cellNum ?? applicant.phone ?? ADMIN_APPLY_MESSAGES.NO_PHONE}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 block mb-0.5">단과대</span>
+              <span className="text-white font-medium">{applicant.college ?? '-'}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 block mb-0.5">학과</span>
+              <span className="text-white font-medium">{applicant.department ?? ADMIN_APPLY_MESSAGES.NO_DEPARTMENT}</span>
+            </div>
+            {applicant.email && (
+              <div className="sm:col-span-2">
+                <span className="text-gray-500 block mb-0.5">이메일</span>
+                <span className="text-white font-medium">{applicant.email}</span>
+              </div>
+            )}
+          </div>
         </div>
         <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar flex-1">
           {questionItems.map((item, idx) => (

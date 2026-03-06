@@ -37,12 +37,20 @@ const ApplicantManagement = ({ onSelect }) => {
 
   const handleSelect = async (app) => {
     try {
-      const response = await api.get(`/api/admin/applies/${app.id}`);
-      const raw = response.data?.data ?? response.data;
+      const [applyRes, infoRes] = await Promise.all([
+        api.get(`/api/admin/applies/${app.id}`),
+        api.get(`/api/admin/applies/${app.id}/info`),
+      ]);
+      const applyData = applyRes.data?.data ?? applyRes.data ?? {};
+      const infoData = infoRes.data?.data ?? infoRes.data ?? {};
       onSelect({
-        ...raw,
-        name: app.name ?? raw.name,
-        department: app.department ?? raw.department
+        ...applyData,
+        name: infoData.name ?? app.name ?? applyData.name,
+        studentId: infoData.studentId ?? app.studentId,
+        college: infoData.college,
+        department: infoData.department ?? app.department ?? applyData.department,
+        cellNum: infoData.cellNum ?? app.cellNum,
+        email: infoData.email ?? app.email,
       });
     } catch (err) {
       console.error('상세 데이터 로드 실패:', err);
@@ -72,11 +80,13 @@ const ApplicantManagement = ({ onSelect }) => {
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/5">
-        <table className="w-full text-left border-collapse min-w-[700px]">
+        <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
             <tr className="border-b border-white/10 text-gray-400 text-xs uppercase tracking-widest bg-white/5">
               <th className="p-5 font-bold">ID</th>
               <th className="p-5 font-bold">지원자 성명</th>
+              <th className="p-5 font-bold">학번</th>
+              <th className="p-5 font-bold">전화번호</th>
               <th className="p-5 font-bold">소속 학과</th>
               <th className="p-5 font-bold text-center">지원서 상세 보기</th>
             </tr>
@@ -97,6 +107,12 @@ const ApplicantManagement = ({ onSelect }) => {
                     </span>
                   </div>
                 </td>
+                <td className="p-5 text-sm text-gray-400 font-mono">
+                  {app.studentId ?? app.studentNumber ?? '-'}
+                </td>
+                <td className="p-5 text-sm text-gray-400">
+                  {app.cellNum ?? app.phone ?? app.phoneNumber ?? '-'}
+                </td>
                 <td className="p-5 text-sm text-gray-400">
                   {app.department || ADMIN_APPLY_MESSAGES.NO_DEPARTMENT}
                 </td>
@@ -112,7 +128,7 @@ const ApplicantManagement = ({ onSelect }) => {
             ))}
             {filteredApplicants.length === 0 && (
               <tr>
-                <td colSpan="4" className="p-20 text-center text-gray-500 italic">
+                <td colSpan="6" className="p-20 text-center text-gray-500 italic">
                   {ADMIN_APPLY_MESSAGES.NO_APPLICANTS}
                 </td>
               </tr>

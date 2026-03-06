@@ -69,6 +69,8 @@ export const ADMIN_APPLY_MESSAGES = {
   NO_APPLICANTS: '현재 접수된 지원서가 없습니다.',
   NO_NAME: '이름 없음',
   NO_DEPARTMENT: '학과 없음',
+  NO_STUDENT_ID: '학번 없음',
+  NO_PHONE: '전화번호 없음',
   NO_ANSWER: '내용 없음',
   REVIEW_TITLE: 'Application Review',
   VIEW_BUTTON: '보기',
