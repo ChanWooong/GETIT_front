@@ -1,14 +1,12 @@
 import React from 'react';
-import { PlayCircle, Send, LogIn } from 'lucide-react';
+import { PlayCircle, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../../store/appStore';
 
-const Home = ({ userRole }) => {
+const Home = ({ isApprovedMember }) => {
   const navigate = useNavigate();
   const { generationText } = useAppStore();
-  const isLoggedIn = userRole !== 'GUEST';
-  const isApprovedMember = userRole === 'ROLE_MEMBER' || userRole === 'ROLE_ADMIN';
-  const isPending = userRole === 'ROLE_GUEST'; 
+
   return (
     <div className="min-h-screen bg-[#110b29] text-white font-sans overflow-x-hidden">
       <header className="relative w-full h-screen flex flex-col justify-center items-center text-center px-4 pt-20">

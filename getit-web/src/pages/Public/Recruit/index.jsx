@@ -11,9 +11,10 @@ import {
   Rocket,    
   Flag       
 } from 'lucide-react';
-import Footer from "../../../components/ContactFooter";
-import scheduleData from "../../../resources/Recruit/Schedule.json";
-import faqData from "../../../resources/Recruit/FAQ.json";
+import { MESSAGES } from '../../../constants';
+import Footer from '../../../components/ContactFooter';
+import scheduleData from '../../../resources/Recruit/Schedule.json';
+import faqData from '../../../resources/Recruit/FAQ.json';
 const Recruit = () => {
   const navigate = useNavigate();
   const { generation, generationText } = useAppStore();
@@ -27,7 +28,7 @@ const Recruit = () => {
     if (!isRecruiting) return;
 
     if (!isLoggedIn) {
-      alert("지원서 작성을 위해 먼저 로그인이 필요합니다.");
+      alert(MESSAGES.APPLY_LOGIN_REQUIRED);
       navigate('/login'); // 로그인 페이지로 이동
     } else {
       navigate('/apply'); // 지원서 작성 페이지로 이동

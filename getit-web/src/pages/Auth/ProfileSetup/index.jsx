@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { User, Hash, BookOpen, Phone } from 'lucide-react';
+import { MESSAGES } from '../../../constants';
 
 import ProfileHeader from './components/ProfileHeader';
 import InfoInput from './components/InfoInput';
@@ -35,7 +36,7 @@ const ProfileSetup = () => {
     try {
       const token = localStorage.getItem('accessToken');
       if(!token){
-        alert("로그인이 필요합니다.");
+        alert(MESSAGES.LOGIN_REQUIRED);
         navigate('/login', { replace: true });
         return;
       };
@@ -46,11 +47,12 @@ const ProfileSetup = () => {
           'Authorization': `Bearer ${token}` 
         }
       });
-      alert(response.data || "정보 등록이 완료되었습니다!");
+      const successMsg = response.data || MESSAGES.PROFILE_SUCCESS;
+      alert(successMsg);
       navigate('/'); 
     } catch (error) {
       console.error("등록 에러:", error.response?.data);
-      const errorMsg = error.response?.data?.message || "입력 형식을 다시 확인해주세요";
+      const errorMsg = error.response?.data?.message || MESSAGES.PROFILE_FORM_ERROR;
       alert(errorMsg);
     } finally {
       setIsLoading(false);

@@ -27,7 +27,7 @@ function MemberCard({ member }) {
       className={`group relative bg-white/5 border ${borderColor} p-8 rounded-2xl hover:bg-white/10 hover:${borderColor.replace("border-","border-")}/30 transition-all duration-300 hover:-translate-y-1`}
     >
       {/* 분류 배지 */}
-      <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-bold text-black rounded-bl-lg ${badgeBg}`}> {badgeText} </div>
+      <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-bold text-black rounded-bl-lg ${badgeBg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>{badgeText}</div>
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
         {/* 프로필 이미지 영역 */}
         <div className="relative shrink-0">

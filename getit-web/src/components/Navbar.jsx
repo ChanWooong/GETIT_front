@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, PlayCircle, TrendingUp, LayoutDashboard, Settings, UserCheck } from 'lucide-react';
+import { Menu, X, LogOut, PlayCircle, TrendingUp, Settings } from 'lucide-react';
+import { ROLES } from '../constants';
 
-const Navbar = ({ userRole, setUserRole }) => {
+const Navbar = ({ auth }) => {
+  const { userRole, setUserRole, isLoggedIn, isApproved,isAdmin,isMember } = auth ?? {};
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  // 💡 [수정] 로그인 여부와 승인 여부를 분리
-  const isLoggedIn = userRole !== 'GUEST';
-  const isMember = userRole === 'ROLE_MEMBER';
-
   const handleLogout = () => {
-    localStorage.removeItem('accessToken'); // 스토리지도 삭제
-    setUserRole('GUEST');
+    localStorage.removeItem('accessToken');
+    setUserRole(ROLES.GUEST);
     navigate('/');
     setIsMenuOpen(false);
   };
@@ -49,7 +47,7 @@ const Navbar = ({ userRole, setUserRole }) => {
               )}
 
               {/* 관리자 전용 메뉴 */}
-              {userRole === 'ROLE_ADMIN' && (
+              {userRole === ROLES.ADMIN && (
                 <Link 
                   to="/admin" 
                   className="hover:text-cyan-400 transition-colors"
@@ -93,7 +91,7 @@ const Navbar = ({ userRole, setUserRole }) => {
                 </>
               )}
               
-              {userRole === 'ROLE_ADMIN' && (
+              {userRole === ROLES.ADMIN && (
                 <Link to="/admin" onClick={closeMenu} className="text-red-400 flex items-center gap-2 border border-red-500/50 px-4 py-2 rounded-xl bg-red-900/20">
                   <Settings size={20} /> Admin Page
                 </Link>

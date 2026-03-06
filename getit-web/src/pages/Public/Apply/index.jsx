@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAppStore } from '../../../store/appStore';
+import { MESSAGES } from '../../../constants';
+import applyQuestionsData from '../../../resources/Apply/ApplyQuestions.json';
 import ApplyHeader from './components/ApplyHeader';
 import QuestionField from './components/QuestionField';
 import SubmitButton from './components/SubmitButton';
 import questionData from '../../../resources/Apply/question.json';
 
+const applyQuestions = applyQuestionsData;
+
 const Apply = () => {
+  const navigate = useNavigate();
   const { generationText } = useAppStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '', q4: '', q5: '' });
+  const initialAnswers = useMemo(
+    () => Object.fromEntries(applyQuestions.map((q) => [q.id, ''])),
+    []
+  );
+  const [answers, setAnswers] = useState(initialAnswers);
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

@@ -1,10 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../../store/appStore';
-import { MessageCircle } from 'lucide-react'; // 카카오 아이콘 대용 (또는 커스텀 SVG)
+import { MessageCircle } from 'lucide-react';
 
 const Login = () => {
-  const navigate = useNavigate();
   const { generationText } = useAppStore();
 
   // 백엔드 OAuth2 엔드포인트 URL (환경 변수로 관리하는 것이 좋습니다)

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { MESSAGES, ROLES } from './constants';
+import { useAuth } from './hooks/useAuth';
 import Navbar from './components/Navbar';
 import Home from './pages/Public/Home/index.jsx';
 import About from './pages/Public/About/index.jsx';
@@ -17,13 +17,11 @@ import AdminPage from './pages/Admin/index.jsx';
 import Apply from './pages/Public/Apply/index.jsx';
 
 
-const NavigationWrapper = ({ userRole, setUserRole }) => {
+const NavigationWrapper = ({ auth }) => {
   const location = useLocation();
-
   const hideNavbarPaths = ['/profileSetup'];
   const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
-
-  return shouldShowNavbar ? <Navbar userRole={userRole} setUserRole={setUserRole} /> : null;
+  return shouldShowNavbar ? <Navbar auth={auth} /> : null;
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -38,46 +36,30 @@ if(token) {
   window.history.replaceState({}, document.title, window.location.pathname); // 토큰 저장 후 URL 정리
 
   if(isNew && !hasInfo) {
-    alert("서비스 이용을 위해 추가 정보 입력이 필요합니다.");
+    alert(MESSAGES.PROFILE_SETUP_REQUIRED);
     window.location.replace('/profileSetup');
   }
 }
 
 function App() {
-  const [userRole, setUserRole] = useState(() => { 
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        return decoded.role || 'GUEST';
-      } catch {
-        return 'GUEST';
-      }
-    }
-    return 'GUEST';
-  }); 
-  
-  const isMember = userRole === 'ROLE_MEMBER';
-  const isAdmin = userRole === 'ROLE_ADMIN';
-  const isApproved = isAdmin || isMember;
+  const auth = useAuth();
+  const { userRole, setUserRole, isLoggedIn, isApproved, isAdmin,isMember } = auth;
 
   return (
     <BrowserRouter>
-      <NavigationWrapper userRole={userRole} setUserRole={setUserRole} />
-      
+      <NavigationWrapper auth={auth} />
       <Routes>
-        <Route path="/" element={<Home userRole={userRole} />} />
+        <Route path="/" element={<Home isApprovedMember={isApproved} />} />
         <Route path="/about" element={<About />} />
         <Route path="/project" element={<Project />} />
         <Route path="/executives" element={<Executives />} />
         <Route path="/recruit" element={<Recruit />} />
         <Route
           path="/apply"
-          element={userRole !== 'GUEST' ? <Apply /> : <Navigate to="/login" replace />} 
+          element={isLoggedIn ? <Apply /> : <Navigate to="/login" replace />}
         />
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
         <Route path="/profileSetup" element={<ProfileSetup />} />
-      
 
         {isApproved && (
           <>
@@ -93,7 +75,6 @@ function App() {
         ) : (
           <Route path="/admin" element={<Navigate to="/" replace />} />
         )}
-
       </Routes>
     </BrowserRouter>
   );
