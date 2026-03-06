@@ -16,7 +16,7 @@ import Executives from './pages/Public/Excutives.jsx';
 import Dashboard from './pages/Dashboard';
 import AdminPage from './pages/Admin/index.jsx';
 import Apply from './pages/Public/Apply.jsx';
-
+import OAuthCallbackHandler from './components/OAuthCallbackHandler';
 
 const NavigationWrapper = ({ auth }) => {
   const location = useLocation();
@@ -24,24 +24,6 @@ const NavigationWrapper = ({ auth }) => {
   const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
   return shouldShowNavbar ? <Navbar auth={auth} /> : null;
 };
-
-const params = new URLSearchParams(window.location.search);
-const token = params.get('token'); 
-const isNew = params.get('isNewMember') === 'true';
-const hasInfo = params.get('hasInfo') === 'true';
-
-if(token) {
-  localStorage.setItem('accessToken', token);
-  localStorage.setItem('isNewMember', params.get('isNewMember'));
-  localStorage.setItem('hasInfo', params.get('hasInfo'));
-
-  if(isNew && !hasInfo) {
-    // /profileSetup 직접 요청 시 서버가 404 낼 수 있으므로, 먼저 / 로 이동 후 클라이언트에서 리다이렉트
-    window.location.replace('/?redirect=profileSetup');
-  } else {
-    window.location.replace('/');
-  }
-}
 
 function RedirectHandler() {
   const location = useLocation();
@@ -66,6 +48,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <OAuthCallbackHandler />
       <RedirectHandler />
       <NavigationWrapper auth={auth} />
       <Routes>
