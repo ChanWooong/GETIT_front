@@ -2,9 +2,9 @@
   "Schedule": [
     { "date": "9월 2주차", "topic": "GETIT Chat", "type": "Event" },
     { "date": "9월 4주차", "topic": "아이디어톤", "type": "Event" },
-    { "date": "9월 5주차 - 11월 2주차", "topic": "MVP 개발", "type": "Event" },
-    { "date": "11월 1주차", "topic": "Deployment Seminar", "type": "Seminar" },
-    { "date": "11월 3주차 - 11월 4주차", "topic": "User Testing Festival", "type": "Event" },
-    { "date": "9월 2주차 - 11월 1주차", "topic": "창업 빌드업", "type": "Online" }
+    { "date": "9월 – 11월", "topic": "MVP 개발", "type": "Event" },
+    { "date": "11월 1주차", "topic": "배포 세미나", "type": "Seminar" },
+    { "date": "11월 4주차", "topic": "유저 테스트 및 마케팅 행사", "type": "Event" },
+    { "date": "9월 – 11월", "topic": "SW교육 & 창업 빌드업", "type": "Online" }
   ]
 }

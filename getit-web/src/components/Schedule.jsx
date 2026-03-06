@@ -1,46 +1,71 @@
 import React from "react";
-import { Calendar } from "lucide-react";
+import { Calendar, Star, BookOpen, Wifi } from "lucide-react";
+
+const TYPE_CONFIG = {
+  Event: { icon: Star, label: "Event", className: "border-cyan-500/50 text-cyan-400 bg-cyan-500/10" },
+  Seminar: { icon: BookOpen, label: "Seminar", className: "border-blue-500/50 text-blue-400 bg-blue-500/10" },
+  Online: { icon: Wifi, label: "Online", className: "border-green-500/50 text-green-400 bg-green-500/10" },
+  Offline: { icon: Calendar, label: "Offline", className: "border-purple-500/50 text-purple-400 bg-purple-500/10" },
+};
 
 function Schedule(props) {
-  const scheduleList = props.scheduleList; // 부모 컴포넌트에서 일정 데이터를 받아옵니다.
+  const scheduleList = props.scheduleList ?? [];
+
+  const isRange = (dateStr) => {
+    if (!dateStr || typeof dateStr !== "string") return false;
+    return dateStr.includes(" – ") || dateStr.includes("–");
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <h3 className="text-3xl font-bold mb-8 text-center flex items-center justify-center gap-2">
-        <Calendar className="text-cyan-400" />
+        <Calendar className="text-cyan-400" size={28} />
         GETIT {props.semester}학기 일정
       </h3>
-      <p className="text-center text-gray-400 mb-10">
+      <p className="text-center text-gray-400 mb-10 text-sm">
         GET IT {props.semester}학기 행사입니다.
-        <br />* 일정은 상황에 따라 변경될 수 있습니다.
+        <br />
+        <span className="text-gray-500">* 일정은 상황에 따라 변경될 수 있습니다.</span>
       </p>
 
-      <div className="space-y-4">
-        {scheduleList && scheduleList.length > 0 ? scheduleList.map((item, index) => ( // Check if scheduleList is valid
-          <div
-            key={index}
-            className="flex flex-col md:flex-row items-start md:items-center bg-white/5 border border-white/10 p-5 rounded-xl hover:bg-white/10 transition-colors"
-          >
-            <div className="min-w-[100px] font-bold text-cyan-400 mb-2 md:mb-0">
-              {item.date || '날짜 없음'}
-            </div>
-            <div className="flex-1 font-medium text-white mb-2 md:mb-0">
-              {item.topic || '주제 없음'}
-            </div>
-            <div>
-              <span
-                className={`text-xs px-3 py-1 rounded-full border ${
-                  item.type === "Offline"
-                    ? "border-blue-500 text-blue-400"
-                    : item.type === "Online"
-                      ? "border-green-500 text-green-400"
-                      : "border-purple-500 text-purple-400 font-bold"
+      <div className="space-y-3">
+        {scheduleList.length > 0 ? (
+          scheduleList.map((item, index) => {
+            const range = isRange(item.date);
+            const config = TYPE_CONFIG[item.type] ?? TYPE_CONFIG.Event;
+            const Icon = config.icon;
+
+            return (
+              <div
+                key={index}
+                className={`flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 p-4 sm:p-5 rounded-2xl border transition-all ${
+                  range
+                    ? "bg-cyan-500/5 border-cyan-500/20 hover:bg-cyan-500/10"
+                    : "bg-white/5 border-white/10 hover:bg-white/10"
                 }`}
               >
-                {item.type || '유형 없음'}
-              </span>
-            </div>
-          </div>
-        )) : <p className="text-center text-gray-400">일정이 없습니다.</p>}
+                <div className="flex-shrink-0 w-full sm:w-[120px] font-semibold text-sm text-cyan-400">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+                    {item.date || "날짜 없음"}
+                  </span>
+                </div>
+                <div className="flex-1 font-medium text-white min-w-0">
+                  {item.topic || "주제 없음"}
+                </div>
+                <div className="flex-shrink-0">
+                  <span
+                    className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${config.className}`}
+                  >
+                    <Icon size={14} />
+                    {config.label}
+                  </span>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-center text-gray-400 py-8">일정이 없습니다.</p>
+        )}
       </div>
     </div>
   );
