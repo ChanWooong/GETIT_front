@@ -79,16 +79,20 @@ export const ADMIN_APPLY_MESSAGES = {
 
 /** Admin 권한(역할 지정) 관리 문구 */
 export const ADMIN_AUTH_MESSAGES = {
-  LOADING: '가입자 목록 로딩 중...',
-  LIST_ERROR: '가입자 목록을 불러오는 중 오류가 발생했습니다.',
+  LOADING: '멤버 목록 로딩 중...',
+  LIST_ERROR: '멤버 목록을 불러오는 중 오류가 발생했습니다.',
   ROLE_UPDATE_SUCCESS: '역할이 변경되었습니다.',
   ROLE_UPDATE_ERROR: '역할 변경 중 오류가 발생했습니다.',
   ROLE_CONFIRM: (name, roleLabel) => `"${name}" 님을 ${roleLabel}(으)로 지정하시겠습니까?`,
-  NO_USERS: '승인 대기 중인 가입자가 없습니다.',
-  SEARCH_PLACEHOLDER: '이름·학번으로 검색...',
+  DELETE_CONFIRM: (name) => `"${name || '이 사용자'}" 님을 삭제하시겠습니까? 삭제 후 복구할 수 없습니다.`,
+  DELETE_SUCCESS: '삭제되었습니다.',
+  DELETE_ERROR: '삭제 중 오류가 발생했습니다.',
+  NO_USERS: '조회된 멤버가 없습니다.',
+  SEARCH_PLACEHOLDER: '이름·학번·이메일로 검색...',
   ROLE_GUEST: '게스트',
   ROLE_MEMBER: '멤버',
   ROLE_ADMIN: '관리자',
+  FILTER_ALL: '전체',
 };
 
 /** Project 페이지 헤더·설명 문구 */
