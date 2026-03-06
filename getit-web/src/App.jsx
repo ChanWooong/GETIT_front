@@ -62,8 +62,8 @@ function RedirectHandler() {
 
 function App() {
   const auth = useAuth();
-  const { userRole, setUserRole, isLoggedIn, isApproved, isAdmin,isMember } = auth;
-
+  const { userRole, setUserRole, isApproved, isAdmin,isMember } = auth;
+  const token = params.get('token'); 
   return (
     <BrowserRouter>
       <RedirectHandler />
@@ -76,7 +76,7 @@ function App() {
         <Route path="/recruit" element={<Recruit />} />
         <Route
           path="/apply"
-          element={isLoggedIn ? <Apply /> : <Navigate to="/login" replace />}
+          element={token !== null ? <Apply /> : <Navigate to="/login" replace />}
         />
         <Route path="/login" element={<Login setUserRole={setUserRole} />} />
         <Route path="/profileSetup" element={<ProfileSetup />} />
