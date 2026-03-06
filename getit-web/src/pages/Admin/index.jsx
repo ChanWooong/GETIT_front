@@ -26,7 +26,7 @@ const AdminPage = () => {
             />
           )}
           {activeTab === 'AUTH' && <AuthManagement />}
-          {activeTab === 'SETTINGS' && <SettingsManagement />}
+          {activeTab === 'SETTINGS' && <SettingsManagement onBack={() => setActiveTab('MEMBERS')} />}
           
         </div>
       </div>

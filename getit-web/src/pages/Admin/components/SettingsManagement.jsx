@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Calendar } from 'lucide-react';
+import { Settings, Calendar, ArrowLeft } from 'lucide-react';
 import api from '../../../api/axios';
 
-const SettingsManagement = () => {
+const SettingsManagement = ({ onBack }) => {
   const [filter, setFilter] = useState('RECRUIT');
   const [startAt, setStartAt] = useState('');
   const [endAt, setEndAt] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 현재 모집 상태 조회
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -29,8 +28,8 @@ const SettingsManagement = () => {
     try {
       setLoading(true);
       await api.patch('/api/recruitment/status', {
-        startAt: startAt.replace('T', 'T') + ':00',
-        endAt: endAt.replace('T', 'T') + ':00',
+        startAt: startAt + ':00',
+        endAt: endAt + ':00',
       });
       alert('모집 기간이 설정되었습니다.');
       const response = await api.get('/api/recruitment/status');
@@ -42,17 +41,22 @@ const SettingsManagement = () => {
     }
   };
 
-  const filters = [
-    { id: 'RECRUIT', label: '모집 설정' },
-  ];
+  const filters = [{ id: 'RECRUIT', label: '모집 설정' }];
 
   return (
     <div className="animate-in fade-in duration-500 text-left">
+      {/* ✅ 뒤로가기 버튼 */}
+      <button
+        onClick={onBack}
+        className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white text-sm font-bold transition-colors"
+      >
+        <ArrowLeft size={16} /> 돌아가기
+      </button>
+
       <h3 className="text-xl font-bold flex items-center gap-2 text-white mb-8">
         <Settings className="text-cyan-400" /> 설정
       </h3>
 
-      {/* 필터 탭 */}
       <div className="flex gap-3 mb-8">
         {filters.map((f) => (
           <button
@@ -67,7 +71,6 @@ const SettingsManagement = () => {
         ))}
       </div>
 
-      {/* 모집 설정 */}
       {filter === 'RECRUIT' && (
         <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
           <div className="flex items-center gap-3 mb-6">
