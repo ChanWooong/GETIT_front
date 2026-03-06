@@ -50,7 +50,29 @@ export const MESSAGES = {
   APPLY_SUCCESS:
     '제출이 완료되었습니다.\n저희 GET IT에 지원해주셔서 진심으로 감사드리며,\n서류 발표 일정을 안내해 드리겠습니다.',
   APPLY_LOGIN_REQUIRED: '지원서 작성을 위해 먼저 로그인이 필요합니다.',
+  APPLY_DRAFT_LOADED: '작성 중이던 임시 저장 데이터를 불러왔습니다.',
+  APPLY_DRAFT_SAVED: '임시 저장이 완료되었습니다.',
+  APPLY_DRAFT_ERROR: '임시 저장 중 오류가 발생했습니다.',
+  APPLY_SUBMIT_CONFIRM: '제출 후에는 수정이 불가능합니다. 제출하시겠습니까?',
+  APPLY_SUBMIT_ERROR: '제출 중 오류가 발생했습니다.',
   LECTURE_LOCKED: '아직 오픈되지 않은 강의입니다.',
+};
+
+/** 지원서 제출 완료 시 발표일 등 (문구에 삽입) */
+export const APPLY_ANNOUNCE_DATE = '3월 15일';
+
+/** Admin 지원자 목록·모달 문구 */
+export const ADMIN_APPLY_MESSAGES = {
+  LOADING: '데이터 로딩 중...',
+  LIST_ERROR: '지원서 목록을 불러오는 중 오류가 발생했습니다.',
+  SEARCH_PLACEHOLDER: '이름으로 검색...',
+  NO_APPLICANTS: '현재 접수된 지원서가 없습니다.',
+  NO_NAME: '이름 없음',
+  NO_DEPARTMENT: '학과 없음',
+  NO_ANSWER: '내용 없음',
+  REVIEW_TITLE: 'Application Review',
+  VIEW_BUTTON: '보기',
+  MODAL_CLOSE: '닫기',
 };
 
 /** Project 페이지 헤더·설명 문구 */
