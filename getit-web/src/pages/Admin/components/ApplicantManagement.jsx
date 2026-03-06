@@ -28,16 +28,19 @@ const ApplicantManagement = ({ onSelect }) => {
   }, []);
 
   const handleSelect = async (app) => {
-   try {
+    try {
       const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/admin/applies/${app.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-     });
-      // ✅ success 체크 제거, 바로 data 사용
-    onSelect({ ...response.data, name: app.name, department: app.department });
-
-  } catch (err) {
+      });
+      const raw = response.data?.data ?? response.data;
+      onSelect({
+        ...raw,
+        name: app.name ?? raw.name,
+        department: app.department ?? raw.department
+      });
+    } catch (err) {
       console.error("상세 데이터 로드 실패:", err);
-   }
+    }
   };
 
   if (loading) return <div className="p-10 text-white text-center">데이터 로딩 중...</div>;

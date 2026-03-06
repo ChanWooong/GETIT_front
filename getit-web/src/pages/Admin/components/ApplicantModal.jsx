@@ -5,10 +5,10 @@ import questions from '../../../resources/Apply/question.json';
 const ApplicantModal = ({ applicant, onClose }) => {
   if (!applicant) return null;
 
-
+  // API는 answer1~answer5 반환. question index(0~4) → answer1~answer5 매핑
   const questionItems = questions.map((q) => ({
-      q: q.label,
-      a: applicant.answers?.[q.index]
+    label: q.label,
+    answer: applicant[`answer${q.index + 1}`] ?? applicant.answers?.[q.index] ?? ''
   }));
 
   return (
@@ -25,10 +25,10 @@ const ApplicantModal = ({ applicant, onClose }) => {
           <p className="text-gray-400 text-sm mt-1">{applicant.department || '학과 없음'}</p>
         </div>
         <div className="space-y-6 overflow-y-auto pr-2 custom-scrollbar flex-1">
-          {questions.map((item, idx) => (
+          {questionItems.map((item, idx) => (
             <div key={idx} className="bg-white/5 p-6 rounded-3xl border border-white/5">
-              <h4 className="text-cyan-400 font-black text-sm mb-4 uppercase">{item.q}</h4>
-              <p className="text-gray-300 leading-relaxed text-sm whitespace-pre-wrap">{item.a || '내용 없음'}</p>
+              <h4 className="text-cyan-400 font-black text-sm mb-4 uppercase">{item.label}</h4>
+              <p className="text-gray-300 leading-relaxed text-sm whitespace-pre-wrap">{item.answer || '내용 없음'}</p>
             </div>
           ))}
         </div>
