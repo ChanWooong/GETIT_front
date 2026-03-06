@@ -83,36 +83,50 @@ const Navbar = ({ auth }) => {
               <X size={28} />
             </button>
           </div>
-          <nav className="flex-1 min-h-0 flex flex-col justify-evenly px-4 py-4">
-            <Link to="/about" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">About</Link>
-            <Link to="/executives" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">Executives</Link>
-            <Link to="/recruit" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">Recruit</Link>
+          <nav className="flex-1 min-h-0 flex flex-col justify-evenly px-4 py-4 overflow-y-auto">
+            {/* 그룹 1: 소개/공개 메뉴 */}
+            <div className="flex flex-col gap-1">
+              <Link to="/about" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">About</Link>
+              <Link to="/executives" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">Executives</Link>
+              <Link to="/recruit" onClick={closeMenu} className="py-3 px-4 rounded-xl text-gray-300 hover:text-cyan-400 hover:bg-white/5 transition-colors text-base font-medium text-center">Recruit</Link>
+            </div>
 
             {isLoggedIn ? (
               <>
+                {/* 구분선 */}
+                <div className="border-t border-white/10 my-1" aria-hidden="true" />
+                {/* 그룹 2: 멤버 메뉴 (Lecture, Invest) */}
                 {isMember && (
-                  <>
+                  <div className="flex flex-col gap-1">
                     <Link to="/lecture" onClick={closeMenu} className="py-3 px-4 rounded-xl text-cyan-400 hover:bg-cyan-500/10 transition-colors text-base font-medium flex items-center justify-center gap-2">
                       <PlayCircle size={18} /> Lecture
                     </Link>
                     <Link to="/invest" onClick={closeMenu} className="py-3 px-4 rounded-xl text-cyan-400 hover:bg-cyan-500/10 transition-colors text-base font-medium flex items-center justify-center gap-2">
                       <TrendingUp size={18} /> Invest
                     </Link>
-                  </>
+                  </div>
                 )}
+                {isMember && userRole === ROLES.ADMIN && <div className="border-t border-white/10 my-1" aria-hidden="true" />}
+                {/* 그룹 3: 관리자 */}
                 {userRole === ROLES.ADMIN && (
                   <Link to="/admin" onClick={closeMenu} className="py-3 px-4 rounded-xl text-red-400 border border-red-500/50 bg-red-900/20 hover:bg-red-900/30 transition-colors text-base font-medium flex items-center justify-center gap-2">
                     <Settings size={18} /> Admin
                   </Link>
                 )}
+                {/* 구분선 */}
+                <div className="border-t border-white/10 my-1" aria-hidden="true" />
+                {/* 그룹 4: 로그아웃 */}
                 <button type="button" onClick={handleLogout} className="py-3 px-4 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors text-base font-medium flex items-center justify-center gap-2">
                   <LogOut size={18} /> Logout
                 </button>
               </>
             ) : (
-              <Link to="/login" onClick={closeMenu} className="py-3 px-6 rounded-full bg-cyan-500 text-[#110b29] font-bold hover:bg-cyan-400 transition-colors text-base text-center">
-                Login
-              </Link>
+              <>
+                <div className="border-t border-white/10 my-1" aria-hidden="true" />
+                <Link to="/login" onClick={closeMenu} className="py-3 px-6 rounded-full bg-cyan-500 text-[#110b29] font-bold hover:bg-cyan-400 transition-colors text-base text-center">
+                  Login
+                </Link>
+              </>
             )}
           </nav>
         </div>
