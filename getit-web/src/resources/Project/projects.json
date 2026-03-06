@@ -5,7 +5,7 @@
     "category": "Web",
     "desc": "팬을 위한 All-In-One 팬 커뮤니티 서비스",
     "tech": ["React", "Node.js", "Express", "MySQL"],
-    "links": { "github": "https://github.com/letsgojh/SamGyeopSal_Get_It", "demo": "#" },
+    "links": { "github": "https://github.com/letsgojh/SamGyeopSal_Get_It" },
     "color": "from-purple-500 to-indigo-500"
   }
 ]

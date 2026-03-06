@@ -46,12 +46,6 @@ const ProjectCard = ({ project }) => {
           >
             <Github size={18} /> {PROJECT_PAGE.LINK_SOURCE}
           </a>
-          <a
-            href={project.links.demo}
-            className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors text-sm font-bold"
-          >
-            {PROJECT_PAGE.LINK_DEMO} <ExternalLink size={16} />
-          </a>
         </div>
       </div>
     </div>
