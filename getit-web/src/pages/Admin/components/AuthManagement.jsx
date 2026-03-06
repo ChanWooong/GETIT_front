@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../../api/axios';
-import { ADMIN_AUTH_MESSAGES } from '../../../constants';
-import { UserCheck, Search, Loader2 } from 'lucide-react';
+import { ADMIN_AUTH_MESSAGES, ROLES } from '../../../constants';
+import { UserCheck, Search, Loader2, UserX, Shield } from 'lucide-react';
 
 /**
- * Admin 권한 설정: 승인 대기 가입자 목록 및 멤버 승인
- * - GET /api/admin/members/pending: 승인 대기 사용자 목록 (id, name, studentId, department, createdAt)
- * - PATCH /api/admin/members/{id}/approve: 멤버 승인
+ * Admin 권한 설정: 승인 대기 가입자 목록 및 역할 지정 (게스트 / 멤버 / 관리자)
+ * - GET /api/admin/members/pending: 승인 대기 사용자 목록
+ * - PATCH /api/admin/members/{id}/role: 역할 지정 (body: { role: 'GUEST' | 'ROLE_MEMBER' | 'ROLE_ADMIN' })
  */
 const formatDate = (dateStr) => {
   if (!dateStr) return '-';
@@ -18,12 +18,20 @@ const formatDate = (dateStr) => {
   }
 };
 
+const ROLE_OPTIONS = [
+  { value: ROLES.GUEST, label: ADMIN_AUTH_MESSAGES.ROLE_GUEST, Icon: UserX, className: 'bg-white/5 hover:bg-gray-500/20 text-gray-400' },
+  { value: ROLES.MEMBER, label: ADMIN_AUTH_MESSAGES.ROLE_MEMBER, Icon: UserCheck, className: 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400' },
+  { value: ROLES.ADMIN, label: ADMIN_AUTH_MESSAGES.ROLE_ADMIN, Icon: Shield, className: 'bg-red-500/20 hover:bg-red-500/30 text-red-400' },
+];
+
+const getRoleLabel = (roleValue) => ROLE_OPTIONS.find((r) => r.value === roleValue)?.label ?? roleValue;
+
 const AuthManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [approvingId, setApprovingId] = useState(null);
+  const [updatingId, setUpdatingId] = useState(null);
 
   const fetchMembers = async () => {
     try {
@@ -61,18 +69,19 @@ const AuthManagement = () => {
     );
   }, [users, searchQuery]);
 
-  const handleApprove = async (user) => {
-    if (!window.confirm(ADMIN_AUTH_MESSAGES.APPROVE_CONFIRM)) return;
+  const handleSetRole = async (user, roleValue) => {
+    const roleLabel = getRoleLabel(roleValue);
+    if (!window.confirm(ADMIN_AUTH_MESSAGES.ROLE_CONFIRM(user.name || '이름 없음', roleLabel))) return;
     try {
-      setApprovingId(user.id);
-      await api.patch(`/api/admin/members/${user.id}/approve`);
+      setUpdatingId(user.id);
+      await api.patch(`/api/admin/members/${user.id}/role`, { role: roleValue });
       await fetchMembers();
-      alert(ADMIN_AUTH_MESSAGES.APPROVE_SUCCESS);
+      alert(ADMIN_AUTH_MESSAGES.ROLE_UPDATE_SUCCESS);
     } catch (err) {
-      console.error('멤버 승인 실패:', err);
-      alert(err.response?.data?.message || ADMIN_AUTH_MESSAGES.APPROVE_ERROR);
+      console.error('역할 변경 실패:', err);
+      alert(err.response?.data?.message || ADMIN_AUTH_MESSAGES.ROLE_UPDATE_ERROR);
     } finally {
-      setApprovingId(null);
+      setUpdatingId(null);
     }
   };
 
@@ -115,7 +124,7 @@ const AuthManagement = () => {
               <th className="p-5 font-bold">학번</th>
               <th className="p-5 font-bold">학과</th>
               <th className="p-5 font-bold">가입일</th>
-              <th className="p-5 font-bold text-center">동작</th>
+              <th className="p-5 font-bold text-center">역할 지정</th>
             </tr>
           </thead>
           <tbody>
@@ -125,20 +134,26 @@ const AuthManagement = () => {
                 <td className="p-5 text-sm text-gray-400 font-mono">{user.studentId ?? '-'}</td>
                 <td className="p-5 text-sm text-gray-400">{user.department ?? '-'}</td>
                 <td className="p-5 text-sm text-gray-400">{formatDate(user.createdAt)}</td>
-                <td className="p-5 text-center">
-                  <button
-                    type="button"
-                    onClick={() => handleApprove(user)}
-                    disabled={approvingId === user.id}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {approvingId === user.id ? (
-                      <Loader2 size={14} className="animate-spin" />
-                    ) : (
-                      <UserCheck size={14} />
+                <td className="p-5">
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    {updatingId === user.id && (
+                      <span className="flex items-center gap-1.5 text-gray-500 text-xs mr-1">
+                        <Loader2 size={12} className="animate-spin" /> 처리 중
+                      </span>
                     )}
-                    {ADMIN_AUTH_MESSAGES.BUTTON_APPROVE}
-                  </button>
+                    {ROLE_OPTIONS.map(({ value, label, Icon, className }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => handleSetRole(user, value)}
+                        disabled={updatingId === user.id}
+                        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+                      >
+                        <Icon size={12} className="shrink-0" />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </td>
               </tr>
             ))}
