@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
 import { ROLES } from '../../constants';
-import { PUBLIC_LINKS, MEMBER_LINKS, ADMIN_LINK } from './navLinks';
+import { PUBLIC_LINKS, MY_PROFILE_LINK, MEMBER_LINKS, ADMIN_LINK } from './navLinks';
 
 const NavDesktop = ({ auth, onLogout }) => {
   const { userRole, isLoggedIn, isMember } = auth ?? {};
@@ -17,6 +17,12 @@ const NavDesktop = ({ auth, onLogout }) => {
 
       {isLoggedIn ? (
         <>
+          <Link
+            to={MY_PROFILE_LINK.to}
+            className="hover:text-cyan-400 transition-colors flex items-center gap-1"
+          >
+            <MY_PROFILE_LINK.Icon size={18} /> {MY_PROFILE_LINK.label}
+          </Link>
           {(isMember || userRole === ROLES.ADMIN) && (
             <>
               <div className="h-4 w-px bg-gray-700 mx-2" aria-hidden="true" />

@@ -16,6 +16,7 @@ import Executives from './pages/Public/Executives.jsx';
 import Dashboard from './pages/Member/Dashboard';
 import AdminPage from './pages/Admin/index.jsx';
 import Apply from './pages/Public/Apply.jsx';
+import MyProfile from './pages/Member/MyProfile/index.jsx';
 import OAuthCallbackHandler from './components/OAuthCallbackHandler';
 
 const NavigationWrapper = ({ auth }) => {
@@ -65,6 +66,10 @@ function App() {
         <Route
           path="/profileSetup"
           element={isLoggedIn ? <ProfileSetup /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/myProfile"
+          element={isLoggedIn ? <MyProfile /> : <Navigate to="/login" replace />}
         />
         {/* OAuth 콜백으로 /token 도착 시 홈으로 (토큰 처리 후 replace가 안 된 경우 대비) */}
         <Route path="/token" element={<Navigate to="/" replace />} />
