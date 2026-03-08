@@ -46,6 +46,10 @@ export const MESSAGES = {
   LOGIN_REQUIRED: '로그인이 필요합니다.',
   PROFILE_SUCCESS: '정보 등록이 완료되었습니다!',
   PROFILE_FORM_ERROR: '입력 형식을 다시 확인해주세요',
+  MY_PROFILE_CONFIRM: '해당 정보가 맞나요?',
+  MY_PROFILE_SAVED: '저장되었습니다.',
+  MY_PROFILE_LOAD_ERROR: '회원 정보를 불러오지 못했습니다.',
+  MY_PROFILE_SAVE_ERROR: '저장 중 오류가 발생했습니다.',
   APPLY_ALL_REQUIRED: '모든 문항을 작성해주세요!',
   APPLY_SUCCESS:
     '제출이 완료되었습니다.\n저희 GET IT에 지원해주셔서 진심으로 감사드리며,\n서류 발표 일정을 안내해 드리겠습니다.',
@@ -113,7 +117,7 @@ export const PROJECT_PAGE = {
   TITLE_HIGHLIGHT: 'PROJECTS',
   SUBTITLE: '우리가 밤새워 만든 결과물들입니다.',
   DESCRIPTION: '작은 아이디어에서 시작해 실제 서비스가 되기까지의 여정을 확인해보세요.',
-  LINK_SOURCE: 'Source Code',
+  LINK_SOURCE: 'Project Github',
   LINK_DEMO: 'Live Demo',
 };
 

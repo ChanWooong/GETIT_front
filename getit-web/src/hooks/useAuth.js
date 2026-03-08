@@ -11,7 +11,9 @@ import { useAuthStore } from './authStore';
 export function useAuth() {
   const userRole = useAuthStore((s) => s.userRole);
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const userName = useAuthStore((s) => s.userName);
   const setUserRole = useAuthStore((s) => s.setUserRole);
+  const setUserName = useAuthStore((s) => s.setUserName);
   const logout = useAuthStore((s) => s.logout);
 
   const isApproved = userRole === ROLES.MEMBER || userRole === ROLES.ADMIN;
@@ -20,7 +22,9 @@ export function useAuth() {
 
   return {
     userRole,
+    userName,
     setUserRole,
+    setUserName,
     logout,
     isLoggedIn,
     isApproved,
