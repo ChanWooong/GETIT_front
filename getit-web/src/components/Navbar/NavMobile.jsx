@@ -69,7 +69,7 @@ const NavMobile = ({ auth, onLogout, onClose }) => {
               onClick={onClose}
               className={`${linkBase} flex-1 flex items-center justify-center gap-2 rounded-r-none border-r-0 text-emerald-400 bg-emerald-900/20 border border-emerald-500/40 border-l-4 border-l-emerald-500/70 hover:text-emerald-300 hover:bg-emerald-900/30 transition-colors`}
             >
-              <MY_PROFILE_LINK.Icon size={18} /> {MY_PROFILE_LINK.label}
+              <MY_PROFILE_LINK.Icon size={18} /> {displayName}
             </Link>
             <div className="w-px bg-white/10 self-stretch shrink-0" aria-hidden="true" />
             <button
