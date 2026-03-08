@@ -5,7 +5,8 @@ import { ROLES } from '../../constants';
 import { PUBLIC_LINKS, MEMBER_LINKS, ADMIN_LINK } from './navLinks';
 
 const NavDesktop = ({ auth, onLogout }) => {
-  const { userRole, isLoggedIn, isMember } = auth ?? {};
+  const { userRole, isLoggedIn, isMember, userName } = auth ?? {};
+  const displayName = userName?.trim() || '회원';
 
   return (
     <div className="hidden md:flex items-center space-x-8 font-medium text-gray-300">
@@ -36,15 +37,19 @@ const NavDesktop = ({ auth, onLogout }) => {
               {ADMIN_LINK.label}
             </Link>
           )}
+          <span className="text-gray-400 pl-4" aria-hidden="true">
+            {displayName} 님
+          </span>
           <button
             type="button"
             onClick={onLogout}
-            className="text-gray-400 hover:text-white flex items-center gap-1 transition-colors pl-4"
+            className="text-gray-400 hover:text-white flex items-center gap-1 transition-colors"
           >
             <LogOut size={18} /> Logout
           </button>
         </>
       ) : (
+        
         <Link
           to="/login"
           className="bg-cyan-500 text-[#110b29] px-5 py-2 rounded-full font-bold hover:bg-cyan-400 transition-all shadow-[0_0_15px_rgba(34,211,238,0.3)]"
@@ -52,6 +57,7 @@ const NavDesktop = ({ auth, onLogout }) => {
           Login
         </Link>
       )}
+      
     </div>
   );
 };

@@ -10,7 +10,8 @@ const linkMember = 'text-cyan-400 hover:bg-cyan-500/10 transition-colors flex it
 const linkAdmin = 'text-red-400 border border-red-500/50 bg-red-900/20 hover:bg-red-900/30 transition-colors flex items-center justify-center gap-2';
 
 const NavMobile = ({ auth, onLogout, onClose }) => {
-  const { userRole, isLoggedIn, isMember } = auth ?? {};
+  const { userRole, isLoggedIn, isMember, userName } = auth ?? {};
+  const displayName = userName?.trim() || '회원';
 
   return (
     <nav className="flex-1 min-h-0 flex flex-col justify-evenly px-4 py-4 overflow-y-auto">
@@ -57,6 +58,9 @@ const NavMobile = ({ auth, onLogout, onClose }) => {
             </Link>
           )}
           <div className="border-t border-white/10 my-1" aria-hidden="true" />
+          <p className="py-2 px-4 text-gray-400 text-center text-sm" aria-hidden="true">
+            {displayName} 님
+          </p>
           <button
             type="button"
             onClick={onLogout}
