@@ -41,7 +41,7 @@ const Navbar = ({ auth }) => {
       </div>
 
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[60] md:hidden bg-[#110b29] flex flex-col h-[100dvh] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] animate-fade-in">
+        <div className="fixed inset-0 z-[60] md:hidden bg-[#110b29]/95 backdrop-blur-md flex flex-col h-[100dvh] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] animate-fade-in">
           <div className="flex-shrink-0 flex justify-end items-center px-4 py-3 border-b border-white/5">
             <button
               type="button"

@@ -29,14 +29,9 @@ const NavMobile = ({ auth, onLogout, onClose }) => {
 
       {isLoggedIn ? (
         <>
-          <div className="border-t border-white/10 my-1" aria-hidden="true" />
-          <Link
-            to={MY_PROFILE_LINK.to}
-            onClick={onClose}
-            className={`${linkBase} ${linkPublic}`}
-          >
-            <MY_PROFILE_LINK.Icon size={18} /> {MY_PROFILE_LINK.label}
-          </Link>
+          {(isMember || userRole === ROLES.ADMIN) && (
+            <div className="border-t border-white/10 my-1" aria-hidden="true" />
+          )}
           {(isMember || userRole === ROLES.ADMIN) && (
             <div className="flex flex-col gap-1">
               {MEMBER_LINKS.map(({ to, label, Icon }) => (
@@ -63,14 +58,26 @@ const NavMobile = ({ auth, onLogout, onClose }) => {
               <ADMIN_LINK.Icon size={18} /> {ADMIN_LINK.label}
             </Link>
           )}
-          <div className="border-t border-white/10 my-1" aria-hidden="true" />
-          <button
-            type="button"
-            onClick={onLogout}
-            className={`${linkBase} text-gray-400 hover:text-white hover:bg-white/5 transition-colors flex items-center justify-center gap-2`}
-          >
-            <LogOut size={18} /> Logout
-          </button>
+          {(isMember || userRole === ROLES.ADMIN) && (
+            <div className="border-t border-white/10 my-1" aria-hidden="true" />
+          )}
+          <div className="flex flex-row items-stretch gap-0">
+            <Link
+              to={MY_PROFILE_LINK.to}
+              onClick={onClose}
+              className={`${linkBase} ${linkPublic} flex-1 flex items-center justify-center gap-2 rounded-r-none`}
+            >
+              <MY_PROFILE_LINK.Icon size={18} /> {MY_PROFILE_LINK.label}
+            </Link>
+            <div className="w-px bg-white/10 self-stretch shrink-0" aria-hidden="true" />
+            <button
+              type="button"
+              onClick={onLogout}
+              className={`${linkBase} text-gray-400 hover:text-white hover:bg-white/5 transition-colors flex-1 flex items-center justify-center gap-2 rounded-l-none`}
+            >
+              <LogOut size={18} /> Logout
+            </button>
+          </div>
         </>
       ) : (
         <>

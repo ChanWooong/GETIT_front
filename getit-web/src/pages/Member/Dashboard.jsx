@@ -1,10 +1,7 @@
 import React from 'react';
 import { Play, Bell, Users, Clock } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-const Dashboard = () => {
-  const { auth } = useAuth();
-  const { userName, generation } = auth ?? {};
 
+const Dashboard = () => {
   return (
     <div className="min-h-screen w-full bg-[#110b29] text-white pt-32 pb-20 px-6 font-sans">
       <div className="max-w-7xl mx-auto">
@@ -13,7 +10,7 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-end mb-10 pb-6 border-b border-white/10 gap-4">
           <div>
             <h2 className="text-3xl font-bold mb-2">My Dashboard</h2>
-            <p className="text-gray-400">{generation}기 활동 멤버 <span className="text-cyan-400 font-bold">{userName}</span>님, 환영합니다!</p>
+            <p className="text-gray-400">{generation}기 활동 멤버 <span className="text-cyan-400 font-bold">홍길동</span>님, 환영합니다!</p>
           </div>
           <div className="text-left md:text-right bg-white/5 p-4 rounded-xl md:bg-transparent md:p-0">
             <p className="text-xs text-gray-500 mb-1">NEXT SESSION</p>
