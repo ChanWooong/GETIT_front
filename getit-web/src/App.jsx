@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from
 import { useEffect } from 'react';
 import { MESSAGES, ROLES } from './constants';
 import { useAuth } from './hooks/useAuth';
+import api from './api/axios';
 import Navbar from './components/Navbar';
 import Home from './pages/Public/Home.jsx';
 import About from './pages/Public/About.jsx';
@@ -45,7 +46,21 @@ function RedirectHandler() {
 
 function App() {
   const auth = useAuth();
-  const { userRole, isLoggedIn, isApproved, isAdmin, isMember } = auth;
+  const { userRole, isLoggedIn, isApproved, isAdmin, isMember, setUserName } = auth;
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const syncMemberName = async () => {
+      try {
+        const response = await api.get('/api/member/info');
+        const name = response.data?.name;
+        if (name != null && typeof name === 'string') setUserName(name.trim() || null);
+      } catch {
+        // 401 등은 axios 인터셉터에서 처리, 여기서는 무시
+      }
+    };
+    syncMemberName();
+  }, [isLoggedIn, setUserName]);
 
   return (
     <BrowserRouter>

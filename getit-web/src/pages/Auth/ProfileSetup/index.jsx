@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../../api/axios';
 import { User, Hash, BookOpen, Phone } from 'lucide-react';
 import { MESSAGES } from '../../../constants';
+import { useAuth } from '../../../hooks/useAuth';
 
 import ProfileHeader from './components/ProfileHeader';
 import InfoInput from './components/InfoInput';
@@ -12,6 +13,7 @@ import Agreement from './components/Agreement.jsx'; // 💡 추가: 약관 동�
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
+  const { setUserName } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   // 💡 추가: 약관 동의 팝업 노출 여부 상태 (기본값 true)
   const [showAgreement, setShowAgreement] = useState(true);
@@ -41,6 +43,7 @@ const ProfileSetup = () => {
         return;
       }
       const response = await api.post('/api/member/info', formData);
+      setUserName(formData.name?.trim() || null);
       const successMsg = response.data?.message ?? MESSAGES.PROFILE_SUCCESS;
       alert(successMsg);
       navigate('/'); 
