@@ -1,9 +1,10 @@
 import React from 'react';
-import { BarChart2, Bell, Users } from 'lucide-react'; // Settings 제거
+import { BarChart2, BookOpen, Bell, Users } from 'lucide-react';
 
 const TabNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'MEMBERS', label: '부원 학습 관리', icon: BarChart2 },
+    { id: 'LECTURE', label: '강의 관리', icon: BookOpen },
     { id: 'APPLICANTS', label: '지원서 관리', icon: Bell },
     { id: 'AUTH', label: '권한 설정', icon: Users },
   ];

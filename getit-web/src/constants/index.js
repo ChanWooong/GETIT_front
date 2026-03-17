@@ -27,13 +27,13 @@ export const LECTURE_TRACK = {
   STARTUP: 'STARTUP',
 };
 
-/** API Base URL 및 강의 목록 경로 (백엔드 연동 시 사용) */
+/** API Base URL 및 경로 (백엔드 연동) */
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 export const API = {
   BASE_URL: API_BASE_URL,
   PATHS: {
-    /** GET 강의 목록. 응답 예: { swTrack: Lecture[], startupTrack: Lecture[] } */
     LECTURES: '/api/lectures',
+    LECTURE_DETAIL: (id) => `/api/lecture/${id}`,
   },
 };
 
@@ -91,6 +91,18 @@ export const ADMIN_MEMBER_MESSAGES = {
   LOADING: '데이터 로딩 중...',
   LIST_ERROR: '데이터 로드 실패',
   SEARCH_PLACEHOLDER: '이름으로 검색...',
+  SUBTAB_MEMBERS: '멤버 현황',
+  SUBTAB_QNA: 'Q&A 확인',
+  SUBTAB_ASSIGNMENTS: '과제 제출 현황',
+  QNA_SELECT_LECTURE: '강의 선택',
+  QNA_NO_LECTURES: '강의가 없습니다.',
+  QNA_ROOMS: '질문한 멤버 목록',
+  QNA_NO_ROOMS: '질문이 없습니다.',
+  QNA_ANSWER_PLACEHOLDER: '답변 입력',
+  QNA_SUBMIT_ANSWER: '답변 등록',
+  ASSIGNMENTS_LOADING: '과제 목록 로딩 중...',
+  ASSIGNMENTS_EMPTY: '제출된 과제가 없습니다.',
+  ASSIGNMENTS_DOWNLOAD_PREPARING: '준비 중',
 };
 
 /** Admin 권한(역할 지정) 관리 문구 */
@@ -123,3 +135,43 @@ export const PROJECT_PAGE = {
 
 /** Project 페이지 카테고리 필터 목록 (첫 항목이 기본값) */
 export const PROJECT_CATEGORIES = ['All', 'Web', 'App', 'AI'];
+
+/** Admin 강의 관리 문구 */
+export const ADMIN_LECTURE_MESSAGES = {
+  TAB: '강의 관리',
+  LIST_TITLE: '강의 목록',
+  ADD: '강의 추가',
+  EDIT: '수정',
+  DELETE: '삭제',
+  QNA: 'Q&A',
+  NO_LECTURES: '등록된 강의가 없습니다.',
+  DELETE_CONFIRM: (title) => `"${title || '이 강의'}"를 삭제하시겠습니까?`,
+  DELETE_SUCCESS: '삭제되었습니다.',
+  FORM_TITLE: '제목',
+  FORM_DESCRIPTION: '설명',
+  FORM_VIDEO_URL: '유튜브 URL (1개)',
+  FORM_MATERIALS: '강의 자료 (이름만)',
+  FORM_TRACK: '트랙',
+  FORM_WEEK: '주차',
+  FORM_STATUS: '상태',
+  SAVE: '저장',
+  CANCEL: '취소',
+  SAVE_SUCCESS: '저장되었습니다.',
+  TRACK_SW: 'SW',
+  TRACK_STARTUP: '창업',
+  QNA_MODAL_TITLE: 'Q&A 관리',
+  QNA_NO_QUESTIONS: '아직 질문이 없습니다.',
+  QNA_ANSWER: '답변 작성',
+  QNA_ANSWER_PLACEHOLDER: '답변 내용을 입력하세요.',
+  QNA_SUBMIT_ANSWER: '답변 등록',
+};
+
+/** 멤버 강의 목록/상세 문구 */
+export const LECTURE_PAGE_MESSAGES = {
+  NO_LECTURES_IN_TRACK: '해당 트랙에 등록된 강의가 없습니다.',
+  MATERIAL_PREPARING: '준비 중',
+  QNA_PLACEHOLDER: '질문하기...',
+  QNA_SEND: '보내기',
+  QNA_NO_MESSAGES: '아직 질문이 없습니다.',
+  LECTURE_NOT_FOUND: '강의를 찾을 수 없습니다.',
+};

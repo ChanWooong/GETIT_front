@@ -66,10 +66,10 @@ const ProfileSetup = () => {
         <ProfileHeader />
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <InfoInput label="이름" icon={User} name="name" placeholder="성함을 입력하세요" value={formData.name} onChange={handleChange} />
-          <InfoInput label="학번" icon={Hash} name="studentId" placeholder="숫자 10자리" maxLength="10" pattern="[0-9]{10}" value={formData.studentId} onChange={handleChange} />
+          <InfoInput label="이름" icon={User} name="name" placeholder="김겟잇" value={formData.name} onChange={handleChange} />
+          <InfoInput label="학번" icon={Hash} name="studentId" placeholder="1234567890" maxLength="10" pattern="[0-9]{10}" value={formData.studentId} onChange={handleChange} />
           <CollegeSelect value={formData.college} onChange={handleChange} />
-          <InfoInput label="학부(과) - 세부 전공" icon={BookOpen} name="department" placeholder="정확한 명칭으로 적어주세요." value={formData.department} onChange={handleChange} />
+          <InfoInput label="학부(과) - 세부 전공" icon={BookOpen} name="department" placeholder="컴퓨터학부 - 글솝" value={formData.department} onChange={handleChange} />
           <InfoInput label="전화번호" icon={Phone} name="cellNum" placeholder="010-1234-5678" pattern="010-[0-9]{3,4}-[0-9]{4}" value={formData.cellNum} onChange={handleChange} />
           <SetupButton isLoading={isLoading} />
         </form>
