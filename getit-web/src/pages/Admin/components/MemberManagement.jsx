@@ -6,9 +6,23 @@ import { ADMIN_MEMBER_MESSAGES, API, LECTURE_TRACK } from '../../../constants';
 import LoadingState from '../../../components/admin/LoadingState';
 import ErrorState from '../../../components/admin/ErrorState';
 import SearchInput from '../../../components/admin/SearchInput';
-import { CheckCircle, MessageCircle, FileText } from 'lucide-react';
+import { CheckCircle, MessageCircle, FileText, Trash2 } from 'lucide-react';
 
 const SUBTAB = { MEMBERS: 'MEMBERS', QNA: 'QNA', ASSIGNMENTS: 'ASSIGNMENTS' };
+
+/** Q&A 메시지를 질문 단위로 묶음 (각 질문 밑에 해당 답변들) */
+function groupQnaByQuestion(messages) {
+  if (!Array.isArray(messages) || messages.length === 0) return [];
+  const groups = [];
+  for (const msg of messages) {
+    if (msg.sender === 'USER') {
+      groups.push({ question: msg, answers: [] });
+    } else if (msg.sender === 'ADMIN' && groups.length > 0) {
+      groups[groups.length - 1].answers.push(msg);
+    }
+  }
+  return groups;
+}
 
 const MemberManagement = () => {
   const { generationText } = useAppStore();
@@ -139,6 +153,7 @@ function QnaManagementView() {
   const [messages, setMessages] = useState([]);
   const [loadingChat, setLoadingChat] = useState(false);
   const [answerByQna, setAnswerByQna] = useState({});
+  const [answerDeletingId, setAnswerDeletingId] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -215,6 +230,23 @@ function QnaManagementView() {
       .catch(() => alert('답변 등록에 실패했습니다.'));
   };
 
+  const deleteAnswer = (lectureId, answerId) => {
+    if (!lectureId || !answerId || answerDeletingId) return;
+    if (!window.confirm(ADMIN_MEMBER_MESSAGES.QNA_DELETE_ANSWER_CONFIRM)) return;
+    setAnswerDeletingId(answerId);
+    api
+      .delete(`/api/lecture/${lectureId}/qna/answer/${answerId}`)
+      .then(() => {
+        if (expanded && expanded.lectureId === lectureId && expanded.memberId) {
+          return api.get(`/api/lecture/${lectureId}/qna/rooms/${expanded.memberId}`);
+        }
+        return Promise.resolve({ data: [] });
+      })
+      .then((res) => setMessages(Array.isArray(res.data) ? res.data : []))
+      .catch(() => alert(ADMIN_MEMBER_MESSAGES.QNA_DELETE_ANSWER_ERROR))
+      .finally(() => setAnswerDeletingId(null));
+  };
+
   const toggleExpand = (row) => {
     const key = row.lectureId + '-' + row.memberId;
     const next = expanded && expanded.lectureId === row.lectureId && expanded.memberId === row.memberId ? null : { lectureId: row.lectureId, memberId: row.memberId };
@@ -287,29 +319,52 @@ function QnaManagementView() {
                             {loadingChat ? (
                               <p className="text-gray-500">{ADMIN_MEMBER_MESSAGES.LOADING}</p>
                             ) : (
-                              messages.map((msg) => (
-                                <div key={msg.id} className={msg.sender === 'ADMIN' ? 'pl-4 border-l-2 border-cyan-500/30' : ''}>
-                                  <p className="text-sm text-gray-200 whitespace-pre-wrap">{msg.content}</p>
-                                  <p className="text-xs text-gray-500">
-                                    {msg.sender === 'USER' ? '멤버' : '관리자'} · {msg.createdAt ? new Date(msg.createdAt).toLocaleString('ko-KR') : ''}
-                                  </p>
-                                  {msg.sender === 'USER' && (
-                                    <div className="mt-2 flex gap-2">
-                                      <input
-                                        type="text"
-                                        value={answerByQna[msg.id] ?? ''}
-                                        onChange={(e) => setAnswerByQna((prev) => ({ ...prev, [msg.id]: e.target.value }))}
-                                        placeholder={ADMIN_MEMBER_MESSAGES.QNA_ANSWER_PLACEHOLDER}
-                                        className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => submitAnswer(row.lectureId, msg.id)}
-                                        disabled={!(answerByQna[msg.id] || '').trim()}
-                                        className="px-4 py-2 bg-cyan-600 text-white font-bold rounded-lg text-sm disabled:opacity-50"
-                                      >
-                                        {ADMIN_MEMBER_MESSAGES.QNA_SUBMIT_ANSWER}
-                                      </button>
+                              groupQnaByQuestion(messages).map((group) => (
+                                <div key={group.question.id} className="space-y-2">
+                                  <div>
+                                    <p className="text-sm text-gray-200 whitespace-pre-wrap">{group.question.content}</p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      멤버 · {group.question.createdAt ? new Date(group.question.createdAt).toLocaleString('ko-KR') : ''}
+                                    </p>
+                                  </div>
+                                  <div className="mt-2 flex gap-2">
+                                    <input
+                                      type="text"
+                                      value={answerByQna[group.question.id] ?? ''}
+                                      onChange={(e) => setAnswerByQna((prev) => ({ ...prev, [group.question.id]: e.target.value }))}
+                                      placeholder={ADMIN_MEMBER_MESSAGES.QNA_ANSWER_PLACEHOLDER}
+                                      className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => submitAnswer(row.lectureId, group.question.id)}
+                                      disabled={!(answerByQna[group.question.id] || '').trim()}
+                                      className="px-4 py-2 bg-cyan-600 text-white font-bold rounded-lg text-sm disabled:opacity-50"
+                                    >
+                                      {ADMIN_MEMBER_MESSAGES.QNA_SUBMIT_ANSWER}
+                                    </button>
+                                  </div>
+                                  {group.answers.length > 0 && (
+                                    <div className="pl-4 space-y-2 border-l-2 border-cyan-500/30">
+                                      {group.answers.map((answer) => (
+                                        <div key={answer.id} className="flex items-start justify-between gap-2">
+                                          <div className="min-w-0 flex-1">
+                                            <p className="text-sm text-gray-200 whitespace-pre-wrap">{answer.content}</p>
+                                            <p className="text-xs text-gray-500 mt-0.5">
+                                              관리자 · {answer.createdAt ? new Date(answer.createdAt).toLocaleString('ko-KR') : ''}
+                                            </p>
+                                          </div>
+                                          <button
+                                            type="button"
+                                            onClick={() => deleteAnswer(row.lectureId, answer.id)}
+                                            disabled={answerDeletingId === answer.id}
+                                            className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-400/10 disabled:opacity-50"
+                                            title={ADMIN_MEMBER_MESSAGES.QNA_DELETE_ANSWER}
+                                          >
+                                            <Trash2 size={16} />
+                                          </button>
+                                        </div>
+                                      ))}
                                     </div>
                                   )}
                                 </div>

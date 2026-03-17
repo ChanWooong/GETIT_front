@@ -4,10 +4,10 @@ import { Lock, Clock, ExternalLink, AlertCircle } from 'lucide-react';
 const Invest = () => {
   // 🔥 나중에 아이디어톤 기간이 되면 이 값을 true로 바꾸세요!
   // 혹은 DB에서 상태를 받아오도록 수정할 수도 있습니다.
-  const isLive = false; 
+  const isLive = true; 
 
   // 기존 모의투자 사이트 주소 (나중에 여기에 주소만 넣으면 됩니다)
-  const investSiteUrl = "https://your-invest-site.com";
+  const investSiteUrl = "https://stockgame.get-it.cloud";
 
   if (isLive) {
     return (

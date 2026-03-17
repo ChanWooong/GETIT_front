@@ -2,11 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, PlayCircle, AlertTriangle, FileText,
-  Upload, Check, X, Download, MessageCircle, Send,
+  Upload, Check, X, Download, MessageCircle, Send, Trash2,
 } from 'lucide-react';
 import api from '../../../api/axios';
 import { useAuth } from '../../../hooks/useAuth';
 import { API, MESSAGES, LECTURE_PAGE_MESSAGES } from '../../../constants';
+
+/** Q&A 메시지 목록을 질문 단위로 묶음 (각 질문 밑에 해당 답변들) */
+function groupQnaByQuestion(messages) {
+  if (!Array.isArray(messages) || messages.length === 0) return [];
+  const groups = [];
+  for (const msg of messages) {
+    if (msg.sender === 'USER') {
+      groups.push({ question: msg, answers: [] });
+    } else if (msg.sender === 'ADMIN' && groups.length > 0) {
+      groups[groups.length - 1].answers.push(msg);
+    }
+  }
+  return groups;
+}
 
 /** 유튜브 URL에서 videoId 추출 */
 function getYoutubeVideoId(url) {
@@ -34,6 +48,7 @@ const LectureDetail = () => {
   const [qnaInput, setQnaInput] = useState('');
   const [qnaMessages, setQnaMessages] = useState([]);
   const [qnaSubmitting, setQnaSubmitting] = useState(false);
+  const [qnaDeletingId, setQnaDeletingId] = useState(null);
 
   useEffect(() => {
     if (!id) {
@@ -102,6 +117,18 @@ const LectureDetail = () => {
       .then((res) => setQnaMessages(Array.isArray(res.data) ? res.data : []))
       .catch(() => alert('질문 등록에 실패했습니다.'))
       .finally(() => setQnaSubmitting(false));
+  };
+
+  const handleDeleteQuestion = (qnaId) => {
+    if (!isMember || !lecture?.id || qnaDeletingId) return;
+    if (!window.confirm(LECTURE_PAGE_MESSAGES.QNA_DELETE_CONFIRM)) return;
+    setQnaDeletingId(qnaId);
+    api
+      .delete(`/api/lecture/${lecture.id}/qna/${qnaId}`)
+      .then(() => api.get(`/api/lecture/${lecture.id}/qna/me`))
+      .then((res) => setQnaMessages(Array.isArray(res.data) ? res.data : []))
+      .catch(() => alert(LECTURE_PAGE_MESSAGES.QNA_DELETE_ERROR))
+      .finally(() => setQnaDeletingId(null));
   };
 
   if (loading) {
@@ -235,12 +262,39 @@ const LectureDetail = () => {
               ) : qnaMessages.length === 0 ? (
                 <p className="text-gray-500 text-sm">{LECTURE_PAGE_MESSAGES.QNA_NO_MESSAGES}</p>
               ) : (
-                qnaMessages.map((msg) => (
-                  <div key={msg.id} className={msg.sender === 'ADMIN' ? 'pl-4 border-l-2 border-cyan-500/30' : ''}>
-                    <p className="text-sm text-gray-200 whitespace-pre-wrap">{msg.content}</p>
-                    <p className="text-xs text-gray-500">
-                      {msg.sender === 'USER' ? '나' : '관리자'} · {msg.createdAt ? new Date(msg.createdAt).toLocaleString() : ''}
-                    </p>
+                groupQnaByQuestion(qnaMessages).map((group) => (
+                  <div key={group.question.id} className="space-y-2">
+                    <div>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm text-gray-200 whitespace-pre-wrap">{group.question.content}</p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            나 · {group.question.createdAt ? new Date(group.question.createdAt).toLocaleString() : ''}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteQuestion(group.question.id)}
+                          disabled={qnaDeletingId === group.question.id}
+                          className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-400/10 disabled:opacity-50"
+                          title={LECTURE_PAGE_MESSAGES.QNA_DELETE}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                    {group.answers.length > 0 && (
+                      <div className="pl-4 space-y-1 border-l-2 border-cyan-500/30">
+                        {group.answers.map((answer) => (
+                          <div key={answer.id}>
+                            <p className="text-sm text-gray-200 whitespace-pre-wrap">{answer.content}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">
+                              관리자 · {answer.createdAt ? new Date(answer.createdAt).toLocaleString() : ''}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))
               )}

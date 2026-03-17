@@ -112,6 +112,9 @@ export const ADMIN_MEMBER_MESSAGES = {
   QNA_BOARD_EMPTY: '등록된 질문이 없습니다.',
   QNA_LOADING: 'Q&A 목록 로딩 중...',
   QNA_NO_MESSAGES: '메시지 없음',
+  QNA_DELETE_ANSWER: '삭제',
+  QNA_DELETE_ANSWER_CONFIRM: '이 답변을 삭제할까요?',
+  QNA_DELETE_ANSWER_ERROR: '답변 삭제에 실패했습니다.',
   ASSIGNMENTS_LOADING: '과제 목록 로딩 중...',
   ASSIGNMENTS_EMPTY: '제출된 과제가 없습니다.',
   ASSIGNMENTS_DOWNLOAD_PREPARING: '준비 중',
@@ -186,4 +189,7 @@ export const LECTURE_PAGE_MESSAGES = {
   QNA_SEND: '보내기',
   QNA_NO_MESSAGES: '아직 질문이 없습니다.',
   LECTURE_NOT_FOUND: '강의를 찾을 수 없습니다.',
+  QNA_DELETE: '삭제',
+  QNA_DELETE_CONFIRM: '이 질문을 삭제할까요?',
+  QNA_DELETE_ERROR: '질문 삭제에 실패했습니다.',
 };
