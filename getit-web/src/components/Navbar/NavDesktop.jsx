@@ -29,11 +29,23 @@ const NavDesktop = ({ auth, onLogout }) => {
           {(isMember || userRole === ROLES.ADMIN) && (
             <>
               {divider}
-              {MEMBER_LINKS.map(({ to, label, Icon }) => (
-                <Link key={to} to={to} className={`${linkCommon} ${linkMember}`}>
-                  <Icon size={16} className="flex-shrink-0" /> <span className="truncate">{label}</span>
-                </Link>
-              ))}
+              {MEMBER_LINKS.map((item) => {
+                const { label, Icon } = item;
+                const key = item.to ?? item.href ?? label;
+                const linkClass = `${linkCommon} ${linkMember}`;
+                if (item.external && item.href) {
+                  return (
+                    <a key={key} href={item.href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                      <Icon size={16} className="flex-shrink-0" /> <span className="truncate">{label}</span>
+                    </a>
+                  );
+                }
+                return (
+                  <Link key={key} to={item.to} className={linkClass}>
+                    <Icon size={16} className="flex-shrink-0" /> <span className="truncate">{label}</span>
+                  </Link>
+                );
+              })}
             </>
           )}
           {userRole === ROLES.ADMIN && (

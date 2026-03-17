@@ -13,7 +13,6 @@ import Project from './pages/Public/Project.jsx';
 import Login from './pages/Auth/Login/index.jsx';
 import Lecture from './pages/Member/LectureList/index.jsx';
 import LectureDetail from './pages/Member/LectureDetail/index.jsx';
-import Invest from './pages/Member/Invest';
 import Executives from './pages/Public/Executives.jsx';
 import Dashboard from './pages/Member/Dashboard';
 import AdminPage from './pages/Admin/index.jsx';
@@ -105,7 +104,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/lecture" element={<Lecture />} />
             <Route path="/lecture/:id" element={<LectureDetail userRole={userRole} />} />
-            <Route path="/invest" element={<Invest />} />
           </>
         )}
 

@@ -37,6 +37,9 @@ export const API = {
   },
 };
 
+/** 모의투자 앱 URL (별도 프론트/서버, 새 탭에서 오픈) */
+export const INVEST_APP_URL = import.meta.env.VITE_INVEST_APP_URL || 'https://stockgame.get-it.cloud';
+
 /**
  * 사용자에게 보여주는 알림/에러 메시지.
  * 문구 변경 시 이 파일만 수정하면 된다.

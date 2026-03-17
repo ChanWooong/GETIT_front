@@ -36,16 +36,30 @@ const NavMobile = ({ auth, onLogout, onClose }) => {
           )}
           {(isMember || userRole === ROLES.ADMIN) && (
             <div className="flex flex-col gap-2">
-              {MEMBER_LINKS.map(({ to, label, Icon }) => (
-                <Link
-                  key={to}
-                  to={to}
-                  onClick={onClose}
-                  className={`${linkBase} ${linkMember}`}
-                >
-                  <Icon size={18} /> {label}
-                </Link>
-              ))}
+              {MEMBER_LINKS.map((item) => {
+                const { label, Icon } = item;
+                const key = item.to ?? item.href ?? label;
+                const linkClass = `${linkBase} ${linkMember}`;
+                if (item.external && item.href) {
+                  return (
+                    <a
+                      key={key}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={onClose}
+                      className={linkClass}
+                    >
+                      <Icon size={18} /> {label}
+                    </a>
+                  );
+                }
+                return (
+                  <Link key={key} to={item.to} onClick={onClose} className={linkClass}>
+                    <Icon size={18} /> {label}
+                  </Link>
+                );
+              })}
             </div>
           )}
           {userRole === ROLES.ADMIN && (
