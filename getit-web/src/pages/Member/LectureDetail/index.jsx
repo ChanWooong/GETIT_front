@@ -102,17 +102,15 @@ const LectureDetail = () => {
     setUploadStatus('UPLOADING');
     const formData = new FormData();
     formData.append('files', selectedFile);
-    formData.append(
-      'request',
-      new Blob(
-        [JSON.stringify({ week: lecture.week ?? 1, type: lecture.type ?? 'SW', comment: '' })],
-        { type: 'application/json' }
-      )
+    const week = Number(lecture.week) || 1;
+    const type = lecture.type === 'STARTUP' ? 'STARTUP' : 'SW';
+    const requestBlob = new Blob(
+      [JSON.stringify({ week, type, comment: '' })],
+      { type: 'application/json' }
     );
+    formData.append('request', requestBlob, 'request.json');
     api
-      .post('/api/assignments', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      .post('/api/assignments', formData)
       .then(() => setUploadStatus('SUCCESS'))
       .catch(() => {
         setUploadStatus('IDLE');
@@ -220,6 +218,13 @@ const LectureDetail = () => {
           </div>
         </div>
 
+        <div className="bg-[#110b29] border border-white/10 p-6 rounded-2xl">
+            <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-200">
+              <Download size={18} className="text-cyan-400" /> 강의 자료
+            </h3>
+            <p className="text-gray-500 text-sm">{LECTURE_PAGE_MESSAGES.MATERIAL_PREPARING}</p>
+        </div>
+        
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-[#110b29] border border-cyan-500/30 p-6 rounded-2xl shadow-lg relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-cyan-500" />
@@ -262,12 +267,7 @@ const LectureDetail = () => {
             </div>
           </div>
 
-          <div className="bg-[#110b29] border border-white/10 p-6 rounded-2xl">
-            <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-200">
-              <Download size={18} className="text-cyan-400" /> 강의 자료
-            </h3>
-            <p className="text-gray-500 text-sm">{LECTURE_PAGE_MESSAGES.MATERIAL_PREPARING}</p>
-          </div>
+
 
           <div className="bg-[#110b29] border border-white/10 p-6 rounded-2xl h-[320px] flex flex-col">
             <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-200">
