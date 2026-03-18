@@ -222,7 +222,19 @@ const LectureDetail = () => {
             <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-200">
               <Download size={18} className="text-cyan-400" /> 강의 자료
             </h3>
-            <p className="text-gray-500 text-sm">{LECTURE_PAGE_MESSAGES.MATERIAL_PREPARING}</p>
+            {lecture.resourceUrl ? (
+              <a
+                href={lecture.resourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 font-medium"
+              >
+                <Download size={16} />
+                {LECTURE_PAGE_MESSAGES.MATERIAL_VIEW_LINK}
+              </a>
+            ) : (
+              <p className="text-gray-500 text-sm">{LECTURE_PAGE_MESSAGES.MATERIAL_PREPARING}</p>
+            )}
         </div>
         
         <div className="lg:col-span-1 space-y-6">

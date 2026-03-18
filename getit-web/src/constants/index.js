@@ -121,6 +121,8 @@ export const ADMIN_MEMBER_MESSAGES = {
   ASSIGNMENTS_LOADING: '과제 목록 로딩 중...',
   ASSIGNMENTS_EMPTY: '제출된 과제가 없습니다.',
   ASSIGNMENTS_DOWNLOAD_PREPARING: '준비 중',
+  ASSIGNMENTS_DOWNLOAD: '다운로드',
+  ASSIGNMENTS_DOWNLOAD_ERROR: '과제 파일 다운로드에 실패했습니다.',
 };
 
 /** Admin 권한(역할 지정) 관리 문구 */
@@ -168,7 +170,9 @@ export const ADMIN_LECTURE_MESSAGES = {
   FORM_TITLE: '제목',
   FORM_DESCRIPTION: '설명',
   FORM_VIDEO_URL: '유튜브 URL (1개)',
-  FORM_MATERIALS: '강의 자료 (이름만)',
+  FORM_RESOURCE_URL: '강의 자료 URL (선택)',
+  FORM_RESOURCE_URL_PLACEHOLDER: 'https://... (PDF, PPT 링크)',
+  FORM_URL_INVALID: '올바른 URL 형식이어야 합니다.',
   FORM_TRACK: '트랙',
   FORM_WEEK: '주차',
   FORM_STATUS: '상태',
@@ -185,9 +189,20 @@ export const ADMIN_LECTURE_MESSAGES = {
 };
 
 /** 멤버 강의 목록/상세 문구 */
+/** SW 트랙 제목 필터 옵션 (value: '' = 전체, 그 외는 제목에 포함된 문자열로 필터) */
+export const SW_TRACK_FILTERS = [
+  { value: '', label: '전체' },
+  { value: 'React', label: 'React' },
+  { value: 'Express', label: 'Express' },
+  { value: '세미나', label: '세미나' },
+  { value: 'WEB', label: 'WEB' },
+];
+
 export const LECTURE_PAGE_MESSAGES = {
   NO_LECTURES_IN_TRACK: '해당 트랙에 등록된 강의가 없습니다.',
+  NO_LECTURES_FOR_FILTER: '선택한 필터에 맞는 강의가 없습니다.',
   MATERIAL_PREPARING: '준비 중',
+  MATERIAL_VIEW_LINK: '자료 보기',
   QNA_PLACEHOLDER: '질문하기...',
   QNA_SEND: '보내기',
   QNA_NO_MESSAGES: '아직 질문이 없습니다.',

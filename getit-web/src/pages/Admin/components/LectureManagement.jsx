@@ -51,6 +51,7 @@ const LectureManagement = () => {
       week: payload.week,
       type: payload.type,
       videoUrl: payload.videoUrl || undefined,
+      resourceUrl: payload.resourceUrl || undefined,
     };
     if (id) {
       api.patch(`/api/admin/lecture/${id}`, body).then(() => {

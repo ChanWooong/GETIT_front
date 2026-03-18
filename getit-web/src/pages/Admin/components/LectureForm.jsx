@@ -1,12 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { LECTURE_TRACK, ADMIN_LECTURE_MESSAGES } from '../../../constants';
 
-/** API 요청용: title, description, week, type, videoUrl (자료·상태 없음) */
+/** URL 형식 검증 (비어 있으면 통과, 아니면 http(s) URL) */
+function isValidUrl(value) {
+  const v = (value || '').trim();
+  if (!v) return true;
+  try {
+    const u = new URL(v);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+/** API 요청용: title, description, week, type, videoUrl, resourceUrl */
 const LectureForm = ({ initialData, onSave, onCancel }) => {
   const isEdit = Boolean(initialData?.id);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
+  const [resourceUrl, setResourceUrl] = useState('');
   const [track, setTrack] = useState(LECTURE_TRACK.SW);
   const [week, setWeek] = useState(1);
 
@@ -15,12 +28,14 @@ const LectureForm = ({ initialData, onSave, onCancel }) => {
       setTitle(initialData.title ?? '');
       setDescription(initialData.description ?? '');
       setVideoUrl(initialData.videoUrl ?? '');
+      setResourceUrl(initialData.resourceUrl ?? '');
       setTrack(initialData.type ?? initialData.track ?? LECTURE_TRACK.SW);
       setWeek(Number(initialData.week) || 1);
     } else {
       setTitle('');
       setDescription('');
       setVideoUrl('');
+      setResourceUrl('');
       setTrack(LECTURE_TRACK.SW);
       setWeek(1);
     }
@@ -28,12 +43,23 @@ const LectureForm = ({ initialData, onSave, onCancel }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const vUrl = videoUrl.trim();
+    const rUrl = resourceUrl.trim();
+    if (vUrl && !isValidUrl(vUrl)) {
+      alert(ADMIN_LECTURE_MESSAGES.FORM_URL_INVALID);
+      return;
+    }
+    if (rUrl && !isValidUrl(rUrl)) {
+      alert(ADMIN_LECTURE_MESSAGES.FORM_URL_INVALID);
+      return;
+    }
     const payload = {
       title: title.trim(),
       description: description.trim(),
       week,
       type: track,
-      videoUrl: videoUrl.trim() || null,
+      videoUrl: vUrl || null,
+      resourceUrl: rUrl || null,
     };
     onSave(isEdit ? initialData.id : null, payload);
   };
@@ -66,6 +92,16 @@ const LectureForm = ({ initialData, onSave, onCancel }) => {
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
           placeholder="https://www.youtube.com/watch?v=..."
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-400 mb-1">{ADMIN_LECTURE_MESSAGES.FORM_RESOURCE_URL}</label>
+        <input
+          type="url"
+          value={resourceUrl}
+          onChange={(e) => setResourceUrl(e.target.value)}
+          placeholder={ADMIN_LECTURE_MESSAGES.FORM_RESOURCE_URL_PLACEHOLDER}
           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
         />
       </div>

@@ -6,7 +6,7 @@ import { ADMIN_MEMBER_MESSAGES, API, LECTURE_TRACK } from '../../../constants';
 import LoadingState from '../../../components/admin/LoadingState';
 import ErrorState from '../../../components/admin/ErrorState';
 import SearchInput from '../../../components/admin/SearchInput';
-import { CheckCircle, MessageCircle, FileText, Trash2 } from 'lucide-react';
+import { CheckCircle, MessageCircle, FileText, Trash2, Download } from 'lucide-react';
 
 const SUBTAB = { MEMBERS: 'MEMBERS', QNA: 'QNA', ASSIGNMENTS: 'ASSIGNMENTS' };
 
@@ -406,6 +406,7 @@ function QnaManagementView() {
 function AssignmentsListView() {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingFileId, setDownloadingFileId] = useState(null);
 
   useEffect(() => {
     api.get('/api/admin/assignments/all', { params: { size: 100 } })
@@ -416,6 +417,24 @@ function AssignmentsListView() {
       .catch(() => setAssignments([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleDownloadFile = (fileId, fileName) => {
+    if (downloadingFileId != null) return;
+    setDownloadingFileId(fileId);
+    api
+      .get(`/api/admin/assignments/files/${fileId}/download`, { responseType: 'blob' })
+      .then((res) => {
+        const blob = res.data;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName || 'download';
+        a.click();
+        URL.revokeObjectURL(url);
+      })
+      .catch(() => alert(ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_DOWNLOAD_ERROR))
+      .finally(() => setDownloadingFileId(null));
+  };
 
   if (loading) return <p className="text-gray-500 py-8">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_LOADING}</p>;
   if (assignments.length === 0) return <p className="text-gray-500 py-8">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_EMPTY}</p>;
@@ -448,7 +467,25 @@ function AssignmentsListView() {
                   : '-'}
               </td>
               <td className="p-4">
-                <span className="text-xs text-gray-500">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_DOWNLOAD_PREPARING}</span>
+                {Array.isArray(a.files) && a.files.length > 0 ? (
+                  <div className="flex flex-wrap gap-1">
+                    {a.files.map((f) => (
+                      <button
+                        key={f.fileId}
+                        type="button"
+                        onClick={() => handleDownloadFile(f.fileId, f.fileName)}
+                        disabled={downloadingFileId === f.fileId}
+                        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-600/20 text-cyan-400 text-xs font-medium hover:bg-cyan-600/30 disabled:opacity-50"
+                        title={f.fileName}
+                      >
+                        <Download size={14} />
+                        {ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_DOWNLOAD}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-xs text-gray-500">-</span>
+                )}
               </td>
             </tr>
           ))}

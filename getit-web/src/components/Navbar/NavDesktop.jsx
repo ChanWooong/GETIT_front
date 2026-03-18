@@ -16,9 +16,13 @@ const NavDesktop = ({ auth, onLogout }) => {
   const linkLogout = 'text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-1';
   const divider = <div className="h-4 w-px bg-white/20 flex-shrink-0" aria-hidden="true" />;
 
+  const publicLinksToShow = PUBLIC_LINKS.filter(
+    (link) => link.to !== '/recruit' || !isMember || userRole === ROLES.ADMIN
+  );
+
   return (
     <div className="hidden md:flex items-center min-w-0 gap-1 md:gap-2 lg:gap-3 flex-shrink">
-      {PUBLIC_LINKS.map(({ to, label }) => (
+      {publicLinksToShow.map(({ to, label }) => (
         <Link key={to} to={to} className={`${linkCommon} ${linkPublic}`}>
           {label}
         </Link>

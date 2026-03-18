@@ -14,10 +14,14 @@ const NavMobile = ({ auth, onLogout, onClose }) => {
   const { userRole, isLoggedIn, isMember, userName } = auth ?? {};
   const displayName = userName?.trim() || '회원';
 
+  const publicLinksToShow = PUBLIC_LINKS.filter(
+    (link) => link.to !== '/recruit' || !isMember || userRole === ROLES.ADMIN
+  );
+
   return (
     <nav className="flex-shrink-0 flex flex-col justify-start pt-6 pb-4 px-4 overflow-y-auto">
       <div className="flex flex-col gap-2 flex-shrink-0">
-        {PUBLIC_LINKS.map(({ to, label }) => (
+        {publicLinksToShow.map(({ to, label }) => (
           <Link
             key={to}
             to={to}

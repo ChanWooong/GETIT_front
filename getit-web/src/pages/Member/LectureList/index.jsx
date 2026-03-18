@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PlayCircle, Code, Briefcase, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/axios';
-import { API, LECTURE_TRACK, LECTURE_PAGE_MESSAGES, MESSAGES } from '../../../constants';
+import { API, LECTURE_TRACK, LECTURE_PAGE_MESSAGES, MESSAGES, SW_TRACK_FILTERS } from '../../../constants';
 
 /**
  * 강의 목록: GET /api/lectures 후 상세 조회로 type/week 확보, 트랙별·주차순 정렬 (status 미사용)
@@ -10,6 +10,7 @@ import { API, LECTURE_TRACK, LECTURE_PAGE_MESSAGES, MESSAGES } from '../../../co
 const Lecture = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(LECTURE_TRACK.SW);
+  const [swFilter, setSwFilter] = useState('');
   const [swTrack, setSwTrack] = useState([]);
   const [startupTrack, setStartupTrack] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -64,7 +65,12 @@ const Lecture = () => {
     return () => { cancelled = true; };
   }, []);
 
-  const currentLectures = activeTab === LECTURE_TRACK.SW ? swTrack : startupTrack;
+  const currentLectures = useMemo(() => {
+    if (activeTab === LECTURE_TRACK.STARTUP) return startupTrack;
+    if (!swFilter) return swTrack;
+    const keyword = swFilter.toLowerCase();
+    return swTrack.filter((lec) => (lec.title || '').toLowerCase().includes(keyword));
+  }, [activeTab, swTrack, startupTrack, swFilter]);
 
   const handleMoveToDetail = (lectureId) => {
     navigate(`/lecture/${lectureId}`);
@@ -96,7 +102,7 @@ const Lecture = () => {
           </h2>
         </div>
 
-        <div className="flex justify-center gap-4 mb-10">
+        <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={() => setActiveTab(LECTURE_TRACK.SW)}
             className={`flex items-center gap-2 px-6 py-2 md:px-8 md:py-3 rounded-full font-bold transition-all ${
@@ -119,10 +125,31 @@ const Lecture = () => {
           </button>
         </div>
 
+        {activeTab === LECTURE_TRACK.SW && (
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {SW_TRACK_FILTERS.map(({ value, label }) => (
+              <button
+                key={value || 'all'}
+                type="button"
+                onClick={() => setSwFilter(value)}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
+                  swFilter === value
+                    ? 'bg-cyan-500 text-[#110b29]'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="space-y-4">
           {currentLectures.length === 0 ? (
             <div className="text-center py-16 text-gray-500">
-              {LECTURE_PAGE_MESSAGES.NO_LECTURES_IN_TRACK}
+              {activeTab === LECTURE_TRACK.SW && swFilter
+                ? LECTURE_PAGE_MESSAGES.NO_LECTURES_FOR_FILTER
+                : LECTURE_PAGE_MESSAGES.NO_LECTURES_IN_TRACK}
             </div>
           ) : (
             currentLectures.map((lec) => (
