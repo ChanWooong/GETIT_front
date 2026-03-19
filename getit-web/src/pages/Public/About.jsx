@@ -73,7 +73,7 @@ function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* 1학기 카드 */}
-            <div className="bg-gradient-to-br from-blue-900/40 to-black border border-blue-500/30 p-4 sm:p-5 md:p-6 rounded-2xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+            <div className="bg-gradient-to-br from-blue-900/40 to-black border border-blue-500/30 p-4 sm:p-5 md:p-6 rounded-2xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 m-2 sm:m-3">
               <div className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-bl-lg">
                 1학기
               </div>
@@ -103,7 +103,7 @@ function About() {
             </div>
 
             {/* 2학기 카드 */}
-            <div className="bg-gradient-to-br from-purple-900/40 to-black border border-purple-500/30 p-4 sm:p-5 md:p-6 rounded-2xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+            <div className="bg-gradient-to-br from-purple-900/40 to-black border border-purple-500/30 p-4 sm:p-5 md:p-6 rounded-2xl relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 m-2 sm:m-3">
               <div className="absolute top-0 right-0 bg-purple-600 text-white text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-bl-lg">
                 2학기
               </div>

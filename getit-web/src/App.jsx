@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from
 import { useEffect } from 'react';
 import { MESSAGES, ROLES } from './constants';
 import { useAuth } from './hooks/useAuth';
+import { useAuthStore } from './hooks/authStore';
+import api from './api/axios';
 import Navbar from './components/Navbar';
 import Home from './pages/Public/Home.jsx';
 import About from './pages/Public/About.jsx';
@@ -11,11 +13,11 @@ import Project from './pages/Public/Project.jsx';
 import Login from './pages/Auth/Login/index.jsx';
 import Lecture from './pages/Member/LectureList/index.jsx';
 import LectureDetail from './pages/Member/LectureDetail/index.jsx';
-import Invest from './pages/Member/Invest';
 import Executives from './pages/Public/Executives.jsx';
 import Dashboard from './pages/Member/Dashboard';
 import AdminPage from './pages/Admin/index.jsx';
 import Apply from './pages/Public/Apply.jsx';
+import MyProfile from './pages/Member/MyProfile/index.jsx';
 import OAuthCallbackHandler from './components/OAuthCallbackHandler';
 
 const NavigationWrapper = ({ auth }) => {
@@ -44,7 +46,31 @@ function RedirectHandler() {
 
 function App() {
   const auth = useAuth();
-  const { userRole, isLoggedIn, isApproved, isAdmin, isMember } = auth;
+  const { userRole, isLoggedIn, isApproved, isAdmin, isMember, setUserName } = auth;
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    const syncMemberName = async () => {
+      try {
+        const response = await api.get('/api/member/info');
+        const name = response.data?.name;
+        if (name != null && typeof name === 'string') setUserName(name.trim() || null);
+      } catch {
+        // exp 없을 때 등: 유저 정보 로드 실패 시 로그아웃 (401은 인터셉터에서 리다이렉트)
+        useAuthStore.getState().logout();
+      }
+    };
+    syncMemberName();
+  }, [isLoggedIn, setUserName]);
+
+  // 탭 전환 시 토큰 만료 여부 확인
+  useEffect(() => {
+    const handler = () => {
+      if (document.visibilityState === 'visible') useAuthStore.getState().checkAndClearExpiry();
+    };
+    document.addEventListener('visibilitychange', handler);
+    return () => document.removeEventListener('visibilitychange', handler);
+  }, []);
 
   return (
     <BrowserRouter>
@@ -66,6 +92,10 @@ function App() {
           path="/profileSetup"
           element={isLoggedIn ? <ProfileSetup /> : <Navigate to="/login" replace />}
         />
+        <Route
+          path="/myProfile"
+          element={isLoggedIn ? <MyProfile /> : <Navigate to="/login" replace />}
+        />
         {/* OAuth 콜백으로 /token 도착 시 홈으로 (토큰 처리 후 replace가 안 된 경우 대비) */}
         <Route path="/token" element={<Navigate to="/" replace />} />
 
@@ -74,7 +104,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/lecture" element={<Lecture />} />
             <Route path="/lecture/:id" element={<LectureDetail userRole={userRole} />} />
-            <Route path="/invest" element={<Invest />} />
           </>
         )}
 
