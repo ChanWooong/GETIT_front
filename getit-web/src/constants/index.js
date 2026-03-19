@@ -206,10 +206,10 @@ export const ADMIN_LECTURE_MESSAGES = {
 /** SW 트랙 제목 필터 옵션 (value: '' = 전체, 그 외는 제목에 포함된 문자열로 필터) */
 export const SW_TRACK_FILTERS = [
   { value: '', label: '전체' },
+  { value: 'WEB', label: 'WEB' },
   { value: 'React', label: 'React' },
   { value: 'Express', label: 'Express' },
   { value: '세미나', label: '세미나' },
-  { value: 'WEB', label: 'WEB' },
 ];
 
 export const LECTURE_PAGE_MESSAGES = {
@@ -224,6 +224,6 @@ export const LECTURE_PAGE_MESSAGES = {
   QNA_DELETE: '삭제',
   QNA_DELETE_CONFIRM: '이 질문을 삭제할까요?',
   QNA_DELETE_ERROR: '질문 삭제에 실패했습니다.',
-  ASSIGNMENT_GITHUB_LABEL: 'GitHub 링크 (선택)',
+  ASSIGNMENT_GITHUB_LABEL: 'GitHub 링크',
   ASSIGNMENT_GITHUB_PLACEHOLDER: 'https://github.com/...',
 };
