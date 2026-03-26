@@ -137,48 +137,82 @@ const LectureManagement = () => {
 
   useEffect(() => {
     if (materialModalLectureId == null) return;
+    let cancelled = false;
     setMaterialLoading(true);
     api
       .get(API.PATHS.ADMIN_LECTURE_FILES(materialModalLectureId))
-      .then((res) => setMaterialFiles(Array.isArray(res.data) ? res.data : []))
+      .then((res) => {
+        if (cancelled) return;
+        setMaterialFiles(Array.isArray(res.data) ? res.data : []);
+      })
       .catch(() => {
+        if (cancelled) return;
         setMaterialFiles([]);
         alert(ADMIN_LECTURE_MESSAGES.MATERIALS_LIST_ERROR);
       })
-      .finally(() => setMaterialLoading(false));
+      .finally(() => {
+        if (!cancelled) setMaterialLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [materialModalLectureId]);
 
   const handleMaterialUpload = (e) => {
     const { files } = e.target;
-    if (!files?.length || materialModalLectureId == null || materialUploading) return;
+    const lectureId = materialModalLectureId;
+    if (!files?.length || lectureId == null || materialUploading) return;
     const formData = new FormData();
     for (let i = 0; i < files.length; i += 1) {
       formData.append('files', files[i]);
     }
     setMaterialUploading(true);
     api
-      .post(API.PATHS.ADMIN_LECTURE_FILES(materialModalLectureId), formData)
+      .post(API.PATHS.ADMIN_LECTURE_FILES(lectureId), formData)
       .then(() => {
         alert(ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOAD_SUCCESS);
-        return api.get(API.PATHS.ADMIN_LECTURE_FILES(materialModalLectureId));
+        return api.get(API.PATHS.ADMIN_LECTURE_FILES(lectureId))
+          .then((res) => {
+            if (materialModalLectureId !== lectureId) return;
+            setMaterialFiles(Array.isArray(res.data) ? res.data : []);
+          })
+          .catch(() => {
+            if (materialModalLectureId !== lectureId) return;
+            alert(ADMIN_LECTURE_MESSAGES.MATERIALS_LIST_ERROR);
+          });
       })
-      .then((res) => setMaterialFiles(Array.isArray(res.data) ? res.data : []))
-      .catch(() => alert(ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOAD_ERROR))
+      .catch(() => {
+        if (materialModalLectureId !== lectureId) return;
+        alert(ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOAD_ERROR);
+      })
       .finally(() => {
-        setMaterialUploading(false);
+        if (materialModalLectureId === lectureId) {
+          setMaterialUploading(false);
+        }
         e.target.value = '';
       });
   };
 
   const handleMaterialDelete = (fileId) => {
-    if (materialModalLectureId == null || materialDeletingId) return;
+    const lectureId = materialModalLectureId;
+    if (lectureId == null || materialDeletingId) return;
     if (!window.confirm(ADMIN_LECTURE_MESSAGES.MATERIALS_DELETE_CONFIRM)) return;
     setMaterialDeletingId(fileId);
     api
-      .delete(API.PATHS.ADMIN_LECTURE_FILE(materialModalLectureId, fileId))
-      .then(() => setMaterialFiles((prev) => prev.filter((f) => f.fileId !== fileId)))
-      .catch(() => alert(ADMIN_LECTURE_MESSAGES.MATERIALS_DELETE_ERROR))
-      .finally(() => setMaterialDeletingId(null));
+      .delete(API.PATHS.ADMIN_LECTURE_FILE(lectureId, fileId))
+      .then(() => {
+        if (materialModalLectureId !== lectureId) return;
+        setMaterialFiles((prev) => prev.filter((f) => f.fileId !== fileId));
+      })
+      .catch(() => {
+        if (materialModalLectureId !== lectureId) return;
+        alert(ADMIN_LECTURE_MESSAGES.MATERIALS_DELETE_ERROR);
+      })
+      .finally(() => {
+        if (materialModalLectureId === lectureId) {
+          setMaterialDeletingId(null);
+        }
+      });
   };
 
   useEffect(() => {

@@ -95,27 +95,57 @@ const LectureDetail = () => {
 
   // 내 과제 제출(해당 강의) + 관리자 코멘트 이력 조회
   useEffect(() => {
-    if (!lecture?.id || !isMember) return;
+    if (!lecture?.id || !isMember) {
+      setMyAssignment(null);
+      setMyAssignmentLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setMyAssignment(null);
     setMyAssignmentLoading(true);
     api.get('/api/assignments/me')
       .then((res) => {
+        if (cancelled) return;
         const list = res.data?.data ?? res.data; // 서버 응답 포맷 방어
         const arr = Array.isArray(list) ? list : [];
         const found = arr.find((a) => a.lectureId === lecture.id) || null;
         setMyAssignment(found);
       })
-      .catch(() => setMyAssignment(null))
-      .finally(() => setMyAssignmentLoading(false));
+      .catch(() => {
+        if (!cancelled) setMyAssignment(null);
+      })
+      .finally(() => {
+        if (!cancelled) setMyAssignmentLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [lecture?.id, isMember]);
 
   useEffect(() => {
-    if (!lecture?.id) return;
+    if (!lecture?.id) {
+      setLectureFiles([]);
+      setLectureFilesLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLectureFiles([]);
     setLectureFilesLoading(true);
     api
       .get(API.PATHS.LECTURE_FILES(lecture.id))
-      .then((res) => setLectureFiles(Array.isArray(res.data) ? res.data : []))
-      .catch(() => setLectureFiles([]))
-      .finally(() => setLectureFilesLoading(false));
+      .then((res) => {
+        if (cancelled) return;
+        setLectureFiles(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch(() => {
+        if (!cancelled) setLectureFiles([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLectureFilesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [lecture?.id]);
 
   const videoId = lecture?.videoUrl ? getYoutubeVideoId(lecture.videoUrl) : null;
@@ -299,7 +329,8 @@ const LectureDetail = () => {
           </div>
         </div>
 
-        <div className="bg-[#110b29] border border-white/10 p-6 rounded-2xl space-y-6">
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-[#110b29] border border-white/10 p-6 rounded-2xl space-y-6">
             <h3 className="font-bold flex items-center gap-2 text-gray-200">
               <Download size={18} className="text-cyan-400" /> {LECTURE_PAGE_MESSAGES.MATERIAL_SECTION_TITLE}
             </h3>
@@ -359,9 +390,8 @@ const LectureDetail = () => {
                 </ul>
               )}
             </div>
-        </div>
-        
-        <div className="lg:col-span-1 space-y-6">
+          </div>
+
           <div className="bg-[#110b29] border border-cyan-500/30 p-6 rounded-2xl shadow-lg relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-cyan-500" />
             <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-200">
