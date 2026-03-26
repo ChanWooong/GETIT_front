@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, FileText, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, FileText, X, FolderOpen } from 'lucide-react';
 import api from '../../../api/axios';
-import { API, LECTURE_TRACK } from '../../../constants';
-import { ADMIN_LECTURE_MESSAGES } from '../../../constants';
+import { API, LECTURE_TRACK, ADMIN_LECTURE_MESSAGES, LECTURE_PAGE_MESSAGES } from '../../../constants';
 import LectureForm from './LectureForm';
 
 const LectureManagement = () => {
@@ -19,6 +18,13 @@ const LectureManagement = () => {
   const [taskSaving, setTaskSaving] = useState(false);
   const [taskDeleting, setTaskDeleting] = useState(false);
   const [taskForm, setTaskForm] = useState({ title: '', description: '', deadline: '' });
+  // 강의 자료 파일 모달
+  const [materialModalLectureId, setMaterialModalLectureId] = useState(null);
+  const [materialModalTitle, setMaterialModalTitle] = useState('');
+  const [materialFiles, setMaterialFiles] = useState([]);
+  const [materialLoading, setMaterialLoading] = useState(false);
+  const [materialUploading, setMaterialUploading] = useState(false);
+  const [materialDeletingId, setMaterialDeletingId] = useState(null);
 
   const loadList = () => {
     setLoading(true);
@@ -112,6 +118,67 @@ const LectureManagement = () => {
     setTaskLoading(false);
     setTaskSaving(false);
     setTaskDeleting(false);
+  };
+
+  const openMaterialModal = (lec) => {
+    setMaterialModalLectureId(lec.id);
+    setMaterialModalTitle(lec.title || '(제목 없음)');
+    setMaterialFiles([]);
+  };
+
+  const closeMaterialModal = () => {
+    setMaterialModalLectureId(null);
+    setMaterialModalTitle('');
+    setMaterialFiles([]);
+    setMaterialLoading(false);
+    setMaterialUploading(false);
+    setMaterialDeletingId(null);
+  };
+
+  useEffect(() => {
+    if (materialModalLectureId == null) return;
+    setMaterialLoading(true);
+    api
+      .get(API.PATHS.ADMIN_LECTURE_FILES(materialModalLectureId))
+      .then((res) => setMaterialFiles(Array.isArray(res.data) ? res.data : []))
+      .catch(() => {
+        setMaterialFiles([]);
+        alert(ADMIN_LECTURE_MESSAGES.MATERIALS_LIST_ERROR);
+      })
+      .finally(() => setMaterialLoading(false));
+  }, [materialModalLectureId]);
+
+  const handleMaterialUpload = (e) => {
+    const { files } = e.target;
+    if (!files?.length || materialModalLectureId == null || materialUploading) return;
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i += 1) {
+      formData.append('files', files[i]);
+    }
+    setMaterialUploading(true);
+    api
+      .post(API.PATHS.ADMIN_LECTURE_FILES(materialModalLectureId), formData)
+      .then(() => {
+        alert(ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOAD_SUCCESS);
+        return api.get(API.PATHS.ADMIN_LECTURE_FILES(materialModalLectureId));
+      })
+      .then((res) => setMaterialFiles(Array.isArray(res.data) ? res.data : []))
+      .catch(() => alert(ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOAD_ERROR))
+      .finally(() => {
+        setMaterialUploading(false);
+        e.target.value = '';
+      });
+  };
+
+  const handleMaterialDelete = (fileId) => {
+    if (materialModalLectureId == null || materialDeletingId) return;
+    if (!window.confirm(ADMIN_LECTURE_MESSAGES.MATERIALS_DELETE_CONFIRM)) return;
+    setMaterialDeletingId(fileId);
+    api
+      .delete(API.PATHS.ADMIN_LECTURE_FILE(materialModalLectureId, fileId))
+      .then(() => setMaterialFiles((prev) => prev.filter((f) => f.fileId !== fileId)))
+      .catch(() => alert(ADMIN_LECTURE_MESSAGES.MATERIALS_DELETE_ERROR))
+      .finally(() => setMaterialDeletingId(null));
   };
 
   useEffect(() => {
@@ -237,6 +304,14 @@ const LectureManagement = () => {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  onClick={() => openMaterialModal(lec)}
+                  className="p-2 rounded-lg text-gray-400 hover:text-amber-400 hover:bg-white/10"
+                  title={ADMIN_LECTURE_MESSAGES.MATERIALS_MANAGE}
+                >
+                  <FolderOpen size={18} />
+                </button>
+                <button
+                  type="button"
                   onClick={() => openTaskModal(lec)}
                   className="p-2 rounded-lg text-gray-400 hover:text-purple-400 hover:bg-white/10"
                   title={ADMIN_LECTURE_MESSAGES.TASK_MANAGE}
@@ -262,6 +337,72 @@ const LectureManagement = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {materialModalLectureId != null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={closeMaterialModal}>
+          <div
+            className="bg-[#161229] border border-white/10 rounded-2xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-4 border-b border-white/10">
+              <h3 className="font-bold text-white">
+                {ADMIN_LECTURE_MESSAGES.MATERIALS_MANAGE} · {materialModalTitle}
+              </h3>
+              <button type="button" onClick={closeMaterialModal} className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">{ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOAD_BUTTON}</label>
+                <p className="text-xs text-gray-500 mb-2">{ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOAD_HINT}</p>
+                <input
+                  type="file"
+                  multiple
+                  disabled={materialUploading}
+                  onChange={handleMaterialUpload}
+                  className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-600 file:text-white"
+                />
+                {materialUploading && <p className="text-sm text-gray-500 mt-2">{ADMIN_LECTURE_MESSAGES.MATERIALS_UPLOADING}</p>}
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-gray-300 mb-2">{LECTURE_PAGE_MESSAGES.MATERIAL_ATTACHMENTS_SECTION}</h4>
+                {materialLoading ? (
+                  <p className="text-gray-500 py-4 text-center">{ADMIN_LECTURE_MESSAGES.MATERIALS_LOADING}</p>
+                ) : materialFiles.length === 0 ? (
+                  <p className="text-gray-500 text-sm">{ADMIN_LECTURE_MESSAGES.MATERIALS_EMPTY}</p>
+                ) : (
+                  <ul className="space-y-2">
+                    {materialFiles.map((f) => (
+                      <li
+                        key={f.fileId}
+                        className="flex items-center justify-between gap-2 p-2 rounded-lg bg-black/30 border border-white/10"
+                      >
+                        <span className="text-sm text-gray-200 truncate" title={f.fileName}>{f.fileName}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleMaterialDelete(f.fileId)}
+                          disabled={materialDeletingId === f.fileId}
+                          className="text-xs text-red-400 hover:text-red-300 shrink-0 disabled:opacity-50"
+                        >
+                          {materialDeletingId === f.fileId ? ADMIN_LECTURE_MESSAGES.MATERIALS_DELETING : ADMIN_LECTURE_MESSAGES.MATERIALS_DELETE}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={closeMaterialModal}
+                className="w-full px-4 py-2 rounded-xl border border-white/20 text-gray-300 hover:bg-white/10"
+              >
+                {ADMIN_LECTURE_MESSAGES.CANCEL}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

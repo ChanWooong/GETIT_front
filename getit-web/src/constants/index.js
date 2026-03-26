@@ -34,6 +34,9 @@ export const API = {
   PATHS: {
     LECTURES: '/api/lectures',
     LECTURE_DETAIL: (id) => `/api/lecture/${id}`,
+    LECTURE_FILES: (lectureId) => `/api/lecture/${lectureId}/files`,
+    ADMIN_LECTURE_FILES: (lectureId) => `/api/admin/lecture/${lectureId}/files`,
+    ADMIN_LECTURE_FILE: (lectureId, fileId) => `/api/admin/lecture/${lectureId}/files/${fileId}`,
   },
 };
 
@@ -212,6 +215,20 @@ export const ADMIN_LECTURE_MESSAGES = {
   TASK_DELETE_SUCCESS: '과제가 삭제되었습니다.',
   TASK_DELETE_ERROR: '과제 삭제에 실패했습니다.',
   TASK_LOAD_ERROR: '과제 정보를 불러오지 못했습니다.',
+  // 강의 자료 파일(첨부)
+  MATERIALS_MANAGE: '자료 파일 관리',
+  MATERIALS_LOADING: '자료 목록을 불러오는 중...',
+  MATERIALS_EMPTY: '등록된 첨부 파일이 없습니다.',
+  MATERIALS_UPLOAD_BUTTON: '파일 업로드',
+  MATERIALS_UPLOADING: '업로드 중...',
+  MATERIALS_UPLOAD_HINT: 'PDF, 문서, 이미지 등 (여러 개 선택 가능)',
+  MATERIALS_DELETE: '삭제',
+  MATERIALS_DELETING: '삭제 중...',
+  MATERIALS_DELETE_CONFIRM: '이 파일을 삭제하시겠습니까?',
+  MATERIALS_UPLOAD_SUCCESS: '파일이 업로드되었습니다.',
+  MATERIALS_UPLOAD_ERROR: '업로드에 실패했습니다.',
+  MATERIALS_DELETE_ERROR: '삭제에 실패했습니다.',
+  MATERIALS_LIST_ERROR: '자료 목록을 불러오지 못했습니다.',
 };
 
 /** 멤버 강의 목록/상세 문구 */
@@ -229,6 +246,17 @@ export const LECTURE_PAGE_MESSAGES = {
   NO_LECTURES_FOR_FILTER: '선택한 필터에 맞는 강의가 없습니다.',
   MATERIAL_PREPARING: '준비 중',
   MATERIAL_VIEW_LINK: '자료 보기',
+  MATERIAL_SECTION_TITLE: '강의 자료',
+  MATERIAL_LINK_SECTION: '링크 자료',
+  MATERIAL_ATTACHMENTS_SECTION: '첨부 파일',
+  MATERIAL_DOWNLOAD: '다운로드',
+  MATERIAL_VIEW_NEW_TAB: '새 탭에서 보기',
+  MATERIAL_PDF_NO_URL: 'PDF URL이 없습니다.',
+  MATERIAL_PDF_LOADING: 'PDF 로딩 중...',
+  MATERIAL_PDF_LOAD_ERROR: 'PDF를 불러올 수 없습니다. (외부 링크는 CORS 제한으로 실패할 수 있습니다.)',
+  MATERIAL_DOWNLOAD_ERROR: '파일을 다운로드하지 못했습니다.',
+  MATERIAL_OPEN_TAB_ERROR: '새 탭에서 열지 못했습니다.',
+  MATERIAL_NO_ATTACHMENTS: '첨부된 파일이 없습니다.',
   QNA_PLACEHOLDER: '질문하기...',
   QNA_SEND: '보내기',
   QNA_NO_MESSAGES: '아직 질문이 없습니다.',
