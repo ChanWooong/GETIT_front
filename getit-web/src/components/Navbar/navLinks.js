@@ -15,7 +15,7 @@ export const MY_PROFILE_LINK = { to: '/myProfile', label: '내 정보', Icon: Us
 export const MEMBER_LINKS = [
   { to: '/lecture', label: '강의 목록', Icon: PlayCircle },
   { to: '/assignments', label: '내 과제', Icon: FileText },
-  { external: true, href: INVEST_APP_URL, label: '모의 투자', Icon: TrendingUp },
+
 ];
 
 /** 관리자 전용 링크 */

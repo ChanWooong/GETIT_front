@@ -61,9 +61,10 @@ const LectureDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [videoLoadError, setVideoLoadError] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [githubUrl, setGithubUrl] = useState('');
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [assignmentGithubUrl, setAssignmentGithubUrl] = useState('');
   const [uploadStatus, setUploadStatus] = useState('IDLE');
+  const [removedFileIds, setRemovedFileIds] = useState([]);
   const [myAssignment, setMyAssignment] = useState(null);
   const [myAssignmentLoading, setMyAssignmentLoading] = useState(false);
   const [qnaInput, setQnaInput] = useState('');
@@ -177,38 +178,80 @@ const LectureDetail = () => {
     }
   };
 
+  useEffect(() => {
+    setRemovedFileIds([]);
+    setSelectedFiles([]);
+    setAssignmentGithubUrl(myAssignment?.githubUrl ?? '');
+  }, [myAssignment?.assignmentId, myAssignment?.githubUrl]);
+
 
   const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setUploadStatus('IDLE');
-    }
+    const files = Array.from(e.target.files || []);
+    setSelectedFiles(files);
+    setUploadStatus('IDLE');
   };
 
-  const handleUpload = () => {
-    if (!selectedFile || !lecture) return;
+  const handleToggleRemoveExistingFile = (fileId) => {
+    setRemovedFileIds((prev) => (
+      prev.includes(fileId) ? prev.filter((idValue) => idValue !== fileId) : [...prev, fileId]
+    ));
+  };
+
+  const handleSaveAssignment = () => {
+    if (!lecture) return;
+    const githubUrlTrimmed = (assignmentGithubUrl || '').trim() || null;
+    const hasNewFiles = selectedFiles.length > 0;
+    const hasGithub = !!githubUrlTrimmed;
+    const existingFilesCount = Array.isArray(myAssignment?.files) ? myAssignment.files.length : 0;
+    const removedCount = removedFileIds.length;
+    const remainingCount = Math.max(0, existingFilesCount - removedCount);
+    const finalFileCount = remainingCount + selectedFiles.length;
+    if (!myAssignment && !hasNewFiles && !hasGithub) {
+      alert(LECTURE_PAGE_MESSAGES.ASSIGNMENT_EMPTY_ERROR);
+      return;
+    }
+    if (myAssignment && finalFileCount < 1 && !hasGithub) {
+      alert(LECTURE_PAGE_MESSAGES.ASSIGNMENT_EMPTY_ERROR);
+      return;
+    }
     setUploadStatus('UPLOADING');
     const formData = new FormData();
-    formData.append('files', selectedFile);
-    const githubUrlTrimmed = (githubUrl || '').trim() || null;
-    const requestBlob = new Blob(
-      [JSON.stringify({
-        lectureId: lecture.id,
+    let saveSucceeded = false;
+    selectedFiles.forEach((file) => formData.append('files', file));
+    const requestPayload = myAssignment
+      ? { githubUrl: githubUrlTrimmed, deletedFiles: removedFileIds }
+      : {
         week: lecture.week,
         type: lecture.type,
-        comment: '',
         githubUrl: githubUrlTrimmed,
-      })],
-      { type: 'application/json' }
-    );
+      };
+    const requestBlob = new Blob([JSON.stringify(requestPayload)], { type: 'application/json' });
     formData.append('request', requestBlob, 'request.json');
-    api
-      .post('/api/assignments', formData)
-      .then(() => setUploadStatus('SUCCESS'))
+    const requestPromise = myAssignment
+      ? api.patch(`/api/assignments/${myAssignment.assignmentId}`, formData)
+      : api.post('/api/assignments', formData);
+    requestPromise
+      .then(() => {
+        saveSucceeded = true;
+        setSelectedFiles([]);
+        setRemovedFileIds([]);
+        setUploadStatus('SUCCESS');
+      })
+      .then(() => api.get('/api/assignments/me'))
+      .then((res) => {
+        const list = res.data?.data ?? res.data;
+        const arr = Array.isArray(list) ? list : [];
+        const found = arr.find((a) => a.lectureId === lecture.id) || null;
+        setMyAssignment(found);
+        alert(LECTURE_PAGE_MESSAGES.ASSIGNMENT_SAVE_SUCCESS);
+      })
       .catch(() => {
+        if (saveSucceeded) {
+          alert(LECTURE_PAGE_MESSAGES.ASSIGNMENT_REFRESH_ERROR);
+          return;
+        }
         setUploadStatus('IDLE');
-        alert('과제 제출에 실패했습니다.');
+        alert(LECTURE_PAGE_MESSAGES.ASSIGNMENT_SAVE_ERROR);
       });
   };
 
@@ -401,46 +444,75 @@ const LectureDetail = () => {
               <div className="relative border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:bg-white/5 transition-colors group">
                 <input
                   type="file"
+                  multiple
                   onChange={handleFileSelect}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
-                {!selectedFile ? (
+                {selectedFiles.length === 0 ? (
                   <div className="flex flex-col items-center gap-2 text-gray-400 group-hover:text-gray-200">
                     <Upload size={24} />
                     <span className="text-sm">파일을 드래그하거나 클릭</span>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center gap-2 text-cyan-400 z-20 relative">
+                  <div className="flex items-center justify-center gap-2 text-cyan-400 z-20 relative flex-wrap">
                     <FileText size={20} />
-                    <span className="text-sm truncate max-w-[150px]">{selectedFile.name}</span>
-                    <button type="button" onClick={(e) => { e.preventDefault(); setSelectedFile(null); }} className="text-gray-500 hover:text-white">
+                    <span className="text-sm truncate max-w-[220px]">
+                      {selectedFiles.map((f) => f.name).join(', ')}
+                    </span>
+                    <button type="button" onClick={(e) => { e.preventDefault(); setSelectedFiles([]); }} className="text-gray-500 hover:text-white">
                       <X size={14} />
                     </button>
                   </div>
                 )}
               </div>
+              {myAssignment && Array.isArray(myAssignment.files) && myAssignment.files.length > 0 && (
+                <div className="bg-black/20 border border-white/10 rounded-xl p-3">
+                  <p className="text-xs text-gray-400 mb-2">{LECTURE_PAGE_MESSAGES.ASSIGNMENT_KEPT_FILES_LABEL}</p>
+                  <div className="space-y-1.5">
+                    {myAssignment.files.map((f) => {
+                      const removed = removedFileIds.includes(f.fileId);
+                      return (
+                        <div key={f.fileId} className="flex items-center justify-between gap-2">
+                          <span className={`text-sm ${removed ? 'text-gray-500 line-through' : 'text-gray-200'}`}>{f.fileName}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleRemoveExistingFile(f.fileId)}
+                            className={`text-xs ${removed ? 'text-cyan-400' : 'text-red-300'} hover:underline`}
+                          >
+                            {removed ? LECTURE_PAGE_MESSAGES.ASSIGNMENT_UNDO_REMOVE : LECTURE_PAGE_MESSAGES.ASSIGNMENT_REMOVE_FILE}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-2">{LECTURE_PAGE_MESSAGES.ASSIGNMENT_FILE_REMOVE_HINT}</p>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">
                   {LECTURE_PAGE_MESSAGES.ASSIGNMENT_GITHUB_LABEL}
                 </label>
                 <input
                   type="url"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
+                  value={assignmentGithubUrl}
+                  onChange={(e) => setAssignmentGithubUrl(e.target.value)}
                   placeholder={LECTURE_PAGE_MESSAGES.ASSIGNMENT_GITHUB_PLACEHOLDER}
                   className="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
                 />
               </div>
+              {myAssignment && (
+                <p className="text-xs text-cyan-300">{LECTURE_PAGE_MESSAGES.ASSIGNMENT_EDIT_MODE}</p>
+              )}
               <button
                 type="button"
-                onClick={handleUpload}
-                disabled={!selectedFile || uploadStatus === 'SUCCESS'}
+                onClick={handleSaveAssignment}
+                disabled={uploadStatus === 'UPLOADING'}
                 className={`w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all
-                  ${uploadStatus === 'SUCCESS' ? 'bg-green-600 text-white' : !selectedFile ? 'bg-gray-700 text-gray-400' : 'bg-purple-600 hover:bg-purple-500 text-white'}`}
+                  ${uploadStatus === 'SUCCESS' ? 'bg-green-600 text-white' : 'bg-purple-600 hover:bg-purple-500 text-white'}`}
               >
                 {uploadStatus === 'UPLOADING' && '업로드 중...'}
                 {uploadStatus === 'SUCCESS' && <><Check size={18} /> 제출 완료</>}
-                {uploadStatus === 'IDLE' && '과제 제출하기'}
+                {uploadStatus === 'IDLE' && (myAssignment ? LECTURE_PAGE_MESSAGES.ASSIGNMENT_UPDATE : LECTURE_PAGE_MESSAGES.ASSIGNMENT_SUBMIT)}
               </button>
             </div>
           </div>
