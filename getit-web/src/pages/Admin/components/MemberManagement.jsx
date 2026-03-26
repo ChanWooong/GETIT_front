@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../../api/axios';
 import { useAppStore } from '../../../hooks/appStore';
 import { ADMIN_MEMBER_MESSAGES, API, LECTURE_TRACK } from '../../../constants';
+import LoadingState from '../../../components/admin/LoadingState';
 import { MessageCircle, FileText, Trash2, Download, X } from 'lucide-react';
 
 const SUBTAB = { QNA: 'QNA', ASSIGNMENTS: 'ASSIGNMENTS' };
@@ -134,22 +135,41 @@ function QnaManagementView() {
       setMessages([]);
       return;
     }
+    let cancelled = false;
+    const requestedLectureId = activeRoom.lectureId;
+    const requestedMemberId = activeRoom.memberId;
     setLoadingChat(true);
-    api.get(`/api/lecture/${activeRoom.lectureId}/qna/rooms/${activeRoom.memberId}`)
-      .then((res) => setMessages(Array.isArray(res.data) ? res.data : []))
-      .catch(() => setMessages([]))
-      .finally(() => setLoadingChat(false));
+    api.get(`/api/lecture/${requestedLectureId}/qna/rooms/${requestedMemberId}`)
+      .then((res) => {
+        if (cancelled) return;
+        setMessages(Array.isArray(res.data) ? res.data : []);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setMessages([]);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setLoadingChat(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [activeRoom]);
 
   const submitAnswer = (lectureId, qnaId) => {
     const content = (answerByQna[qnaId] || '').trim();
     if (!content || !lectureId) return;
+    const requestedMemberId = activeRoom?.memberId;
     api.post(`/api/lecture/${lectureId}/qna/${qnaId}/answer`, { content })
       .then(() => {
         setAnswerByQna((prev) => ({ ...prev, [qnaId]: '' }));
-        if (activeRoom && activeRoom.lectureId === lectureId && activeRoom.memberId) {
-          api.get(`/api/lecture/${lectureId}/qna/rooms/${activeRoom.memberId}`)
-            .then((res) => setMessages(Array.isArray(res.data) ? res.data : []));
+        if (requestedMemberId && activeRoom && activeRoom.lectureId === lectureId && activeRoom.memberId === requestedMemberId) {
+          api.get(`/api/lecture/${lectureId}/qna/rooms/${requestedMemberId}`)
+            .then((res) => {
+              if (!activeRoom || activeRoom.lectureId !== lectureId || activeRoom.memberId !== requestedMemberId) return;
+              setMessages(Array.isArray(res.data) ? res.data : []);
+            });
         }
       })
       .catch(() => alert('답변 등록에 실패했습니다.'));
@@ -260,8 +280,10 @@ function QnaManagementView() {
               {loadingChat ? (
                 <p className="text-gray-500">{ADMIN_MEMBER_MESSAGES.LOADING}</p>
               ) : (
-                groupQnaByQuestion(messages).map((group) => (
-                  <div key={group.question.id} className="space-y-2">
+                groupQnaByQuestion(messages).map((group) => {
+                  const qnaKey = group.question.qnaId ?? group.question.id;
+                  return (
+                  <div key={qnaKey} className="space-y-2">
                     <div>
                       <p className="text-sm text-gray-200 whitespace-pre-wrap">{group.question.content}</p>
                       <p className="text-xs text-gray-500 mt-1">
@@ -271,15 +293,15 @@ function QnaManagementView() {
                     <div className="mt-2 flex gap-2">
                       <input
                         type="text"
-                        value={answerByQna[group.question.id] ?? ''}
-                        onChange={(e) => setAnswerByQna((prev) => ({ ...prev, [group.question.id]: e.target.value }))}
+                        value={answerByQna[qnaKey] ?? ''}
+                        onChange={(e) => setAnswerByQna((prev) => ({ ...prev, [qnaKey]: e.target.value }))}
                         placeholder={ADMIN_MEMBER_MESSAGES.QNA_ANSWER_PLACEHOLDER}
                         className="flex-1 bg-black/30 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500"
                       />
                       <button
                         type="button"
-                        onClick={() => submitAnswer(activeRoom.lectureId, group.question.id)}
-                        disabled={!(answerByQna[group.question.id] || '').trim()}
+                        onClick={() => submitAnswer(activeRoom.lectureId, qnaKey)}
+                        disabled={!(answerByQna[qnaKey] || '').trim()}
                         className="px-4 py-2 bg-cyan-600 text-white font-bold rounded-lg text-sm disabled:opacity-50"
                       >
                         {ADMIN_MEMBER_MESSAGES.QNA_SUBMIT_ANSWER}
@@ -309,7 +331,8 @@ function QnaManagementView() {
                       </div>
                     )}
                   </div>
-                ))
+                );
+                })
               )}
               {!loadingChat && messages.length === 0 && <p className="text-gray-500 text-sm">{ADMIN_MEMBER_MESSAGES.QNA_NO_MESSAGES}</p>}
             </div>

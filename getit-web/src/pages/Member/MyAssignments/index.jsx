@@ -15,7 +15,7 @@ export default function MyAssignments() {
   const [draftNewFiles, setDraftNewFiles] = useState([]);
   const [saving, setSaving] = useState(false);
   const [lectureTitleById, setLectureTitleById] = useState({});
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
 
   const loadAssignments = () => {
     setLoading(true);
@@ -131,6 +131,11 @@ export default function MyAssignments() {
     return byTrack;
   }, [items]);
 
+  const selectedAssignment = useMemo(
+    () => items.find((item) => item.assignmentId === selectedAssignmentId) ?? null,
+    [items, selectedAssignmentId]
+  );
+
   if (loading) {
     return (
       <div className="min-h-screen w-full bg-[#0a061e] text-white pt-24 pb-20 px-6 font-sans flex items-center justify-center">
@@ -188,7 +193,7 @@ export default function MyAssignments() {
                               <button
                                 type="button"
                                 onClick={() => {
-                                  setSelectedAssignment(a);
+                                  setSelectedAssignmentId(a.assignmentId);
                                   cancelEdit();
                                 }}
                                 className="px-3 py-1.5 rounded-lg bg-white/10 text-gray-200 text-xs font-bold hover:bg-white/20"
@@ -212,7 +217,7 @@ export default function MyAssignments() {
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
           onClick={() => {
-            setSelectedAssignment(null);
+            setSelectedAssignmentId(null);
             cancelEdit();
           }}
         >
@@ -227,7 +232,7 @@ export default function MyAssignments() {
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedAssignment(null);
+                  setSelectedAssignmentId(null);
                   cancelEdit();
                 }}
                 className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10"
