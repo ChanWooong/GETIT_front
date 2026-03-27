@@ -18,7 +18,7 @@ const NavMobile = ({ auth, onLogout, onClose }) => {
     (link) => link.to !== '/recruit' || !isMember || userRole === ROLES.ADMIN
   );
   const memberLinksToShow = MEMBER_LINKS.filter(
-    (item) => !(userRole === ROLES.ADMIN && item.to === '/assignments')
+    (item) => !(userRole === ROLES.ADMIN && (item.to === '/assignments' || item.to === '/my-qna'))
   );
 
   return (

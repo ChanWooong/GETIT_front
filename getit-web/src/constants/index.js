@@ -34,6 +34,7 @@ export const API = {
   PATHS: {
     LECTURES: '/api/lectures',
     LECTURE_DETAIL: (id) => `/api/lecture/${id}`,
+    LECTURE_QNA_ME: (lectureId) => `/api/lecture/${lectureId}/qna/me`,
     LECTURE_FILES: (lectureId) => `/api/lecture/${lectureId}/files`,
     ASSIGNMENT_FILE_DOWNLOAD: (fileId) => `/api/assignments/files/${fileId}/download`,
     ADMIN_LECTURE_FILES: (lectureId) => `/api/admin/lecture/${lectureId}/files`,
@@ -292,4 +293,20 @@ export const LECTURE_PAGE_MESSAGES = {
   ASSIGNMENT_FEEDBACK_TITLE: '관리자 코멘트',
   ASSIGNMENT_FEEDBACK_EMPTY: '등록된 코멘트가 없습니다.',
   ASSIGNMENT_FEEDBACK_LOADING: '코멘트 불러오는 중...',
+};
+
+/** 멤버 전체 Q&A 모아보기 페이지 */
+export const MY_QNA_PAGE = {
+  TITLE: '내 Q&A',
+  SUBTITLE: '참여한 강의의 질문과 답변을 한곳에서 확인할 수 있습니다.',
+  LOADING: 'Q&A 목록을 불러오는 중...',
+  EMPTY: '등록한 Q&A가 없습니다.',
+  OPEN_IN_LECTURE: '강의에서 보기',
+  UNANSWERED: '미답변',
+  ANSWERED: '답변 있음',
+  LAST_ACTIVITY: '최근 활동',
+  LOAD_ERROR: 'Q&A를 불러오지 못했습니다.',
+  PREVIEW_FALLBACK: '(내용 없음)',
+  TRACK_SW: 'SW',
+  TRACK_STARTUP: '창업',
 };

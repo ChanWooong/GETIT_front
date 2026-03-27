@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, PlayCircle, AlertTriangle, FileText,
   Upload, Check, X, Download, MessageCircle, Send, Trash2,
@@ -8,37 +8,7 @@ import api from '../../../api/axios';
 import { useAuth } from '../../../hooks/useAuth';
 import PdfViewer from '../../../components/PdfViewer';
 import { API, MESSAGES, LECTURE_PAGE_MESSAGES } from '../../../constants';
-
-/** Q&A 메시지를 질문 단위로 묶음. 백엔드 qnaId 있으면 답변을 해당 질문 밑에 붙임. */
-function groupQnaByQuestion(messages) {
-  if (!Array.isArray(messages) || messages.length === 0) return [];
-  const hasQnaId = messages.some((m) => m.qnaId != null);
-  if (hasQnaId) {
-    const questions = messages.filter((m) => m.sender === 'USER').sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    const order = questions.map((m) => m.qnaId ?? m.id);
-    const byQna = {};
-    for (const msg of messages) {
-      const qid = msg.qnaId ?? (msg.sender === 'USER' ? msg.id : null);
-      if (qid == null) continue;
-      if (msg.sender === 'USER') {
-        byQna[qid] = { question: msg, answers: [] };
-      } else {
-        if (!byQna[qid]) byQna[qid] = { question: null, answers: [] };
-        byQna[qid].answers.push(msg);
-      }
-    }
-    return order.map((qid) => byQna[qid]).filter((g) => g && g.question).map((g) => {
-      g.answers.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      return g;
-    });
-  }
-  const groups = [];
-  for (const msg of messages) {
-    if (msg.sender === 'USER') groups.push({ question: msg, answers: [] });
-    else if (msg.sender === 'ADMIN' && groups.length > 0) groups[groups.length - 1].answers.push(msg);
-  }
-  return groups;
-}
+import { groupQnaByQuestion } from '../../../utils/qnaGroup';
 
 /** 유튜브 URL에서 videoId 추출 */
 function getYoutubeVideoId(url) {
@@ -56,6 +26,7 @@ function getYoutubeVideoId(url) {
 const LectureDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isMember } = useAuth();
   const [lecture, setLecture] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -89,10 +60,18 @@ const LectureDetail = () => {
   // Q&A 조회/등록은 MEMBER 전용 API이므로 관리자일 때는 호출하지 않음 (403 방지)
   useEffect(() => {
     if (!lecture?.id || !isMember) return;
-    api.get(`/api/lecture/${lecture.id}/qna/me`)
+    api.get(API.PATHS.LECTURE_QNA_ME(lecture.id))
       .then((res) => setQnaMessages(Array.isArray(res.data) ? res.data : []))
       .catch(() => setQnaMessages([]));
   }, [lecture?.id, isMember]);
+
+  useEffect(() => {
+    if (location.hash !== '#qna' || !lecture?.id) return;
+    const t = window.setTimeout(() => {
+      document.getElementById('qna')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    return () => window.clearTimeout(t);
+  }, [location.hash, lecture?.id]);
 
   // 내 과제 제출(해당 강의) + 관리자 코멘트 이력 조회
   useEffect(() => {
@@ -264,7 +243,7 @@ const LectureDetail = () => {
       .post(`/api/lecture/${lecture.id}/qna`, { content: text })
       .then(() => {
         setQnaInput('');
-        return api.get(`/api/lecture/${lecture.id}/qna/me`);
+        return api.get(API.PATHS.LECTURE_QNA_ME(lecture.id));
       })
       .then((res) => setQnaMessages(Array.isArray(res.data) ? res.data : []))
       .catch(() => alert('질문 등록에 실패했습니다.'))
@@ -277,7 +256,7 @@ const LectureDetail = () => {
     setQnaDeletingId(qnaId);
     api
       .delete(`/api/lecture/${lecture.id}/qna/${qnaId}`)
-      .then(() => api.get(`/api/lecture/${lecture.id}/qna/me`))
+      .then(() => api.get(API.PATHS.LECTURE_QNA_ME(lecture.id)))
       .then((res) => setQnaMessages(Array.isArray(res.data) ? res.data : []))
       .catch(() => alert(LECTURE_PAGE_MESSAGES.QNA_DELETE_ERROR))
       .finally(() => setQnaDeletingId(null));
@@ -545,7 +524,7 @@ const LectureDetail = () => {
 
 
 
-          <div className="bg-[#110b29] border border-white/10 p-6 rounded-2xl h-[320px] flex flex-col">
+          <div id="qna" className="bg-[#110b29] border border-white/10 p-6 rounded-2xl h-[320px] flex flex-col scroll-mt-24">
             <h3 className="font-bold mb-4 flex items-center gap-2 text-gray-200">
               <MessageCircle size={18} className="text-green-400" /> Q&A
             </h3>
