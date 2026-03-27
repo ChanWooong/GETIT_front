@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, ChevronDown } from 'lucide-react';
 import api from '../../../api/axios';
 import { API, LECTURE_TRACK, MY_QNA_PAGE } from '../../../constants';
 import { groupQnaByQuestion } from '../../../utils/qnaGroup';
@@ -19,11 +19,15 @@ function previewLine(text, fallback) {
   return t.length <= max ? t : `${t.slice(0, max)}…`;
 }
 
+const FILTER = { ALL: 'ALL', UNANSWERED: 'UNANSWERED', ANSWERED: 'ANSWERED' };
+
 export default function MyQna() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rows, setRows] = useState([]);
+  const [filter, setFilter] = useState(FILTER.ALL);
+  const [expandedKey, setExpandedKey] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -77,6 +81,7 @@ export default function MyQna() {
               preview: previewLine(g.question.content, MY_QNA_PAGE.PREVIEW_FALLBACK),
               lastAt: threadLastAtMs(g),
               unanswered: g.answers.length === 0,
+              thread: { question: g.question, answers: g.answers },
             });
           }
         }
@@ -95,7 +100,23 @@ export default function MyQna() {
     };
   }, []);
 
+  const filteredRows = useMemo(() => {
+    if (filter === FILTER.ALL) return rows;
+    if (filter === FILTER.UNANSWERED) return rows.filter((r) => r.unanswered);
+    return rows.filter((r) => !r.unanswered);
+  }, [rows, filter]);
+
   const trackLabel = (type) => (type === LECTURE_TRACK.STARTUP ? MY_QNA_PAGE.TRACK_STARTUP : MY_QNA_PAGE.TRACK_SW);
+
+  const toggleExpand = (rowKey) => {
+    setExpandedKey((prev) => (prev === rowKey ? null : rowKey));
+  };
+
+  const filterOptions = [
+    { id: FILTER.ALL, label: MY_QNA_PAGE.FILTER_ALL },
+    { id: FILTER.UNANSWERED, label: MY_QNA_PAGE.FILTER_UNANSWERED },
+    { id: FILTER.ANSWERED, label: MY_QNA_PAGE.FILTER_ANSWERED },
+  ];
 
   if (loading) {
     return (
@@ -133,32 +154,111 @@ export default function MyQna() {
           <p className="text-gray-500">{MY_QNA_PAGE.EMPTY}</p>
         </div>
       ) : (
-        <div className="max-w-3xl mx-auto space-y-3">
-          {rows.map((row) => (
-            <button
-              key={row.rowKey}
-              type="button"
-              onClick={() => navigate(`/lecture/${row.lectureId}#qna`)}
-              className="w-full text-left bg-[#110b29] border border-white/10 rounded-2xl p-4 hover:bg-white/5 transition-colors"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <span className="text-sm font-bold text-cyan-300 truncate">{row.lectureTitle || '-'}</span>
-                <span className="text-xs text-gray-500 shrink-0">{trackLabel(row.trackType)}</span>
-              </div>
-              <p className="text-sm text-gray-200 line-clamp-3 whitespace-pre-wrap">{row.preview}</p>
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <span className="text-gray-500">
-                  {MY_QNA_PAGE.LAST_ACTIVITY}
-                  {': '}
-                  {row.lastAt ? new Date(row.lastAt).toLocaleString() : '-'}
-                </span>
-                <span className={row.unanswered ? 'text-amber-400 font-bold' : 'text-gray-500'}>
-                  {row.unanswered ? MY_QNA_PAGE.UNANSWERED : MY_QNA_PAGE.ANSWERED}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-cyan-400/90">{MY_QNA_PAGE.OPEN_IN_LECTURE}</p>
-            </button>
-          ))}
+        <div className="max-w-3xl mx-auto">
+          <div className="flex flex-wrap gap-2 mb-4">
+            {filterOptions.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => {
+                  setFilter(opt.id);
+                  setExpandedKey(null);
+                }}
+                className={`px-3 py-1.5 rounded-xl text-sm font-bold border transition-colors ${
+                  filter === opt.id
+                    ? 'bg-cyan-600/20 border-cyan-500/40 text-cyan-300'
+                    : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          {filteredRows.length === 0 ? (
+            <div className="bg-[#110b29] border border-white/10 p-6 rounded-2xl">
+              <p className="text-gray-500">{MY_QNA_PAGE.FILTER_EMPTY}</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredRows.map((row) => {
+                const isOpen = expandedKey === row.rowKey;
+                const { thread } = row;
+                return (
+                  <div
+                    key={row.rowKey}
+                    className="bg-[#110b29] border border-white/10 rounded-2xl p-4"
+                  >
+                    <div className="flex gap-2 items-start">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                          <span className="text-sm font-bold text-cyan-300 truncate">{row.lectureTitle || '-'}</span>
+                          <span className="text-xs text-gray-500 shrink-0">{trackLabel(row.trackType)}</span>
+                        </div>
+                        <p className="text-sm text-gray-200 line-clamp-3 whitespace-pre-wrap">{row.preview}</p>
+                        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                          <span className="text-gray-500">
+                            {MY_QNA_PAGE.LAST_ACTIVITY}
+                            {': '}
+                            {row.lastAt ? new Date(row.lastAt).toLocaleString() : '-'}
+                          </span>
+                          <span className={row.unanswered ? 'text-amber-400 font-bold' : 'text-gray-500'}>
+                            {row.unanswered ? MY_QNA_PAGE.UNANSWERED : MY_QNA_PAGE.ANSWERED}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleExpand(row.rowKey)}
+                        className="shrink-0 p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10"
+                        aria-expanded={isOpen}
+                        aria-label={isOpen ? MY_QNA_PAGE.THREAD_TOGGLE_COLLAPSE : MY_QNA_PAGE.THREAD_TOGGLE_EXPAND}
+                      >
+                        <ChevronDown size={20} className={`transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                    </div>
+
+                    {isOpen && thread && (
+                      <div className="mt-4 pt-4 border-t border-white/10 space-y-3 max-h-72 overflow-y-auto">
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-200 whitespace-pre-wrap">{thread.question.content}</p>
+                          <p className="text-xs text-gray-500">
+                            {MY_QNA_PAGE.ROLE_YOU}
+                            {' · '}
+                            {thread.question.createdAt ? new Date(thread.question.createdAt).toLocaleString('ko-KR') : ''}
+                          </p>
+                        </div>
+                        {thread.answers.length > 0 ? (
+                          <div className="pl-4 space-y-2 border-l-2 border-cyan-500/30">
+                            {thread.answers.map((answer) => (
+                              <div key={answer.id}>
+                                <p className="text-sm text-gray-200 whitespace-pre-wrap">{answer.content}</p>
+                                <p className="text-xs text-gray-500 mt-0.5">
+                                  {MY_QNA_PAGE.ROLE_ADMIN}
+                                  {' · '}
+                                  {answer.createdAt ? new Date(answer.createdAt).toLocaleString('ko-KR') : ''}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-gray-500">{MY_QNA_PAGE.UNANSWERED}</p>
+                        )}
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/lecture/${row.lectureId}#qna`)}
+                      className="mt-3 text-xs text-cyan-400/90 hover:text-cyan-300 hover:underline"
+                    >
+                      {MY_QNA_PAGE.OPEN_IN_LECTURE}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
