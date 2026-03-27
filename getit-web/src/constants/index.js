@@ -212,7 +212,6 @@ export const ADMIN_LECTURE_MESSAGES = {
   QNA_ANSWER: '답변 작성',
   QNA_ANSWER_PLACEHOLDER: '답변 내용을 입력하세요.',
   QNA_SUBMIT_ANSWER: '답변 등록',
-  // 과제(Task) 관리
   TASK_MANAGE: '과제 관리',
   TASK_TITLE: '과제 제목',
   TASK_DESCRIPTION: '과제 설명',
