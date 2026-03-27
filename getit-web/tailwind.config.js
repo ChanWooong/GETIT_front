@@ -6,9 +6,10 @@ export default {
   ],
   // projects.json 등에서 동적으로 쓰는 그라데이션 클래스는 소스에 안 보이므로 safelist로 포함
   safelist: [
+    "from-sky-500", "to-cyan-500",
     "from-purple-500", "to-indigo-500",
     "from-emerald-500", "to-teal-500",
-    "from-blue-500", "to-cyan-500",
+    "from-blue-500",
     "from-orange-500", "to-red-500",
   ],
   theme: {
