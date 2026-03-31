@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { ChevronLeft, ChevronRight, Download, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, AlertTriangle, ZoomIn, ZoomOut } from 'lucide-react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import api from '../api/axios';
@@ -9,6 +9,15 @@ import { LECTURE_PAGE_MESSAGES } from '../constants';
 // Vite: 앱 코드에서 worker를 ?url로 불러와야 빌드 시 올바르게 포함됨
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+const PDF_SCALE_MIN = 0.5;
+const PDF_SCALE_MAX = 2.5;
+const PDF_SCALE_STEP_BUTTON = 1.12;
+const PDF_SCALE_STEP_WHEEL = 1.06;
+
+function clampScale(value) {
+  return Math.min(PDF_SCALE_MAX, Math.max(PDF_SCALE_MIN, value));
+}
 
 /**
  * PDF 뷰어. URL로 PDF를 불러와 페이지 단위로 표시.
@@ -28,7 +37,9 @@ export default function PdfViewer({
   const [loadError, setLoadError] = useState(false);
   const [authBlobUrl, setAuthBlobUrl] = useState(null);
   const [authLoading, setAuthLoading] = useState(false);
+  const [scale, setScale] = useState(1);
   const authBlobRef = useRef(null);
+  const scrollAreaRef = useRef(null);
 
   useEffect(() => {
     if (!authFetch || !file) {
@@ -72,9 +83,23 @@ export default function PdfViewer({
 
   const documentFile = authFetch ? authBlobUrl : file;
 
+  useEffect(() => {
+    const el = scrollAreaRef.current;
+    if (!el) return undefined;
+    const onWheel = (e) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const factor = e.deltaY > 0 ? 1 / PDF_SCALE_STEP_WHEEL : PDF_SCALE_STEP_WHEEL;
+      setScale((s) => clampScale(s * factor));
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, [documentFile]);
+
   const onDocumentLoadSuccess = ({ numPages: n }) => {
     setNumPages(n);
     setPageNumber(1);
+    setScale(1);
     setLoadError(false);
   };
 
@@ -141,14 +166,14 @@ export default function PdfViewer({
 
   return (
     <div className={`flex flex-col bg-black/40 rounded-2xl overflow-hidden ${className}`}>
-      <div className="flex items-center justify-between gap-4 p-2 border-b border-white/10 bg-black/30">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-1 p-2 border-b border-white/10 bg-black/30 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
           <button
             type="button"
             onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
             disabled={pageNumber <= 1}
             className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
-            aria-label="이전 페이지"
+            aria-label={LECTURE_PAGE_MESSAGES.MATERIAL_PDF_PAGE_PREV}
           >
             <ChevronLeft size={20} />
           </button>
@@ -160,21 +185,59 @@ export default function PdfViewer({
             onClick={() => setPageNumber((p) => Math.min(numPages ?? 1, p + 1))}
             disabled={!numPages || pageNumber >= numPages}
             className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
-            aria-label="다음 페이지"
+            aria-label={LECTURE_PAGE_MESSAGES.MATERIAL_PDF_PAGE_NEXT}
           >
             <ChevronRight size={20} />
           </button>
+          <span className="hidden sm:inline w-px h-5 bg-white/15 mx-1" aria-hidden />
+          <button
+            type="button"
+            onClick={() => setScale((s) => clampScale(s / PDF_SCALE_STEP_BUTTON))}
+            disabled={scale <= PDF_SCALE_MIN + 0.001}
+            className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label={LECTURE_PAGE_MESSAGES.MATERIAL_PDF_ZOOM_OUT}
+          >
+            <ZoomOut size={20} />
+          </button>
+          <span className="text-xs text-gray-400 tabular-nums min-w-[3rem] text-center">
+            {Math.round(scale * 100)}%
+          </span>
+          <button
+            type="button"
+            onClick={() => setScale((s) => clampScale(s * PDF_SCALE_STEP_BUTTON))}
+            disabled={scale >= PDF_SCALE_MAX - 0.001}
+            className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
+            aria-label={LECTURE_PAGE_MESSAGES.MATERIAL_PDF_ZOOM_IN}
+          >
+            <ZoomIn size={20} />
+          </button>
+          <button
+            type="button"
+            onClick={() => setScale(1)}
+            className="px-2 py-1 rounded-lg text-xs font-medium text-gray-400 hover:text-white hover:bg-white/10"
+            aria-label={LECTURE_PAGE_MESSAGES.MATERIAL_PDF_ZOOM_RESET}
+          >
+            {LECTURE_PAGE_MESSAGES.MATERIAL_PDF_ZOOM_100}
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={openInNewTab}
-          className="inline-flex items-center gap-1.5 text-sm text-cyan-400 hover:text-cyan-300 font-medium"
-        >
-          <Download size={16} />
-          {downloadLabel}
-        </button>
+        <div className="flex flex-col items-center gap-1 sm:items-end">
+          <button
+            type="button"
+            onClick={openInNewTab}
+            className="inline-flex items-center gap-1.5 text-sm text-cyan-400 hover:text-cyan-300 font-medium"
+          >
+            <Download size={16} />
+            {downloadLabel}
+          </button>
+          <p className="text-[10px] text-gray-500 text-center sm:text-right max-w-[220px] leading-tight">
+            {LECTURE_PAGE_MESSAGES.MATERIAL_PDF_ZOOM_WHEEL_HINT}
+          </p>
+        </div>
       </div>
-      <div className="flex-1 overflow-auto flex justify-center p-4 min-h-[400px]">
+      <div
+        ref={scrollAreaRef}
+        className="flex-1 overflow-auto flex justify-center p-4 min-h-[400px]"
+      >
         <Document
           file={documentFile}
           onLoadSuccess={onDocumentLoadSuccess}
@@ -187,9 +250,10 @@ export default function PdfViewer({
         >
           <Page
             pageNumber={pageNumber}
+            scale={scale}
             renderTextLayer
             renderAnnotationLayer
-            className="!max-w-full"
+            className={scale <= 1 ? '!max-w-full' : ''}
           />
         </Document>
       </div>

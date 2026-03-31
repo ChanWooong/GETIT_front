@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft, PlayCircle, AlertTriangle, FileText,
@@ -9,6 +9,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import PdfViewer from '../../../components/PdfViewer';
 import { API, MESSAGES, LECTURE_PAGE_MESSAGES } from '../../../constants';
 import { groupQnaByQuestion } from '../../../utils/qnaGroup';
+import { mergeAssignmentFiles } from '../../../utils/mergeAssignmentFiles';
 
 /** 유튜브 URL에서 videoId 추출 */
 function getYoutubeVideoId(url) {
@@ -44,6 +45,9 @@ const LectureDetail = () => {
   const [qnaDeletingId, setQnaDeletingId] = useState(null);
   const [lectureFiles, setLectureFiles] = useState([]);
   const [lectureFilesLoading, setLectureFilesLoading] = useState(false);
+  const [assignmentFileDragActive, setAssignmentFileDragActive] = useState(false);
+  const assignmentFileInputRef = useRef(null);
+  const skipAssignmentFileClickAfterDropRef = useRef(false);
 
   useEffect(() => {
     if (!id) {
@@ -164,10 +168,50 @@ const LectureDetail = () => {
   }, [myAssignment?.assignmentId, myAssignment?.githubUrl]);
 
 
-  const handleFileSelect = (e) => {
-    const files = Array.from(e.target.files || []);
-    setSelectedFiles(files);
+  const appendAssignmentFiles = (incoming) => {
+    if (!incoming.length) return;
+    setSelectedFiles((prev) => mergeAssignmentFiles(prev, incoming));
     setUploadStatus('IDLE');
+  };
+
+  const handleFileSelect = (e) => {
+    appendAssignmentFiles(Array.from(e.target.files || []));
+    e.target.value = '';
+  };
+
+  const handleAssignmentDropZoneClick = () => {
+    if (skipAssignmentFileClickAfterDropRef.current) return;
+    assignmentFileInputRef.current?.click();
+  };
+
+  const handleAssignmentDropZoneDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleAssignmentDropZoneDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setAssignmentFileDragActive(true);
+  };
+
+  const handleAssignmentDropZoneDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setAssignmentFileDragActive(false);
+    }
+  };
+
+  const handleAssignmentDropZoneDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setAssignmentFileDragActive(false);
+    skipAssignmentFileClickAfterDropRef.current = true;
+    window.setTimeout(() => {
+      skipAssignmentFileClickAfterDropRef.current = false;
+    }, 400);
+    appendAssignmentFiles(Array.from(e.dataTransfer?.files || []));
   };
 
   const handleToggleRemoveExistingFile = (fileId) => {
@@ -420,29 +464,77 @@ const LectureDetail = () => {
               <FileText size={18} className="text-purple-400" /> 과제 제출
             </h3>
             <div className="space-y-4">
-              <div className="relative border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:bg-white/5 transition-colors group">
+              <div className="space-y-2">
                 <input
+                  ref={assignmentFileInputRef}
                   type="file"
                   multiple
                   onChange={handleFileSelect}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  className="sr-only"
+                  tabIndex={-1}
                 />
-                {selectedFiles.length === 0 ? (
-                  <div className="flex flex-col items-center gap-2 text-gray-400 group-hover:text-gray-200">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label={LECTURE_PAGE_MESSAGES.ASSIGNMENT_FILE_DROP_ZONE_ARIA}
+                  onClick={handleAssignmentDropZoneClick}
+                  onKeyDown={(ev) => {
+                    if (ev.key === 'Enter' || ev.key === ' ') {
+                      ev.preventDefault();
+                      handleAssignmentDropZoneClick();
+                    }
+                  }}
+                  onDragOver={handleAssignmentDropZoneDragOver}
+                  onDragEnter={handleAssignmentDropZoneDragEnter}
+                  onDragLeave={handleAssignmentDropZoneDragLeave}
+                  onDrop={handleAssignmentDropZoneDrop}
+                  className={`relative border-2 border-dashed rounded-xl p-6 text-center transition-colors group min-h-[100px] flex items-center justify-center cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/50 ${
+                    assignmentFileDragActive
+                      ? 'border-cyan-400/70 bg-cyan-500/15'
+                      : 'border-white/10 hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex flex-col items-center gap-2 text-gray-400 group-hover:text-gray-200 pointer-events-none">
                     <Upload size={24} />
-                    <span className="text-sm">파일을 드래그하거나 클릭</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center gap-2 text-cyan-400 z-20 relative flex-wrap">
-                    <FileText size={20} />
-                    <span className="text-sm truncate max-w-[220px]">
-                      {selectedFiles.map((f) => f.name).join(', ')}
+                    <span className="text-sm">
+                      {selectedFiles.length === 0
+                        ? LECTURE_PAGE_MESSAGES.ASSIGNMENT_DROP_OR_CLICK
+                        : LECTURE_PAGE_MESSAGES.ASSIGNMENT_ADD_MORE_FILES_PROMPT}
                     </span>
-                    <button type="button" onClick={(e) => { e.preventDefault(); setSelectedFiles([]); }} className="text-gray-500 hover:text-white">
-                      <X size={14} />
-                    </button>
                   </div>
+                </div>
+                {selectedFiles.length > 0 && (
+                  <ul className="max-h-32 overflow-y-auto space-y-1 border border-white/10 rounded-lg p-2 bg-black/20">
+                    {selectedFiles.map((f, idx) => (
+                      <li
+                        key={`${f.name}-${f.size}-${f.lastModified}-${idx}`}
+                        className="flex items-center justify-between gap-2 text-sm text-cyan-400"
+                      >
+                        <span className="truncate flex-1 text-left">{f.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedFiles((prev) => prev.filter((_, i) => i !== idx))}
+                          className="shrink-0 p-1 text-gray-500 hover:text-white rounded"
+                          aria-label={`${f.name} ${LECTURE_PAGE_MESSAGES.ASSIGNMENT_REMOVE_SELECTED_FILE}`}
+                        >
+                          <X size={14} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 )}
+                {selectedFiles.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFiles([])}
+                    className="text-xs text-gray-500 hover:text-white"
+                  >
+                    {LECTURE_PAGE_MESSAGES.ASSIGNMENT_CLEAR_SELECTED_FILES}
+                  </button>
+                )}
+                <p className="text-[11px] text-gray-500 leading-snug">
+                  {LECTURE_PAGE_MESSAGES.ASSIGNMENT_FILES_CUMULATIVE_HINT}
+                </p>
               </div>
               {myAssignment && Array.isArray(myAssignment.files) && myAssignment.files.length > 0 && (
                 <div className="bg-black/20 border border-white/10 rounded-xl p-3">
