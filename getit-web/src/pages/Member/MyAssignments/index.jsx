@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, MessageCircle, Download, Check, X } from 'lucide-react';
 import api from '../../../api/axios';
 import { API, ADMIN_MEMBER_MESSAGES, LECTURE_TRACK, MESSAGES, LECTURE_PAGE_MESSAGES } from '../../../constants';
+import { mergeAssignmentFiles } from '../../../utils/mergeAssignmentFiles';
 
 export default function MyAssignments() {
   const navigate = useNavigate();
@@ -89,6 +90,13 @@ export default function MyAssignments() {
     setDraftRemovedFileIds((prev) => (
       prev.includes(fileId) ? prev.filter((id) => id !== fileId) : [...prev, fileId]
     ));
+  };
+
+  const handleDraftFilesChange = (e) => {
+    const incoming = Array.from(e.target.files || []);
+    if (incoming.length === 0) return;
+    setDraftNewFiles((prev) => mergeAssignmentFiles(prev, incoming));
+    e.target.value = '';
   };
 
   const saveEdit = async (assignment) => {
@@ -316,12 +324,41 @@ export default function MyAssignments() {
                     <input
                       type="file"
                       multiple
-                      onChange={(e) => setDraftNewFiles(Array.from(e.target.files || []))}
+                      onChange={handleDraftFilesChange}
                       className="block w-full text-xs text-gray-300"
                     />
                     {draftNewFiles.length > 0 && (
-                      <p className="text-xs text-gray-400 mt-1">{draftNewFiles.map((f) => f.name).join(', ')}</p>
+                      <ul className="mt-2 max-h-28 overflow-y-auto space-y-1 border border-white/10 rounded-lg p-2 bg-black/20">
+                        {draftNewFiles.map((f, idx) => (
+                          <li
+                            key={`${f.name}-${f.size}-${f.lastModified}-${idx}`}
+                            className="flex items-center justify-between gap-2 text-xs text-cyan-400"
+                          >
+                            <span className="truncate flex-1 text-left">{f.name}</span>
+                            <button
+                              type="button"
+                              onClick={() => setDraftNewFiles((prev) => prev.filter((_, i) => i !== idx))}
+                              className="shrink-0 p-0.5 text-gray-500 hover:text-white rounded"
+                              aria-label={`${f.name} ${LECTURE_PAGE_MESSAGES.ASSIGNMENT_REMOVE_SELECTED_FILE}`}
+                            >
+                              <X size={12} />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
                     )}
+                    {draftNewFiles.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setDraftNewFiles([])}
+                        className="mt-1 text-[11px] text-gray-500 hover:text-white"
+                      >
+                        {LECTURE_PAGE_MESSAGES.ASSIGNMENT_CLEAR_SELECTED_FILES}
+                      </button>
+                    )}
+                    <p className="text-[10px] text-gray-500 mt-1 leading-snug">
+                      {LECTURE_PAGE_MESSAGES.ASSIGNMENT_FILES_CUMULATIVE_HINT}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400 mb-1">{LECTURE_PAGE_MESSAGES.ASSIGNMENT_KEPT_FILES_LABEL}</p>
