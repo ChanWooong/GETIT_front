@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../../api/axios';
 import { useAppStore } from '../../../hooks/appStore';
 import { ADMIN_MEMBER_MESSAGES, API, LECTURE_TRACK } from '../../../constants';
@@ -348,7 +348,8 @@ function AssignmentsListView() {
   const [loading, setLoading] = useState(true);
   const [downloadingFileId, setDownloadingFileId] = useState(null);
   const [trackFilter, setTrackFilter] = useState('ALL'); // ALL | SW | STARTUP
-  const [openWeek, setOpenWeek] = useState(null); // number
+  /** 전체 필터 시 SW·창업 1주차 구분: "SW-1", "STARTUP-1" */
+  const [openSectionKey, setOpenSectionKey] = useState(null);
   const [feedbackByAssignmentId, setFeedbackByAssignmentId] = useState({}); // { [assignmentId]: feedbacks[] }
   const [feedbackLoadingId, setFeedbackLoadingId] = useState(null);
   const [feedbackDraft, setFeedbackDraft] = useState({}); // { [assignmentId]: string }
@@ -371,16 +372,24 @@ function AssignmentsListView() {
     return a.trackType === trackFilter;
   });
 
-  const groupedByWeek = filtered.reduce((acc, cur) => {
-    const w = cur.week ?? 0;
-    if (!acc[w]) acc[w] = [];
-    acc[w].push(cur);
-    return acc;
-  }, {});
+  const groupedByTrackAndWeek = useMemo(() => {
+    const buckets = { SW: {}, STARTUP: {} };
+    for (const cur of filtered) {
+      const tr = cur.trackType === LECTURE_TRACK.STARTUP ? 'STARTUP' : 'SW';
+      const w = cur.week ?? 0;
+      if (!buckets[tr][w]) buckets[tr][w] = [];
+      buckets[tr][w].push(cur);
+    }
+    return buckets;
+  }, [filtered]);
 
-  const weeks = Object.keys(groupedByWeek)
-    .map((w) => Number(w))
-    .sort((a, b) => a - b);
+  const TRACK_KEYS = ['SW', 'STARTUP'];
+  const visibleTracks = useMemo(() => {
+    if (trackFilter === 'ALL') {
+      return TRACK_KEYS.filter((tr) => Object.keys(groupedByTrackAndWeek[tr]).length > 0);
+    }
+    return [trackFilter];
+  }, [trackFilter, groupedByTrackAndWeek]);
 
   const handleDownloadFile = (fileId, fileName) => {
     if (downloadingFileId != null) return;
@@ -466,7 +475,7 @@ function AssignmentsListView() {
           <button
             key={opt.id}
             type="button"
-            onClick={() => { setTrackFilter(opt.id); setOpenWeek(null); }}
+            onClick={() => { setTrackFilter(opt.id); setOpenSectionKey(null); }}
             className={`px-3 py-1.5 rounded-xl text-sm font-bold border transition-colors ${
               trackFilter === opt.id
                 ? 'bg-cyan-600/20 border-cyan-500/40 text-cyan-300'
@@ -478,102 +487,120 @@ function AssignmentsListView() {
         ))}
       </div>
 
-      {weeks.length === 0 ? (
+      {filtered.length === 0 || visibleTracks.length === 0 ? (
         <p className="text-gray-500 py-8">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_EMPTY}</p>
       ) : (
-        <div className="space-y-2">
-          {weeks.map((week) => {
-            const isOpen = openWeek === week;
-            const rows = groupedByWeek[week] ?? [];
+        <div className="space-y-6">
+          {visibleTracks.map((trackKey) => {
+            const weekMap = groupedByTrackAndWeek[trackKey] ?? {};
+            const weeks = Object.keys(weekMap)
+              .map((w) => Number(w))
+              .sort((a, b) => a - b);
+            if (weeks.length === 0) return null;
+            const sectionTitle = trackKey === 'SW'
+              ? ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_SECTION_SW
+              : ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_SECTION_STARTUP;
             return (
-              <div key={week} className="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
-                <button
-                  type="button"
-                  onClick={() => setOpenWeek(isOpen ? null : week)}
-                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-black text-white">{week}주차 | {rows[0]?.taskTitle ?? '-'}</span>
-                    <span className="text-xs text-gray-400">({rows.length})</span>
-                  </div>
-                  <span className="text-xs text-gray-400">{isOpen ? ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_TOGGLE_CLOSE : ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_TOGGLE_OPEN}</span>
-                </button>
-
-                {isOpen && (
-                  <div className="p-4 overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[860px]">
-                      <thead>
-                        <tr className="border-b border-white/10 text-gray-400 text-sm uppercase tracking-wider">
-                          <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_MEMBER}</th>
-                          <th className="p-3">트랙</th>
-                          <th className="p-3">제출일</th>
-                          <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_GITHUB}</th>
-                          <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK}</th>
-                          <th className="p-3">다운로드</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rows.map((a) => (
-                          <tr key={a.assignmentId} className="border-b border-white/5 align-top">
-                            <td className="p-3 font-medium text-white">{a.memberName ?? a.memberId}</td>
-                            <td className="p-3">{a.trackType === LECTURE_TRACK.SW ? 'SW' : 'Startup'}</td>
-                            <td className="p-3 text-sm text-gray-400">{a.submittedAt ? new Date(a.submittedAt).toLocaleString() : '-'}</td>
-                            <td className="p-3">
-                              {a.githubUrl ? (
-                                <a
-                                  href={a.githubUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-cyan-400 text-xs font-medium hover:underline truncate max-w-[140px]"
-                                  title={a.githubUrl}
-                                >
-                                  {ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_GITHUB}
-                                </a>
-                              ) : (
-                                <span className="text-xs text-gray-500">-</span>
-                              )}
-                            </td>
-                            <td className="p-3">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setFeedbackModalAssignment(a);
-                                  loadFeedbacks(a.assignmentId);
-                                  setEditingFeedbackId(null);
-                                  setEditingContent('');
-                                }}
-                                className="px-3 py-1.5 rounded-lg bg-purple-600/20 text-purple-300 text-xs font-bold hover:bg-purple-600/30"
-                              >
-                                {ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_MANAGE}
-                              </button>
-                            </td>
-                            <td className="p-3">
-                              {Array.isArray(a.files) && a.files.length > 0 ? (
-                                <div className="flex flex-wrap gap-1">
-                                  {a.files.map((f) => (
-                                    <button
-                                      key={f.fileId}
-                                      type="button"
-                                      onClick={() => handleDownloadFile(f.fileId, f.fileName)}
-                                      disabled={downloadingFileId === f.fileId}
-                                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-600/20 text-cyan-400 text-xs font-medium hover:bg-cyan-600/30 disabled:opacity-50"
-                                      title={f.fileName}
-                                    >
-                                      <Download size={14} />
-                                      {ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_DOWNLOAD}
-                                    </button>
-                                  ))}
-                                </div>
-                              ) : (
-                                <span className="text-xs text-gray-500">-</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+              <div key={trackKey} className="space-y-2">
+                {trackFilter === 'ALL' && (
+                  <h4 className="text-sm font-bold text-gray-300 px-1">{sectionTitle}</h4>
                 )}
+                {weeks.map((week) => {
+                  const sectionId = `${trackKey}-${week}`;
+                  const isOpen = openSectionKey === sectionId;
+                  const rows = weekMap[week] ?? [];
+                  return (
+                    <div key={sectionId} className="border border-white/10 rounded-2xl overflow-hidden bg-white/5">
+                      <button
+                        type="button"
+                        onClick={() => setOpenSectionKey(isOpen ? null : sectionId)}
+                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/5"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-black text-white">{week}주차 | {rows[0]?.taskTitle ?? '-'}</span>
+                          <span className="text-xs text-gray-400">({rows.length})</span>
+                        </div>
+                        <span className="text-xs text-gray-400">{isOpen ? ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_TOGGLE_CLOSE : ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_TOGGLE_OPEN}</span>
+                      </button>
+
+                      {isOpen && (
+                        <div className="p-4 overflow-x-auto">
+                          <table className="w-full text-left border-collapse min-w-[860px]">
+                            <thead>
+                              <tr className="border-b border-white/10 text-gray-400 text-sm uppercase tracking-wider">
+                                <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_MEMBER}</th>
+                                <th className="p-3">트랙</th>
+                                <th className="p-3">제출일</th>
+                                <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_GITHUB}</th>
+                                <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK}</th>
+                                <th className="p-3">다운로드</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {rows.map((a) => (
+                                <tr key={a.assignmentId} className="border-b border-white/5 align-top">
+                                  <td className="p-3 font-medium text-white">{a.memberName ?? a.memberId}</td>
+                                  <td className="p-3">{a.trackType === LECTURE_TRACK.SW ? 'SW' : 'Startup'}</td>
+                                  <td className="p-3 text-sm text-gray-400">{a.submittedAt ? new Date(a.submittedAt).toLocaleString() : '-'}</td>
+                                  <td className="p-3">
+                                    {a.githubUrl ? (
+                                      <a
+                                        href={a.githubUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-cyan-400 text-xs font-medium hover:underline truncate max-w-[140px]"
+                                        title={a.githubUrl}
+                                      >
+                                        {ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_GITHUB}
+                                      </a>
+                                    ) : (
+                                      <span className="text-xs text-gray-500">-</span>
+                                    )}
+                                  </td>
+                                  <td className="p-3">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setFeedbackModalAssignment(a);
+                                        loadFeedbacks(a.assignmentId);
+                                        setEditingFeedbackId(null);
+                                        setEditingContent('');
+                                      }}
+                                      className="px-3 py-1.5 rounded-lg bg-purple-600/20 text-purple-300 text-xs font-bold hover:bg-purple-600/30"
+                                    >
+                                      {ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_MANAGE}
+                                    </button>
+                                  </td>
+                                  <td className="p-3">
+                                    {Array.isArray(a.files) && a.files.length > 0 ? (
+                                      <div className="flex flex-wrap gap-1">
+                                        {a.files.map((f) => (
+                                          <button
+                                            key={f.fileId}
+                                            type="button"
+                                            onClick={() => handleDownloadFile(f.fileId, f.fileName)}
+                                            disabled={downloadingFileId === f.fileId}
+                                            className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-600/20 text-cyan-400 text-xs font-medium hover:bg-cyan-600/30 disabled:opacity-50"
+                                            title={f.fileName}
+                                          >
+                                            <Download size={14} />
+                                            {ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_DOWNLOAD}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <span className="text-xs text-gray-500">-</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             );
           })}
