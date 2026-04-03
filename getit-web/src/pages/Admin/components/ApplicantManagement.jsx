@@ -44,12 +44,12 @@ const ApplicantManagement = ({ onSelect }) => {
       const applyData = applyRes.data?.data ?? applyRes.data ?? {};
       onSelect({
         ...applyData,
-        name: app.name ?? applyData.name,
-        studentId: app.studentId,
-        college: app.college ?? applyData.college,
-        department: app.department ?? applyData.department,
-        cellNum: app.cellNum ?? applyData.cellNum,
-        email: app.email ?? applyData.email,
+        name: applyData.name ?? app.name,
+        studentId: applyData.studentId ?? app.studentId,
+        college: applyData.college ?? app.college,
+        department: applyData.department ?? app.department,
+        cellNum: applyData.cellNum ?? app.cellNum,
+        email: applyData.email ?? app.email,
       });
     } catch (err) {
       console.error('상세 데이터 로드 실패:', err);
