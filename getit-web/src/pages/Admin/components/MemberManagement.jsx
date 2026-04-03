@@ -357,8 +357,20 @@ function AssignmentsListView() {
   const [editingContent, setEditingContent] = useState('');
   const [feedbackModalAssignment, setFeedbackModalAssignment] = useState(null);
 
+  const refreshAssignments = () => {
+    api
+      .get('/api/admin/assignments/all', { params: { size: 100 } })
+      .then((res) => {
+        const content = res.data?.content ?? (Array.isArray(res.data) ? res.data : []);
+        setAssignments(content);
+      })
+      .catch(() => setAssignments([]));
+  };
+
   useEffect(() => {
-    api.get('/api/admin/assignments/all', { params: { size: 100 } })
+    setLoading(true);
+    api
+      .get('/api/admin/assignments/all', { params: { size: 100 } })
       .then((res) => {
         const content = res.data?.content ?? (Array.isArray(res.data) ? res.data : []);
         setAssignments(content);
@@ -430,6 +442,7 @@ function AssignmentsListView() {
       .then(() => {
         setFeedbackDraft((prev) => ({ ...prev, [assignmentId]: '' }));
         loadFeedbacks(assignmentId);
+        refreshAssignments();
       })
       .catch(() => alert(ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_ERROR));
   };
@@ -456,7 +469,10 @@ function AssignmentsListView() {
     if (!window.confirm(ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_DELETE_CONFIRM)) return;
     api
       .delete(`/api/admin/assignments/feedbacks/${feedbackId}`)
-      .then(() => loadFeedbacks(assignmentId))
+      .then(() => {
+        loadFeedbacks(assignmentId);
+        refreshAssignments();
+      })
       .catch(() => alert(ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_ERROR));
   };
 
@@ -532,12 +548,15 @@ function AssignmentsListView() {
                                 <th className="p-3">트랙</th>
                                 <th className="p-3">제출일</th>
                                 <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_GITHUB}</th>
-                                <th className="p-3">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK}</th>
+                                <th className="p-3 whitespace-nowrap">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_COLUMN_STATUS}</th>
+                                <th className="p-3 whitespace-nowrap">{ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK}</th>
                                 <th className="p-3">다운로드</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {rows.map((a) => (
+                              {rows.map((a) => {
+                                const feedbackCount = Number(a.feedbackCount ?? 0);
+                                return (
                                 <tr key={a.assignmentId} className="border-b border-white/5 align-top">
                                   <td className="p-3 font-medium text-white">{a.memberName ?? a.memberId}</td>
                                   <td className="p-3">{a.trackType === LECTURE_TRACK.SW ? 'SW' : 'Startup'}</td>
@@ -556,6 +575,20 @@ function AssignmentsListView() {
                                     ) : (
                                       <span className="text-xs text-gray-500">-</span>
                                     )}
+                                  </td>
+                                  <td className="p-3">
+                                    <span
+                                      className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${
+                                        feedbackCount > 0
+                                          ? 'border-purple-400/40 bg-purple-500/15 text-purple-200'
+                                          : 'border-white/10 bg-white/5 text-gray-500'
+                                      }`}
+                                    >
+                                      <MessageCircle size={12} className="shrink-0" aria-hidden />
+                                      {feedbackCount > 0
+                                        ? `${ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_LIST_HAS} · ${feedbackCount}${ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_COUNT_UNIT}`
+                                        : ADMIN_MEMBER_MESSAGES.ASSIGNMENTS_FEEDBACK_LIST_NONE}
+                                    </span>
                                   </td>
                                   <td className="p-3">
                                     <button
@@ -593,7 +626,8 @@ function AssignmentsListView() {
                                     )}
                                   </td>
                                 </tr>
-                              ))}
+                                );
+                              })}
                             </tbody>
                           </table>
                         </div>

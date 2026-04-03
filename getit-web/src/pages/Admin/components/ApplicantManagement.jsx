@@ -40,20 +40,16 @@ const ApplicantManagement = ({ onSelect }) => {
 
   const handleSelect = async (app) => {
     try {
-      const [applyRes, infoRes] = await Promise.all([
-        api.get(`/api/admin/applies/${app.id}`),
-        api.get(`/api/admin/applies/${app.id}/info`),
-      ]);
+      const applyRes = await api.get(`/api/admin/applies/${app.id}`);
       const applyData = applyRes.data?.data ?? applyRes.data ?? {};
-      const infoData = infoRes.data?.data ?? infoRes.data ?? {};
       onSelect({
         ...applyData,
-        name: infoData.name ?? app.name ?? applyData.name,
-        studentId: infoData.studentId ?? app.studentId,
-        college: infoData.college,
-        department: infoData.department ?? app.department ?? applyData.department,
-        cellNum: infoData.cellNum ?? app.cellNum,
-        email: infoData.email ?? app.email,
+        name: app.name ?? applyData.name,
+        studentId: app.studentId,
+        college: app.college ?? applyData.college,
+        department: app.department ?? applyData.department,
+        cellNum: app.cellNum ?? applyData.cellNum,
+        email: app.email ?? applyData.email,
       });
     } catch (err) {
       console.error('상세 데이터 로드 실패:', err);

@@ -226,10 +226,26 @@ export default function MyAssignments() {
                         {week}주차 | {lectureTitleById[grouped[track][week]?.[0]?.lectureId] || '-'}
                       </div>
                       <div className="p-4 space-y-3">
-                        {(grouped[track][week] || []).map((a) => (
+                        {(grouped[track][week] || []).map((a) => {
+                          const hasFeedback = Array.isArray(a.feedbacks) && a.feedbacks.length > 0;
+                          return (
                           <div key={a.assignmentId} className="bg-black/20 border border-white/10 rounded-xl p-4">
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="min-w-0">
+                            <div className="flex items-center justify-between gap-3 flex-wrap">
+                              <div className="min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  <span
+                                    className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${
+                                      hasFeedback
+                                        ? 'border-purple-400/40 bg-purple-500/15 text-purple-200'
+                                        : 'border-white/10 bg-white/5 text-gray-500'
+                                    }`}
+                                  >
+                                    <MessageCircle size={12} className="shrink-0" aria-hidden />
+                                    {hasFeedback
+                                      ? LECTURE_PAGE_MESSAGES.ASSIGNMENT_LIST_FEEDBACK_HAS
+                                      : LECTURE_PAGE_MESSAGES.ASSIGNMENT_LIST_FEEDBACK_NONE}
+                                  </span>
+                                </div>
                                 <p className="text-sm text-gray-300">
                                   제출일: {a.createdAt ? new Date(a.createdAt).toLocaleString() : '-'}
                                 </p>
@@ -251,7 +267,8 @@ export default function MyAssignments() {
                               </button>
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
