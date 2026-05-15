@@ -4,6 +4,7 @@ import TabNavigation from './components/TabNavigation';
 import ApplicantManagement from './components/ApplicantManagement';
 import ApplicantModal from './components/ApplicantModal';
 import MemberManagement from './components/MemberManagement';
+import LectureManagement from './components/LectureManagement';
 import AuthManagement from './components/AuthManagement';
 import SettingsManagement from './components/SettingsManagement';
 
@@ -20,6 +21,7 @@ const AdminPage = () => {
 
         <div className="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 min-h-[500px] backdrop-blur-xl relative">
           {activeTab === 'MEMBERS' && <MemberManagement />}
+          {activeTab === 'LECTURE' && <LectureManagement />}
           {activeTab === 'APPLICANTS' && (
             <ApplicantManagement
               onSelect={setSelectedApplicant} // ✅ applicants prop 제거

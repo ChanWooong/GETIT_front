@@ -1,49 +1,79 @@
-import React, { useState, useEffect } from 'react';
-import { PlayCircle, Lock, Clock, CheckCircle, Code, Briefcase, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { PlayCircle, Code, Briefcase, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/axios';
-import { MESSAGES, LECTURE_STATUS, LECTURE_TRACK, API } from '../../../constants';
+import { API, LECTURE_TRACK, LECTURE_PAGE_MESSAGES, MESSAGES, SW_TRACK_FILTERS } from '../../../constants';
 
 /**
- * 백엔드 강의 한 건 타입 (예상)
- * { id, week, title, time, status, videoUrl? }
- * - status: LECTURE_STATUS.DONE | PROGRESS | LOCKED
- * - videoUrl: 유튜브 URL 또는 videoId (LectureDetail에서 사용)
+ * 강의 목록: GET /api/lectures 후 상세 조회로 type/week 확보, 트랙별·주차순 정렬 (status 미사용)
  */
 const Lecture = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(LECTURE_TRACK.SW);
-  const [swLectures, setSwLectures] = useState([]);
-  const [startupLectures, setStartupLectures] = useState([]);
+  const [swFilter, setSwFilter] = useState('');
+  const [swTrack, setSwTrack] = useState([]);
+  const [startupTrack, setStartupTrack] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     setError(null);
     api
-      .get(API.PATHS.LECTURES)
+      .get(API.PATHS.LECTURES, { params: { size: 100 } })
       .then((res) => {
-        const data = res.data ?? {};
-        setSwLectures(Array.isArray(data.swTrack) ? data.swTrack : []);
-        setStartupLectures(Array.isArray(data.startupTrack) ? data.startupTrack : []);
+        const content = res.data?.content ?? [];
+        if (cancelled || content.length === 0) {
+          setSwTrack([]);
+          setStartupTrack([]);
+          setLoading(false);
+          return;
+        }
+        Promise.all(
+          content.map((item) =>
+            api.get(API.PATHS.LECTURE_DETAIL(item.lectureId)).then((r) => ({
+              ...r.data,
+              id: r.data.lectureId,
+            }))
+          )
+        )
+          .then((details) => {
+            if (cancelled) return;
+            const sw = details.filter((d) => d.type === LECTURE_TRACK.SW).sort((a, b) => (a.week ?? 0) - (b.week ?? 0));
+            const startup = details
+              .filter((d) => d.type === LECTURE_TRACK.STARTUP)
+              .sort((a, b) => (a.week ?? 0) - (b.week ?? 0));
+            setSwTrack(sw);
+            setStartupTrack(startup);
+          })
+          .catch(() => {
+            if (!cancelled) setError(MESSAGES.LECTURE_LIST_ERROR);
+          })
+          .finally(() => {
+            if (!cancelled) setLoading(false);
+          });
       })
       .catch(() => {
-        setError(MESSAGES.LECTURE_LIST_ERROR);
-        setSwLectures([]);
-        setStartupLectures([]);
-      })
-      .finally(() => setLoading(false));
+        if (!cancelled) {
+          setError(MESSAGES.LECTURE_LIST_ERROR);
+          setSwTrack([]);
+          setStartupTrack([]);
+        }
+        setLoading(false);
+      });
+    return () => { cancelled = true; };
   }, []);
 
-  const currentLectures = activeTab === LECTURE_TRACK.SW ? swLectures : startupLectures;
+  const currentLectures = useMemo(() => {
+    if (activeTab === LECTURE_TRACK.STARTUP) return startupTrack;
+    if (!swFilter) return swTrack;
+    const keyword = swFilter.toLowerCase();
+    return swTrack.filter((lec) => (lec.title || '').toLowerCase().includes(keyword));
+  }, [activeTab, swTrack, startupTrack, swFilter]);
 
-  const handleMoveToDetail = (id, status) => {
-    if (status !== LECTURE_STATUS.LOCKED) {
-      navigate(`/lecture/${id}`);
-    } else {
-      alert(MESSAGES.LECTURE_LOCKED);
-    }
+  const handleMoveToDetail = (lectureId) => {
+    navigate(`/lecture/${lectureId}`);
   };
 
   if (loading) {
@@ -53,7 +83,6 @@ const Lecture = () => {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="min-h-screen w-full bg-[#110b29] text-white pt-32 pb-20 px-6 font-sans flex flex-col items-center justify-center gap-4">
@@ -73,7 +102,7 @@ const Lecture = () => {
           </h2>
         </div>
 
-        <div className="flex justify-center gap-4 mb-10">
+        <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={() => setActiveTab(LECTURE_TRACK.SW)}
             className={`flex items-center gap-2 px-6 py-2 md:px-8 md:py-3 rounded-full font-bold transition-all ${
@@ -96,59 +125,55 @@ const Lecture = () => {
           </button>
         </div>
 
+        {activeTab === LECTURE_TRACK.SW && (
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {SW_TRACK_FILTERS.map(({ value, label }) => (
+              <button
+                key={value || 'all'}
+                type="button"
+                onClick={() => setSwFilter(value)}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
+                  swFilter === value
+                    ? 'bg-cyan-500 text-[#110b29]'
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-200'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="space-y-4">
           {currentLectures.length === 0 ? (
             <div className="text-center py-16 text-gray-500">
-              해당 트랙에 등록된 강의가 없습니다.
+              {activeTab === LECTURE_TRACK.SW && swFilter
+                ? LECTURE_PAGE_MESSAGES.NO_LECTURES_FOR_FILTER
+                : LECTURE_PAGE_MESSAGES.NO_LECTURES_IN_TRACK}
             </div>
           ) : (
             currentLectures.map((lec) => (
               <div
                 key={lec.id}
-                onClick={() => handleMoveToDetail(lec.id, lec.status)}
-                className={`relative flex items-center justify-between p-6 rounded-2xl border transition-all duration-300 group
-                  ${lec.status === LECTURE_STATUS.LOCKED
-                    ? 'bg-white/5 border-white/5 opacity-50 cursor-not-allowed'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-cyan-500/50 cursor-pointer'
-                  }`}
+                onClick={() => handleMoveToDetail(lec.id)}
+                className="relative flex items-center justify-between p-6 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-cyan-500/50 cursor-pointer transition-all duration-300 group"
               >
                 <div className="flex items-center gap-6">
-                  <div>
-                    {lec.status === LECTURE_STATUS.DONE ? (
-                      <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center text-green-400">
-                        <CheckCircle size={24} />
-                      </div>
-                    ) : lec.status === LECTURE_STATUS.LOCKED ? (
-                      <div className="w-12 h-12 bg-gray-700/30 rounded-full flex items-center justify-center text-gray-500">
-                        <Lock size={24} />
-                      </div>
-                    ) : (
-                      <div
-                        className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                          activeTab === LECTURE_TRACK.SW ? 'bg-cyan-500/20 text-cyan-400' : 'bg-purple-500/20 text-purple-400'
-                        }`}
-                      >
-                        <PlayCircle size={24} />
-                      </div>
-                    )}
+                  <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                      activeTab === LECTURE_TRACK.SW ? 'bg-cyan-500/20 text-cyan-400' : 'bg-purple-500/20 text-purple-400'
+                    }`}
+                  >
+                    <PlayCircle size={24} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">
                       <span
                         className={`text-xs font-bold px-2 py-0.5 rounded ${
-                          lec.status === LECTURE_STATUS.DONE
-                            ? 'bg-green-900/30 text-green-400'
-                            : lec.status === LECTURE_STATUS.LOCKED
-                              ? 'bg-gray-700 text-gray-400'
-                              : activeTab === LECTURE_TRACK.SW
-                                ? 'bg-cyan-900/30 text-cyan-400'
-                                : 'bg-purple-900/30 text-purple-400'
+                          activeTab === LECTURE_TRACK.SW ? 'bg-cyan-900/30 text-cyan-400' : 'bg-purple-900/30 text-purple-400'
                         }`}
                       >
-                        {lec.week}
-                      </span>
-                      <span className="text-xs text-gray-500 flex items-center gap-1">
-                        <Clock size={12} /> {lec.time}
+                        {lec.week}주차
                       </span>
                     </div>
                     <h3 className="text-lg md:text-xl font-bold group-hover:text-white transition-colors">
@@ -156,21 +181,19 @@ const Lecture = () => {
                     </h3>
                   </div>
                 </div>
-                {lec.status !== LECTURE_STATUS.LOCKED && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleMoveToDetail(lec.id, lec.status);
-                    }}
-                    className={`hidden md:flex items-center gap-2 px-5 py-2 rounded-full font-bold text-sm transition-all hover:scale-105 ${
-                      activeTab === LECTURE_TRACK.SW
-                        ? 'bg-cyan-500 text-[#110b29] hover:bg-cyan-400'
-                        : 'bg-purple-500 text-white hover:bg-purple-400'
-                    }`}
-                  >
-                    강좌 보기 <ArrowRight size={16} />
-                  </button>
-                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleMoveToDetail(lec.id);
+                  }}
+                  className={`hidden md:flex items-center gap-2 px-5 py-2 rounded-full font-bold text-sm transition-all hover:scale-105 ${
+                    activeTab === LECTURE_TRACK.SW
+                      ? 'bg-cyan-500 text-[#110b29] hover:bg-cyan-400'
+                      : 'bg-purple-500 text-white hover:bg-purple-400'
+                  }`}
+                >
+                  강좌 보기 <ArrowRight size={16} />
+                </button>
               </div>
             ))
           )}

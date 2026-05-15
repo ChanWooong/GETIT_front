@@ -1,6 +1,15 @@
 [
   {
     "id": 1,
+    "title": "UNIV-AllInfo",
+    "category": "App",
+    "desc": "대학생들을 위한 공지사항 관리 및 일정 통합 애플리케이션",
+    "tech": ["React Native", "Node.js", "Express", "MySQL"],
+    "links": { "github": "https://github.com/Pr1me-Get-It/UNIV-AllInfo_FrontEnd" },
+    "color": "from-sky-500 to-cyan-500"
+  },
+  {
+    "id": 2,
     "title": "Rhyview Maker",
     "category": "Web",
     "desc": "팬을 위한 All-In-One 팬 커뮤니티 서비스",

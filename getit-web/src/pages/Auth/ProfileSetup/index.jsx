@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../../api/axios';
 import { User, Hash, BookOpen, Phone } from 'lucide-react';
 import { MESSAGES } from '../../../constants';
+import { useAuth } from '../../../hooks/useAuth';
 
 import ProfileHeader from './components/ProfileHeader';
 import InfoInput from './components/InfoInput';
@@ -12,6 +13,7 @@ import Agreement from './components/Agreement.jsx'; // 💡 추가: 약관 동�
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
+  const { setUserName } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   // 💡 추가: 약관 동의 팝업 노출 여부 상태 (기본값 true)
   const [showAgreement, setShowAgreement] = useState(true);
@@ -41,6 +43,7 @@ const ProfileSetup = () => {
         return;
       }
       const response = await api.post('/api/member/info', formData);
+      setUserName(formData.name?.trim() || null);
       const successMsg = response.data?.message ?? MESSAGES.PROFILE_SUCCESS;
       alert(successMsg);
       navigate('/'); 
@@ -63,11 +66,11 @@ const ProfileSetup = () => {
         <ProfileHeader />
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <InfoInput label="이름" icon={User} name="name" placeholder="성함을 입력하세요" onChange={handleChange} />
-          <InfoInput label="학번" icon={Hash} name="studentId" placeholder="숫자 10자리" maxLength="10" pattern="[0-9]{10}" onChange={handleChange} />
+          <InfoInput label="이름" icon={User} name="name" placeholder="김겟잇" value={formData.name} onChange={handleChange} />
+          <InfoInput label="학번" icon={Hash} name="studentId" placeholder="1234567890" maxLength="10" pattern="[0-9]{10}" value={formData.studentId} onChange={handleChange} />
           <CollegeSelect value={formData.college} onChange={handleChange} />
-          <InfoInput label="학부(과) - 세부 전공" icon={BookOpen} name="department" placeholder="정확한 명칭으로 적어주세요." onChange={handleChange} />
-          <InfoInput label="전화번호" icon={Phone} name="cellNum" placeholder="010-1234-5678" pattern="010-[0-9]{3,4}-[0-9]{4}" onChange={handleChange} />
+          <InfoInput label="학부(과) - 세부 전공" icon={BookOpen} name="department" placeholder="컴퓨터학부 - 글솝" value={formData.department} onChange={handleChange} />
+          <InfoInput label="전화번호" icon={Phone} name="cellNum" placeholder="010-1234-5678" pattern="010-[0-9]{3,4}-[0-9]{4}" value={formData.cellNum} onChange={handleChange} />
           <SetupButton isLoading={isLoading} />
         </form>
       </div>

@@ -97,10 +97,10 @@ useEffect(() => {
   const handleValueChange = (id, value) => setAnswers(prev => ({ ...prev, [id]: value }));
 
   return (
-    <div className="min-h-screen w-full bg-[#110b29] py-20 px-6 text-white">
-      <div className="max-w-3xl mx-auto bg-white/5 border border-white/10 p-8 md:p-12 rounded-[2.5rem] backdrop-blur-md shadow-2xl">
+    <div className="min-h-screen w-full bg-[#110b29] py-10 px-4 sm:py-12 sm:px-5 md:py-16 md:px-6 lg:py-20 text-white">
+      <div className="max-w-3xl mx-auto bg-white/5 border border-white/10 p-4 sm:p-5 md:p-8 lg:p-12 rounded-xl sm:rounded-2xl md:rounded-[2rem] lg:rounded-[2.5rem] backdrop-blur-md shadow-2xl">
         <ApplyHeader />
-        <form onSubmit={handleSubmit} className="space-y-12">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8 md:space-y-10 lg:space-y-12">
           {questions.map((q) => (
             <QuestionField key={q.id} question={q} value={answers[q.id]} onChange={handleValueChange} />
           ))}
