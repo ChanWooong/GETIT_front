@@ -359,7 +359,7 @@ function AssignmentsListView() {
 
   const refreshAssignments = () => {
     api
-      .get('/api/admin/assignments/all', { params: { size: 100 } })
+      .get('/api/admin/assignments/all', { params: { size: 1000 } })
       .then((res) => {
         const content = res.data?.content ?? (Array.isArray(res.data) ? res.data : []);
         setAssignments(content);
@@ -370,7 +370,7 @@ function AssignmentsListView() {
   useEffect(() => {
     setLoading(true);
     api
-      .get('/api/admin/assignments/all', { params: { size: 100 } })
+      .get('/api/admin/assignments/all', { params: { size: 1000 } })
       .then((res) => {
         const content = res.data?.content ?? (Array.isArray(res.data) ? res.data : []);
         setAssignments(content);
